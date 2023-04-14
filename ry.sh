@@ -27,7 +27,7 @@ function start()
 	    echo "$AppName is running..."
 	else
 		#nohup java $JVM_OPTS -jar $AppName > /dev/null 2>&1 &
-	  java $JVM_OPTS -jar $AppName
+	    java $JVM_OPTS -jar $AppName
 		echo "Start $AppName success..."
 	fi
 }
