@@ -1,0 +1,61 @@
+package com.ruoyi.project.app.service;
+
+import java.util.List;
+import com.ruoyi.project.app.domain.AppDevice;
+
+/**
+ * 参数配置Service接口
+ * 
+ * @author ruoyi
+ * @date 2023-04-13
+ */
+public interface IAppDeviceService 
+{
+    /**
+     * 查询参数配置
+     * 
+     * @param deviceId 参数配置主键
+     * @return 参数配置
+     */
+    public AppDevice selectAppDeviceByDeviceId(Long deviceId);
+
+    /**
+     * 查询参数配置列表
+     * 
+     * @param appDevice 参数配置
+     * @return 参数配置集合
+     */
+    public List<AppDevice> selectAppDeviceList(AppDevice appDevice);
+
+    /**
+     * 新增参数配置
+     * 
+     * @param appDevice 参数配置
+     * @return 结果
+     */
+    public int insertAppDevice(AppDevice appDevice);
+
+    /**
+     * 修改参数配置
+     * 
+     * @param appDevice 参数配置
+     * @return 结果
+     */
+    public int updateAppDevice(AppDevice appDevice);
+
+    /**
+     * 批量删除参数配置
+     * 
+     * @param deviceIds 需要删除的参数配置主键集合
+     * @return 结果
+     */
+    public int deleteAppDeviceByDeviceIds(Long[] deviceIds);
+
+    /**
+     * 删除参数配置信息
+     * 
+     * @param deviceId 参数配置主键
+     * @return 结果
+     */
+    public int deleteAppDeviceByDeviceId(Long deviceId);
+}

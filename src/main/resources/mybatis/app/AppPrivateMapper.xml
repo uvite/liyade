@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.app.mapper.AppPrivateMapper">
+    
+    <resultMap type="AppPrivate" id="AppPrivateResult">
+        <result property="privateId"    column="private_id"    />
+        <result property="publicKey"    column="public_key"    />
+        <result property="privateKey"    column="private_key"    />
+        <result property="privateType"    column="private_type"    />
+        <result property="validDate"    column="valid_date"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectAppPrivateVo">
+        select private_id, public_key, private_key, private_type, valid_date, create_by, create_time, update_by, update_time, remark from app_private
+    </sql>
+
+    <select id="selectAppPrivateList" parameterType="AppPrivate" resultMap="AppPrivateResult">
+        <include refid="selectAppPrivateVo"/>
+        <where>  
+            <if test="publicKey != null  and publicKey != ''"> and public_key = #{publicKey}</if>
+            <if test="privateKey != null  and privateKey != ''"> and private_key = #{privateKey}</if>
+            <if test="privateType != null  and privateType != ''"> and private_type = #{privateType}</if>
+            <if test="validDate != null "> and valid_date = #{validDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppPrivateByPrivateId" parameterType="Long" resultMap="AppPrivateResult">
+        <include refid="selectAppPrivateVo"/>
+        where private_id = #{privateId}
+    </select>
+        
+    <insert id="insertAppPrivate" parameterType="AppPrivate" useGeneratedKeys="true" keyProperty="privateId">
+        insert into app_private
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="publicKey != null">public_key,</if>
+            <if test="privateKey != null">private_key,</if>
+            <if test="privateType != null">private_type,</if>
+            <if test="validDate != null">valid_date,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="publicKey != null">#{publicKey},</if>
+            <if test="privateKey != null">#{privateKey},</if>
+            <if test="privateType != null">#{privateType},</if>
+            <if test="validDate != null">#{validDate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppPrivate" parameterType="AppPrivate">
+        update app_private
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="publicKey != null">public_key = #{publicKey},</if>
+            <if test="privateKey != null">private_key = #{privateKey},</if>
+            <if test="privateType != null">private_type = #{privateType},</if>
+            <if test="validDate != null">valid_date = #{validDate},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where private_id = #{privateId}
+    </update>
+
+    <delete id="deleteAppPrivateByPrivateId" parameterType="Long">
+        delete from app_private where private_id = #{privateId}
+    </delete>
+
+    <delete id="deleteAppPrivateByPrivateIds" parameterType="String">
+        delete from app_private where private_id in 
+        <foreach item="privateId" collection="array" open="(" separator="," close=")">
+            #{privateId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.app.mapper.AppSupplierMapper">
+    
+    <resultMap type="AppSupplier" id="AppSupplierResult">
+        <result property="supplierId"    column="supplier_id"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="supplierShortName"    column="supplier_short_name"    />
+        <result property="supplierSign"    column="supplier_sign"    />
+        <result property="supplierLevel"    column="supplier_level"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectAppSupplierVo">
+        select supplier_id, supplier_name, supplier_short_name, supplier_sign, supplier_level, remark, create_by, create_time, update_by, update_time from app_supplier
+    </sql>
+
+    <select id="selectAppSupplierList" parameterType="AppSupplier" resultMap="AppSupplierResult">
+        <include refid="selectAppSupplierVo"/>
+        <where>  
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="supplierShortName != null  and supplierShortName != ''"> and supplier_short_name like concat('%', #{supplierShortName}, '%')</if>
+            <if test="supplierSign != null  and supplierSign != ''"> and supplier_sign = #{supplierSign}</if>
+            <if test="supplierLevel != null  and supplierLevel != ''"> and supplier_level = #{supplierLevel}</if>
+        </where>
+    </select>
+
+    <select id="selectAppSupplierAll" resultMap="AppSupplierResult">
+        <include refid="selectAppSupplierVo"/>
+    </select>
+    
+    <select id="selectAppSupplierBySupplierId" parameterType="Long" resultMap="AppSupplierResult">
+        <include refid="selectAppSupplierVo"/>
+        where supplier_id = #{supplierId}
+    </select>
+        
+    <insert id="insertAppSupplier" parameterType="AppSupplier" useGeneratedKeys="true" keyProperty="supplierId">
+        insert into app_supplier
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="supplierShortName != null">supplier_short_name,</if>
+            <if test="supplierSign != null">supplier_sign,</if>
+            <if test="supplierLevel != null">supplier_level,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="supplierShortName != null">#{supplierShortName},</if>
+            <if test="supplierSign != null">#{supplierSign},</if>
+            <if test="supplierLevel != null">#{supplierLevel},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppSupplier" parameterType="AppSupplier">
+        update app_supplier
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="supplierShortName != null">supplier_short_name = #{supplierShortName},</if>
+            <if test="supplierSign != null">supplier_sign = #{supplierSign},</if>
+            <if test="supplierLevel != null">supplier_level = #{supplierLevel},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where supplier_id = #{supplierId}
+    </update>
+
+    <delete id="deleteAppSupplierBySupplierId" parameterType="Long">
+        delete from app_supplier where supplier_id = #{supplierId}
+    </delete>
+
+    <delete id="deleteAppSupplierBySupplierIds" parameterType="String">
+        delete from app_supplier where supplier_id in 
+        <foreach item="supplierId" collection="array" open="(" separator="," close=")">
+            #{supplierId}
+        </foreach>
+    </delete>
+</mapper>
