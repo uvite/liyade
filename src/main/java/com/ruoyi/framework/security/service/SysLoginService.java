@@ -1,6 +1,10 @@
 package com.ruoyi.framework.security.service;
 
 import javax.annotation.Resource;
+
+import com.ruoyi.common.exception.user.*;
+import com.ruoyi.project.app.domain.AppIp;
+import com.ruoyi.project.app.service.IAppIpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,11 +15,6 @@ import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.exception.user.BlackListException;
-import com.ruoyi.common.exception.user.CaptchaException;
-import com.ruoyi.common.exception.user.CaptchaExpireException;
-import com.ruoyi.common.exception.user.UserNotExistsException;
-import com.ruoyi.common.exception.user.UserPasswordNotMatchException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -51,6 +50,8 @@ public class SysLoginService
 
     @Autowired
     private ISysConfigService configService;
+    @Autowired
+    private IAppIpService ipService;
 
     /**
      * 登录验证
@@ -65,6 +66,50 @@ public class SysLoginService
     {
         // 验证码校验
         validateCaptcha(username, code, uuid);
+        // 登录前置校验
+        loginPreCheck(username, password);
+        // 用户验证
+        Authentication authentication = null;
+        try
+        {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+            AuthenticationContextHolder.setContext(authenticationToken);
+            // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+            authentication = authenticationManager.authenticate(authenticationToken);
+        }
+        catch (Exception e)
+        {
+            if (e instanceof BadCredentialsException)
+            {
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
+                throw new UserPasswordNotMatchException();
+            }
+            else
+            {
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
+                throw new ServiceException(e.getMessage());
+            }
+        }
+        finally
+        {
+            AuthenticationContextHolder.clearContext();
+        }
+        AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        recordLoginInfo(loginUser.getUserId());
+        // 生成token
+        return tokenService.createToken(loginUser);
+    }
+    /**
+     * 登录验证
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 结果
+     */
+    public String userLogin(String username, String password)
+    {
+
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
@@ -163,6 +208,15 @@ public class SysLoginService
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("login.blocked")));
             throw new BlackListException();
         }
+
+        AppIp appIp=ipService.selectAppIpByIp(IpUtils.getIpAddr());
+        System.out.println(IpUtils.getIpAddr());
+        System.out.println(IpUtils.getIpAddr());
+        if (StringUtils.isNull(appIp)){
+            throw new WhiteListException();
+        }
+
+
     }
 
     /**

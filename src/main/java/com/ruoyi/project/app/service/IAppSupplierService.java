@@ -2,6 +2,7 @@ package com.ruoyi.project.app.service;
 
 import java.util.List;
 import com.ruoyi.project.app.domain.AppSupplier;
+import com.ruoyi.project.system.domain.SysRole;
 
 /**
  * 供应商管理Service接口
@@ -19,6 +20,12 @@ public interface IAppSupplierService
      * @return 供应商管理
      */
     public List<AppSupplier> selectAppSupplierAll();
+
+    /**
+     * 供应商数量
+     * @return
+     */
+    public int selectAppSupplierCount();
 
     /**
      * 查询供应商管理
@@ -67,4 +74,11 @@ public interface IAppSupplierService
      * @return 结果
      */
     public int deleteAppSupplierBySupplierId(Long supplierId);
+
+    /**
+     * 修改供应商状态
+     * appSupplier
+     * @return 结果
+     */
+    public int updateSupplierStatus(AppSupplier appSupplier);
 }

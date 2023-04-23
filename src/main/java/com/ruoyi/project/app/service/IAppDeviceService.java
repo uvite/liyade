@@ -58,4 +58,32 @@ public interface IAppDeviceService
      * @return 结果
      */
     public int deleteAppDeviceByDeviceId(Long deviceId);
+
+    /**
+     * 逻辑删除
+     *
+     * @param deviceId
+     * @return
+     */
+    int logicDeleteById(Long deviceId);
+
+    /**
+     * 批量逻辑删除
+     *
+     * @param deviceIds
+     * @return
+     */
+    int logicDeleteBatch(Long[] deviceIds);
+
+    /**
+     * 入库数量
+     * @return
+     */
+    public int inStockCount();
+
+    /**
+     * 授权数量
+     * @return
+     */
+    public int AuthorizationCount();
 }

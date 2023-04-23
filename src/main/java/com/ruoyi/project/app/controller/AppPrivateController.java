@@ -101,4 +101,14 @@ public class AppPrivateController extends BaseController
     {
         return toAjax(appPrivateService.deleteAppPrivateByPrivateIds(privateIds));
     }
+
+    /**
+     * 获取秘钥详细信息
+     */
+
+    @GetMapping(value = "/generateKeyPair")
+    public AjaxResult generateKeyPair(@PathVariable("privateId") Long privateId)
+    {
+        return success(appPrivateService.selectAppPrivateByPrivateId(privateId));
+    }
 }

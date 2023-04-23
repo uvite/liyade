@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.app.mapper.AppIpMapper">
+    
+    <resultMap type="AppIp" id="AppIpResult">
+        <result property="id"    column="id"    />
+        <result property="ip"    column="ip"    />
+    </resultMap>
+
+    <sql id="selectAppIpVo">
+        select id, ip from app_ip
+    </sql>
+
+    <select id="selectAppIpList" parameterType="AppIp" resultMap="AppIpResult">
+        <include refid="selectAppIpVo"/>
+        <where>  
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppIpById" parameterType="Long" resultMap="AppIpResult">
+        <include refid="selectAppIpVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectAppIpByIp" parameterType="String" resultMap="AppIpResult">
+        <include refid="selectAppIpVo"/>
+        where ip = #{ip}
+    </select>
+        
+    <insert id="insertAppIp" parameterType="AppIp" useGeneratedKeys="true" keyProperty="id">
+        insert into app_ip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ip != null">ip,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ip != null">#{ip},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppIp" parameterType="AppIp">
+        update app_ip
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ip != null">ip = #{ip},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppIpById" parameterType="Long">
+        delete from app_ip where id = #{id}
+    </delete>
+
+    <delete id="deleteAppIpByIds" parameterType="String">
+        delete from app_ip where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

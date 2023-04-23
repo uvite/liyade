@@ -2,6 +2,7 @@ package com.ruoyi.project.app.service;
 
 import java.util.List;
 import com.ruoyi.project.app.domain.AppProduct;
+import com.ruoyi.project.app.domain.AppSupplier;
 
 /**
  * 产品管理Service接口
@@ -9,8 +10,24 @@ import com.ruoyi.project.app.domain.AppProduct;
  * @author ruoyi
  * @date 2023-04-13
  */
-public interface IAppProductService 
+public interface IAppProductService
 {
+
+    /**
+     * 统计产品数量
+     *
+     *
+     * @return 产品管理
+     */
+    public int selectAppProductCount();
+    /**
+     * 全部产品管理
+     *
+     *
+     * @return 产品管理
+     */
+    public List<AppProduct> selectAppProductAll();
+
     /**
      * 查询产品管理
      * 
@@ -58,4 +75,28 @@ public interface IAppProductService
      * @return 结果
      */
     public int deleteAppProductByProductId(Long productId);
+
+    /**
+     * 修改产品状态
+     * appProduct
+     * @return 结果
+     */
+    public int updateProductStatus(AppProduct appProduct);
+
+
+    /**
+     * 逻辑删除
+     *
+     * @param productId
+     * @return
+     */
+    int logicDeleteById(Long productId);
+
+    /**
+     * 批量逻辑删除
+     *
+     * @param productIds
+     * @return
+     */
+    int logicDeleteBatch(Long[] productIds);
 }

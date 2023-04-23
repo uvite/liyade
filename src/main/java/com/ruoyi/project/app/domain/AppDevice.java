@@ -1,30 +1,30 @@
 package com.ruoyi.project.app.domain;
 
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
 
 /**
- * 参数配置对象 app_device
+ * 设备管理对象 app_device
  * 
  * @author ruoyi
- * @date 2023-04-13
+ * @date 2023-04-22
  */
 public class AppDevice extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
+    private AppSupplier supplier;
+    private AppProduct product;
 
     /** 设备ID */
     private Long deviceId;
 
-    /** 名称 */
-    @Excel(name = "名称")
-    private String deviceName;
-
-    /** 类型 */
-    @Excel(name = "类型")
-    private String deviceType;
+    /** 产品名称 */
+    @Excel(name = "产品名称")
+    private Long productId;
 
     /** 供应商 */
     @Excel(name = "供应商")
@@ -38,7 +38,41 @@ public class AppDevice extends BaseEntity
     @Excel(name = "编号")
     private String deviceCode;
 
-    private AppSupplier supplier;
+    /** 入库人 */
+    @Excel(name = "入库人")
+    private String deviceInStockBy;
+
+    /** 入库时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "入库时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date deviceInStockTime;
+
+    /** 出库人 */
+    @Excel(name = "出库人")
+    private String deviceOutStockBy;
+
+    /** 出库时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date deviceOutStockTime;
+
+    /** 状态（0入库 */
+    @Excel(name = "状态", readConverterExp = "状态（0入库")
+    private String stockStatus;
+
+    /** 删除者 */
+    @Excel(name = "删除者")
+    private String deleteBy;
+
+    /** 删除时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "删除时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date deleteTime;
+
+    /** 逻辑删除标识位
+ */
+    @Excel(name = "逻辑删除标识位")
+    private Integer isDeleted;
 
     public void setDeviceId(Long deviceId) 
     {
@@ -49,23 +83,14 @@ public class AppDevice extends BaseEntity
     {
         return deviceId;
     }
-    public void setDeviceName(String deviceName) 
+    public void setProductId(Long productId) 
     {
-        this.deviceName = deviceName;
+        this.productId = productId;
     }
 
-    public String getDeviceName() 
+    public Long getProductId() 
     {
-        return deviceName;
-    }
-    public void setDeviceType(String deviceType) 
-    {
-        this.deviceType = deviceType;
-    }
-
-    public String getDeviceType() 
-    {
-        return deviceType;
+        return productId;
     }
     public void setSupplierId(Long supplierId) 
     {
@@ -94,20 +119,89 @@ public class AppDevice extends BaseEntity
     {
         return deviceCode;
     }
+    public void setDeviceInStockBy(String deviceInStockBy) 
+    {
+        this.deviceInStockBy = deviceInStockBy;
+    }
 
+    public String getDeviceInStockBy() 
+    {
+        return deviceInStockBy;
+    }
+    public void setDeviceInStockTime(Date deviceInStockTime) 
+    {
+        this.deviceInStockTime = deviceInStockTime;
+    }
+
+    public Date getDeviceInStockTime() 
+    {
+        return deviceInStockTime;
+    }
+    public void setDeviceOutStockBy(String deviceOutStockBy) 
+    {
+        this.deviceOutStockBy = deviceOutStockBy;
+    }
+
+    public String getDeviceOutStockBy() 
+    {
+        return deviceOutStockBy;
+    }
+    public void setDeviceOutStockTime(Date deviceOutStockTime) 
+    {
+        this.deviceOutStockTime = deviceOutStockTime;
+    }
+
+    public Date getDeviceOutStockTime() 
+    {
+        return deviceOutStockTime;
+    }
+    public void setStockStatus(String stockStatus) 
+    {
+        this.stockStatus = stockStatus;
+    }
+
+    public String getStockStatus() 
+    {
+        return stockStatus;
+    }
+    public void setDeleteBy(String deleteBy) 
+    {
+        this.deleteBy = deleteBy;
+    }
+
+    public String getDeleteBy() 
+    {
+        return deleteBy;
+    }
+    public void setDeleteTime(Date deleteTime) 
+    {
+        this.deleteTime = deleteTime;
+    }
+
+    public Date getDeleteTime() 
+    {
+        return deleteTime;
+    }
+    public void setIsDeleted(Integer isDeleted) 
+    {
+        this.isDeleted = isDeleted;
+    }
+
+    public Integer getIsDeleted() 
+    {
+        return isDeleted;
+    }
     public AppSupplier getSupplier() {
         return supplier;
     }
-
-    public void setSupplier(AppSupplier supplier) {
-        this.supplier = supplier;
+    public AppProduct getProduct() {
+        return product;
     }
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("deviceId", getDeviceId())
-            .append("deviceName", getDeviceName())
-            .append("deviceType", getDeviceType())
+            .append("productId", getProductId())
             .append("supplierId", getSupplierId())
             .append("deviceStatus", getDeviceStatus())
             .append("deviceCode", getDeviceCode())
@@ -116,9 +210,16 @@ public class AppDevice extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("deviceInStockBy", getDeviceInStockBy())
+            .append("deviceInStockTime", getDeviceInStockTime())
+            .append("deviceOutStockBy", getDeviceOutStockBy())
+            .append("deviceOutStockTime", getDeviceOutStockTime())
+            .append("stockStatus", getStockStatus())
+            .append("deleteBy", getDeleteBy())
+            .append("deleteTime", getDeleteTime())
+            .append("isDeleted", getIsDeleted())
             .append("supplier", getSupplier())
+            .append("product", getProduct())
             .toString();
     }
-
-
 }

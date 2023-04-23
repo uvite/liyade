@@ -12,11 +12,19 @@ import com.ruoyi.project.app.domain.AppSupplier;
 public interface AppSupplierMapper 
 {
     /**
+     * 统计供应商
+     *
+     * @return 供应商
+     */
+    public int selectAppSupplierCount();
+
+    /**
      * 查询供应商管理
      *
      * @return 供应商管理
      */
     public List<AppSupplier> selectAppSupplierAll();
+
 
   /**
      * 查询供应商管理

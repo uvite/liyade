@@ -41,6 +41,9 @@ public class AppSupplier extends BaseEntity {
             public void setSupplierId(Long supplierId) {
         this.supplierId = supplierId;
     }
+    /** 帐号状态（0正常 1停用） */
+    @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
+    private String status;
 
     public Long getSupplierId() {
         return supplierId;
@@ -78,6 +81,15 @@ public class AppSupplier extends BaseEntity {
         return supplierLevel;
     }
 
+    public String getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus(String status)
+    {
+        this.status = status;
+    }
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -87,6 +99,7 @@ public class AppSupplier extends BaseEntity {
                 .append("supplierSign", getSupplierSign())
                 .append("supplierLevel", getSupplierLevel())
                 .append("remark", getRemark())
+                .append("status", getStatus())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
                 .append("updateBy", getUpdateBy())

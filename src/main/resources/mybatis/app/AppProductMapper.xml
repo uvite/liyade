@@ -12,10 +12,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="productCode"    column="product_code"    />
         <result property="productPrice"    column="product_price"    />
         <result property="productCreateTime"    column="product_create_time"    />
+        <result property="status"    column="status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="deleteBy"    column="delete_by"    />
+        <result property="deleteTime"    column="delete_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
         <result property="remark"    column="remark"    />
         <association property="supplier"    column="supplierId" javaType="AppSupplier" resultMap="supplierResult" />
 
@@ -35,7 +39,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectAppProductList" parameterType="AppProduct" resultMap="AppProductResult">
         <include refid="selectAppProductVo"/>
-        <where>  
+        <where>
+            p.is_deleted=0
             <if test="productName != null  and productName != ''"> and p.product_name like concat('%', #{productName}, '%')</if>
             <if test="productType != null  and productType != ''"> and p.product_type = #{productType}</if>
             <if test="supplierId != null "> and p.supplier_id = #{supplierId}</if>
@@ -43,8 +48,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productPrice != null "> and p.product_price = #{productPrice}</if>
             <if test="productCreateTime != null "> and p.product_create_time = #{productCreateTime}</if>
         </where>
+        order by p.product_id desc
     </select>
-    
+
+    <select id="selectAppProductAll" resultMap="AppProductResult">
+        <include refid="selectAppProductVo"/>
+    </select>
+
+
+    <select id="selectAppProductCount" resultType="Integer">
+        select count(1) from app_product where is_deleted=0
+    </select>
+
     <select id="selectAppProductByProductId" parameterType="Long" resultMap="AppProductResult">
         <include refid="selectAppProductVo"/>
         where p.product_id = #{productId}
@@ -108,4 +123,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{productId}
         </foreach>
     </delete>
+
+    <delete id="logicDeleteById" parameterType="Long">
+        update  app_product set is_deleted=1 where product_id = #{productId}
+    </delete>
+
+    <delete id="logicDeleteBatch" parameterType="String">
+        update  app_product set is_deleted=1 where product_id in
+        <foreach item="productId" collection="array" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </delete>
+
 </mapper>

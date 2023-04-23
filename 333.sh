@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ./ry.sh start 启动 stop 停止 restart 重启 status 状态
 AppName=target/ruoyi.jar
 

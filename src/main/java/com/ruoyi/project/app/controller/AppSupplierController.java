@@ -2,6 +2,8 @@ package com.ruoyi.project.app.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.project.system.domain.SysRole;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,5 +102,17 @@ public class AppSupplierController extends BaseController
     public AjaxResult remove(@PathVariable Long[] supplierIds)
     {
         return toAjax(appSupplierService.deleteAppSupplierBySupplierIds(supplierIds));
+    }
+
+    /**
+     * 状态修改
+     */
+    @PreAuthorize("@ss.hasPermi('app:supplier:edit')")
+    @Log(title = "供应商管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeStatus")
+    public AjaxResult changeStatus(@RequestBody AppSupplier appSupplier)
+    {
+
+        return toAjax(appSupplierService.updateSupplierStatus(appSupplier));
     }
 }

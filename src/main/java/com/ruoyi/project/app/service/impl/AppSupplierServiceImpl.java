@@ -3,6 +3,7 @@ package com.ruoyi.project.app.service.impl;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.project.system.domain.SysRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.app.mapper.AppSupplierMapper;
@@ -25,6 +26,12 @@ public class AppSupplierServiceImpl implements IAppSupplierService
     public List<AppSupplier> selectAppSupplierAll() {
         return appSupplierMapper.selectAppSupplierAll();
     }
+
+    @Override
+    public int selectAppSupplierCount() {
+        return appSupplierMapper.selectAppSupplierCount();
+    }
+ 
 
     /**
      * 查询供应商管理
@@ -101,4 +108,17 @@ public class AppSupplierServiceImpl implements IAppSupplierService
     {
         return appSupplierMapper.deleteAppSupplierBySupplierId(supplierId);
     }
+
+    /**
+     * 修改供应商状态
+     *
+     * @param appSupplier 供应商信息
+     * @return 结果
+     */
+    @Override
+    public int updateSupplierStatus(AppSupplier appSupplier)
+    {
+        return appSupplierMapper.updateAppSupplier(appSupplier);
+    }
+
 }

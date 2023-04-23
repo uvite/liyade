@@ -58,4 +58,32 @@ public interface AppDeviceMapper
      * @return 结果
      */
     public int deleteAppDeviceByDeviceIds(Long[] deviceIds);
+
+    /**
+     * 逻辑删除管理
+     *
+     * @param deviceId 管理主键
+     * @return 结果
+     */
+    public int logicDeleteById(Long deviceId);
+
+    /**
+     * 逻辑批量删除管理
+     *
+     * @param deviceIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int logicDeleteBatch(Long[] deviceIds);
+
+    /**
+     * 已入库设备数量
+     * @return
+     */
+    public int selectInStockCount();
+    /**
+     * 已授权设备数量
+     * @return
+     */
+    public int selectDeviceStatusCount();
+
 }

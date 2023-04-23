@@ -93,4 +93,27 @@ public class AppDeviceServiceImpl implements IAppDeviceService
     {
         return appDeviceMapper.deleteAppDeviceByDeviceId(deviceId);
     }
+
+    @Override
+    public int logicDeleteById(Long deviceId) {
+        return appDeviceMapper.logicDeleteById(deviceId);
+    }
+
+    @Override
+    public int logicDeleteBatch(Long[] deviceIds) {
+        return appDeviceMapper.logicDeleteBatch(deviceIds);
+
+    }
+
+    @Override
+    public int inStockCount() {
+        return appDeviceMapper.selectInStockCount();
+
+    }
+
+    @Override
+    public int AuthorizationCount() {
+        return appDeviceMapper.selectDeviceStatusCount();
+
+    }
 }

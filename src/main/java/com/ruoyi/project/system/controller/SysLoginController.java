@@ -16,12 +16,18 @@ import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.system.domain.SysMenu;
 import com.ruoyi.project.system.domain.SysUser;
 import com.ruoyi.project.system.service.ISysMenuService;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 /**
  * 登录验证
  * 
  * @author ruoyi
  */
+@Api("用户管理")
 @RestController
 public class SysLoginController
 {

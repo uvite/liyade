@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.project.app.domain.AppProduct;
+import com.ruoyi.project.app.service.IAppProductService;
 import com.ruoyi.project.app.service.IAppSupplierService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,92 +27,93 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
 
 /**
- * 参数配置Controller
- * 
+ * 设备管理Controller
+ *
  * @author ruoyi
  * @date 2023-04-13
  */
 @RestController
 @RequestMapping("/app/device")
-public class AppDeviceController extends BaseController
-{
+public class AppDeviceController extends BaseController {
     @Autowired
     private IAppDeviceService appDeviceService;
     @Autowired
     private IAppSupplierService supplierService;
+    @Autowired
+    private IAppProductService productService;
 
     /**
-     * 查询参数配置列表
+     * 查询设备管理列表
      */
     @PreAuthorize("@ss.hasPermi('app:device:list')")
     @GetMapping("/list")
-    public TableDataInfo list(AppDevice appDevice)
-    {
+    public TableDataInfo list(AppDevice appDevice) {
         startPage();
         List<AppDevice> list = appDeviceService.selectAppDeviceList(appDevice);
         return getDataTable(list);
     }
 
     /**
-     * 导出参数配置列表
+     * 导出设备管理列表
      */
     @PreAuthorize("@ss.hasPermi('app:device:export')")
-    @Log(title = "参数配置", businessType = BusinessType.EXPORT)
+    @Log(title = "设备管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, AppDevice appDevice)
-    {
+    public void export(HttpServletResponse response, AppDevice appDevice) {
         List<AppDevice> list = appDeviceService.selectAppDeviceList(appDevice);
         ExcelUtil<AppDevice> util = new ExcelUtil<AppDevice>(AppDevice.class);
-        util.exportExcel(response, list, "参数配置数据");
+        util.exportExcel(response, list, "设备管理数据");
     }
 
     /**
-     * 获取参数配置详细信息
+     * 获取设备管理详细信息
      */
     @PreAuthorize("@ss.hasPermi('app:device:query')")
     @GetMapping(value = {"/", "/{deviceId}"})
     public AjaxResult getInfo(@PathVariable(value = "deviceId", required = false) Long deviceId) {
 
         AjaxResult ajax = AjaxResult.success();
+        ajax.put("products", productService.selectAppProductAll());
         ajax.put("suppliers", supplierService.selectAppSupplierAll());
         if (StringUtils.isNotNull(deviceId)) {
             AppDevice appDevice = appDeviceService.selectAppDeviceByDeviceId(deviceId);
             ajax.put(AjaxResult.DATA_TAG, appDevice);
+            ajax.put("products", productService.selectAppProductAll());
             ajax.put("suppliers", supplierService.selectAppSupplierAll());
+
         }
         return ajax;
     }
 
     /**
-     * 新增参数配置
+     * 新增设备管理
      */
     @PreAuthorize("@ss.hasPermi('app:device:add')")
-    @Log(title = "参数配置", businessType = BusinessType.INSERT)
+    @Log(title = "设备管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody AppDevice appDevice)
-    {
+    public AjaxResult add(@RequestBody AppDevice appDevice) {
         return toAjax(appDeviceService.insertAppDevice(appDevice));
     }
 
     /**
-     * 修改参数配置
+     * 修改设备管理
      */
     @PreAuthorize("@ss.hasPermi('app:device:edit')")
-    @Log(title = "参数配置", businessType = BusinessType.UPDATE)
+    @Log(title = "设备管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody AppDevice appDevice)
-    {
+    public AjaxResult edit(@RequestBody AppDevice appDevice) {
         return toAjax(appDeviceService.updateAppDevice(appDevice));
     }
 
     /**
-     * 删除参数配置
+     * 删除设备管理
      */
     @PreAuthorize("@ss.hasPermi('app:device:remove')")
-    @Log(title = "参数配置", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{deviceIds}")
-    public AjaxResult remove(@PathVariable Long[] deviceIds)
-    {
-        return toAjax(appDeviceService.deleteAppDeviceByDeviceIds(deviceIds));
+    @Log(title = "设备管理", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{deviceIds}")
+    public AjaxResult remove(@PathVariable Long[] deviceIds) {
+        return toAjax(appDeviceService.logicDeleteBatch(deviceIds));
     }
+
+
 }

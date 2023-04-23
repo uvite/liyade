@@ -163,24 +163,12 @@
             <artifactId>jaxb-api</artifactId>
         </dependency>
 
-        <!-- Swagger3依赖 -->
+        
+        <!-- knife4j -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${swagger.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.swagger</groupId>
-                    <artifactId>swagger-models</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- 防止进入swagger页面报类型转换错误，排除3.0.0中的引用，手动增加1.6.2版本 -->
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>1.6.2</version>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>3.0.3</version>
         </dependency>
 
         <!-- 获取系统信息 -->

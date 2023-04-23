@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.project.app.domain.AppDevice;
+import com.ruoyi.project.app.domain.AppSupplier;
 import com.ruoyi.project.app.service.IAppSupplierService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +113,17 @@ public class AppProductController extends BaseController
 	@DeleteMapping("/{productIds}")
     public AjaxResult remove(@PathVariable Long[] productIds)
     {
-        return toAjax(appProductService.deleteAppProductByProductIds(productIds));
+        return toAjax(appProductService.logicDeleteBatch(productIds));
+    }
+    /**
+     * 状态修改
+     */
+    @PreAuthorize("@ss.hasPermi('app:product:edit')")
+    @Log(title = "产品管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeStatus")
+    public AjaxResult changeStatus(@RequestBody AppProduct appProduct)
+    {
+
+        return toAjax(appProductService.updateProductStatus(appProduct));
     }
 }

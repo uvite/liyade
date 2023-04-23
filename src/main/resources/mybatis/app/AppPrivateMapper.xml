@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="privateType != null  and privateType != ''"> and private_type = #{privateType}</if>
             <if test="validDate != null "> and valid_date = #{validDate}</if>
         </where>
+        order by private_id desc
     </select>
     
     <select id="selectAppPrivateByPrivateId" parameterType="Long" resultMap="AppPrivateResult">

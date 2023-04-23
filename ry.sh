@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ./ry.sh start 启动 stop 停止 restart 重启 status 状态
 AppName=target/ruoyi.jar
 
@@ -26,8 +26,7 @@ function start()
 	if [ x"$PID" != x"" ]; then
 	    echo "$AppName is running..."
 	else
-		#nohup java $JVM_OPTS -jar $AppName > /dev/null 2>&1 &
-	    java $JVM_OPTS -jar $AppName
+		nohup java $JVM_OPTS -jar $AppName > /dev/null 2>&1 &
 		echo "Start $AppName success..."
 	fi
 }

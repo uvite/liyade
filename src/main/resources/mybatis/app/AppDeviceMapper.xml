@@ -6,8 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="AppDevice" id="AppDeviceResult">
         <result property="deviceId"    column="device_id"    />
-        <result property="deviceName"    column="device_name"    />
-        <result property="deviceType"    column="device_type"    />
+        <result property="productId"    column="product_id"    />
         <result property="supplierId"    column="supplier_id"    />
         <result property="deviceStatus"    column="device_status"    />
         <result property="deviceCode"    column="device_code"    />
@@ -16,31 +15,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
-
+        <result property="deviceInStockBy"    column="device_in_stock_by"    />
+        <result property="deviceInStockTime"    column="device_in_stock_time"    />
+        <result property="deviceOutStockBy"    column="device_out_stock_by"    />
+        <result property="deviceOutStockTime"    column="device_out_stock_time"    />
+        <result property="stockStatus"    column="stock_status"    />
+        <result property="deleteBy"    column="delete_by"    />
+        <result property="deleteTime"    column="delete_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
         <association property="supplier"    column="supplierId" javaType="AppSupplier" resultMap="supplierResult" />
+        <association property="product"    column="productId" javaType="AppProduct" resultMap="productResult" />
 
     </resultMap>
     <resultMap id="supplierResult" type="AppSupplier">
         <id     property="supplierId"    column="supplier_id"     />
         <result property="supplierName"  column="supplier_name"   />
     </resultMap>
-
+    <resultMap id="productResult" type="AppProduct">
+        <id     property="productId"    column="product_id"     />
+        <result property="productName"  column="product_name"   />  
+        <result property="productType"  column="product_type"   />
+    </resultMap>
     <sql id="selectAppDeviceVo">
-        select d.device_id, d.device_name, d.device_type, d.supplier_id, d.device_status, d.device_code, d.create_by, d.create_time, d.update_by,
-               d.update_time, d.remark,s.supplier_id,s.supplier_name
-        from app_device as d
-            left join app_supplier s on d.supplier_id = s.supplier_id
+    select device_id, d.product_id, d.supplier_id, d.device_status, d.device_code, d.create_by, d.create_time, d.update_by, d.update_time, d.remark, d.device_in_stock_by, d.device_in_stock_time, d.device_out_stock_by, d.device_out_stock_time, d.stock_status, d.delete_by, d.delete_time, d.is_deleted 
+    ,s.supplier_id,s.supplier_name,p.product_name,p.product_id,p.product_type
+    from app_device as d
+    left join app_supplier s on d.supplier_id = s.supplier_id
+    left join app_product p on d.product_id = p.product_id
 
     </sql>
 
     <select id="selectAppDeviceList" parameterType="AppDevice" resultMap="AppDeviceResult">
         <include refid="selectAppDeviceVo"/>
         <where>  
-            <if test="deviceName != null  and deviceName != ''"> and d.device_name like concat('%', #{deviceName}, '%')</if>
-            <if test="deviceType != null  and deviceType != ''"> and d.device_type = #{deviceType}</if>
+            d.is_deleted=0
+            <if test="productId != null "> and d.product_id = #{productId}</if>
             <if test="supplierId != null "> and d.supplier_id = #{supplierId}</if>
             <if test="deviceStatus != null  and deviceStatus != ''"> and d.device_status = #{deviceStatus}</if>
             <if test="deviceCode != null  and deviceCode != ''"> and d.device_code = #{deviceCode}</if>
+            <if test="stockStatus != null  and stockStatus != ''"> and d.stock_status = #{stockStatus}</if>
+            <if test="deviceInStockBy != null  and deviceInStockBy != ''"> and d.device_in_stock_by = #{deviceInStockBy}</if>
+            <if test="deviceOutStockBy != null  and deviceOutStockBy != ''"> and d.device_out_stock_by = #{deviceOutStockBy}</if>
+
+            <if test="isDeleted != null "> and d.is_deleted = #{isDeleted}</if>
         </where>
     </select>
     
@@ -52,8 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertAppDevice" parameterType="AppDevice" useGeneratedKeys="true" keyProperty="deviceId">
         insert into app_device
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="deviceName != null">device_name,</if>
-            <if test="deviceType != null">device_type,</if>
+            <if test="productId != null">product_id,</if>
             <if test="supplierId != null">supplier_id,</if>
             <if test="deviceStatus != null">device_status,</if>
             <if test="deviceCode != null">device_code,</if>
@@ -62,10 +78,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
+            <if test="deviceInStockBy != null">device_in_stock_by,</if>
+            <if test="deviceInStockTime != null">device_in_stock_time,</if>
+            <if test="deviceOutStockBy != null">device_out_stock_by,</if>
+            <if test="deviceOutStockTime != null">device_out_stock_time,</if>
+            <if test="stockStatus != null">stock_status,</if>
+            <if test="deleteBy != null">delete_by,</if>
+            <if test="deleteTime != null">delete_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="deviceName != null">#{deviceName},</if>
-            <if test="deviceType != null">#{deviceType},</if>
+            <if test="productId != null">#{productId},</if>
             <if test="supplierId != null">#{supplierId},</if>
             <if test="deviceStatus != null">#{deviceStatus},</if>
             <if test="deviceCode != null">#{deviceCode},</if>
@@ -74,14 +97,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="deviceInStockBy != null">#{deviceInStockBy},</if>
+            <if test="deviceInStockTime != null">#{deviceInStockTime},</if>
+            <if test="deviceOutStockBy != null">#{deviceOutStockBy},</if>
+            <if test="deviceOutStockTime != null">#{deviceOutStockTime},</if>
+            <if test="stockStatus != null">#{stockStatus},</if>
+            <if test="deleteBy != null">#{deleteBy},</if>
+            <if test="deleteTime != null">#{deleteTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
          </trim>
     </insert>
 
     <update id="updateAppDevice" parameterType="AppDevice">
         update app_device
         <trim prefix="SET" suffixOverrides=",">
-            <if test="deviceName != null">device_name = #{deviceName},</if>
-            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="productId != null">product_id = #{productId},</if>
             <if test="supplierId != null">supplier_id = #{supplierId},</if>
             <if test="deviceStatus != null">device_status = #{deviceStatus},</if>
             <if test="deviceCode != null">device_code = #{deviceCode},</if>
@@ -90,6 +120,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="deviceInStockBy != null">device_in_stock_by = #{deviceInStockBy},</if>
+            <if test="deviceInStockTime != null">device_in_stock_time = #{deviceInStockTime},</if>
+            <if test="deviceOutStockBy != null">device_out_stock_by = #{deviceOutStockBy},</if>
+            <if test="deviceOutStockTime != null">device_out_stock_time = #{deviceOutStockTime},</if>
+            <if test="stockStatus != null">stock_status = #{stockStatus},</if>
+            <if test="deleteBy != null">delete_by = #{deleteBy},</if>
+            <if test="deleteTime != null">delete_time = #{deleteTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
         </trim>
         where device_id = #{deviceId}
     </update>
@@ -104,4 +142,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{deviceId}
         </foreach>
     </delete>
+
+    <delete id="logicDeleteById" parameterType="Long">
+        update  app_device set is_deleted=1 where device_id = #{deviceId}
+    </delete>
+
+    <delete id="logicDeleteBatch" parameterType="String">
+        update  app_device set is_deleted=1 where device_id in
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </delete>
+
+    <select id="selectInStockCount" resultType="Integer">
+        select count(1) from app_device where stock_status=0
+    </select>
+     <select id="selectDeviceStatusCount" resultType="Integer">
+        select count(1) from app_device where device_status=1
+    </select>
 </mapper>
