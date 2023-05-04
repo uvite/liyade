@@ -209,13 +209,16 @@ public class SysLoginService
             throw new BlackListException();
         }
 
-//        AppIp appIp=ipService.selectAppIpByIp(IpUtils.getIpAddr());
-//        System.out.println(IpUtils.getIpAddr());
-//        System.out.println(IpUtils.getIpAddr());
-//        if (StringUtils.isNull(appIp)){
-//            throw new WhiteListException();
-//        }
-
+        System.out.println(configService.selectConfigByKey("sys.login.whiteIP"));
+        System.out.println(("true".equals(configService.selectConfigByKey("sys.login.whiteIP"))));
+        if ("true".equals(configService.selectConfigByKey("sys.login.whiteIP"))){
+            AppIp appIp=ipService.selectAppIpByIp(IpUtils.getIpAddr());
+            System.out.println(IpUtils.getIpAddr());
+            System.out.println(IpUtils.getIpAddr());
+            if (StringUtils.isNull(appIp)){
+                throw new WhiteListException();
+            }
+        }
 
     }
 

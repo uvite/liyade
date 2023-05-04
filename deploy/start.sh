@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # ./ry.sh start 启动 stop 停止 restart 重启 status 状态
 AppName=ruoyi.jar
 
 # JVM参数
-JVM_OPTS="-Dname=$AppName  -Duser.timezone=Asia/Shanghai -Xms512m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError     -XX:NewRatio=1 -XX:SurvivorRatio=30"
+JVM_OPTS="-Dname=$AppName  -Duser.timezone=Asia/Shanghai -Xms512m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError   -XX:+PrintGCDetails -XX:NewRatio=1 -XX:SurvivorRatio=30 -XX:+UseParallelGC -XX:+UseParallelOldGC"
 APP_HOME=`pwd`
 LOG_PATH=$APP_HOME/logs/$AppName.log
 
@@ -26,8 +26,8 @@ function start()
 	if [ x"$PID" != x"" ]; then
 	    echo "$AppName is running..."
 	else
-		#nohup java $JVM_OPTS -jar $AppName > /dev/null 2>&1 &
-	    java $JVM_OPTS -jar $AppName
+		nohup java $JVM_OPTS -jar $AppName > /dev/null 2>&1 &
+		echo java $JVM_OPTS -jar $AppName
 		echo "Start $AppName success..."
 	fi
 }
