@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.app.mapper.AppCiphertextsMapper">
+    
+    <resultMap type="AppCiphertexts" id="AppCiphertextsResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="status"    column="status"    />
+        <result property="productType"    column="product_type"    />
+        <result property="provider"    column="provider"    />
+        <result property="ciphertext"    column="ciphertext"    />
+        <result property="ciphertextPath"    column="ciphertext_path"    />
+        <result property="md5"    column="md5"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectAppCiphertextsVo">
+        select id, device_id, status, product_type, provider, ciphertext, ciphertext_path, md5, create_by, create_time, update_by, update_time, remark from app_ciphertexts
+    </sql>
+
+    <select id="selectAppCiphertextsList" parameterType="AppCiphertexts" resultMap="AppCiphertextsResult">
+        <include refid="selectAppCiphertextsVo"/>
+        <where>  
+            <if test="deviceId != null "> and device_id = #{deviceId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="productType != null  and productType != ''"> and product_type = #{productType}</if>
+            <if test="provider != null  and provider != ''"> and provider = #{provider}</if>
+            <if test="ciphertext != null  and ciphertext != ''"> and ciphertext = #{ciphertext}</if>
+            <if test="ciphertextPath != null  and ciphertextPath != ''"> and ciphertext_path = #{ciphertextPath}</if>
+            <if test="md5 != null  and md5 != ''"> and md5 = #{md5}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppCiphertextsById" parameterType="Long" resultMap="AppCiphertextsResult">
+        <include refid="selectAppCiphertextsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAppCiphertexts" parameterType="AppCiphertexts" useGeneratedKeys="true" keyProperty="id">
+        insert into app_ciphertexts
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">device_id,</if>
+            <if test="status != null">status,</if>
+            <if test="productType != null">product_type,</if>
+            <if test="provider != null">provider,</if>
+            <if test="ciphertext != null">ciphertext,</if>
+            <if test="ciphertextPath != null">ciphertext_path,</if>
+            <if test="md5 != null">md5,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="productType != null">#{productType},</if>
+            <if test="provider != null">#{provider},</if>
+            <if test="ciphertext != null">#{ciphertext},</if>
+            <if test="ciphertextPath != null">#{ciphertextPath},</if>
+            <if test="md5 != null">#{md5},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppCiphertexts" parameterType="AppCiphertexts">
+        update app_ciphertexts
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="productType != null">product_type = #{productType},</if>
+            <if test="provider != null">provider = #{provider},</if>
+            <if test="ciphertext != null">ciphertext = #{ciphertext},</if>
+            <if test="ciphertextPath != null">ciphertext_path = #{ciphertextPath},</if>
+            <if test="md5 != null">md5 = #{md5},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppCiphertextsById" parameterType="Long">
+        delete from app_ciphertexts where id = #{id}
+    </delete>
+
+    <delete id="deleteAppCiphertextsByIds" parameterType="String">
+        delete from app_ciphertexts where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
