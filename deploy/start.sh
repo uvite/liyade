@@ -83,5 +83,3 @@ case $1 in
     status)
     status;;
     *)
-
-esac

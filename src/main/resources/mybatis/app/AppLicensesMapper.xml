@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.project.app.mapper.AppLicensesMapper">
-    
+
     <resultMap type="AppLicenses" id="AppLicensesResult">
+        <result property="id"    column="id"    />
         <result property="licenseId"    column="license_id"    />
+        <result property="fileName"    column="file_name"    />
         <result property="deviceId"    column="device_id"    />
         <result property="used"    column="used"    />
         <result property="enabled"    column="enabled"    />
@@ -19,18 +21,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="projectName"    column="project_name"    />
         <result property="projectUsername"    column="project_username"    />
         <result property="projectMobile"    column="project_mobile"    />
-        <result property="fileName"    column="file_name"    />
-
     </resultMap>
 
     <sql id="selectAppLicensesVo">
-        select license_id, device_id, used, enabled, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name, project_username, project_mobile, file_name from app_licenses
+        select id, license_id, file_name, device_id, used, enabled, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name, project_username, project_mobile from app_licenses
     </sql>
 
     <select id="selectAppLicensesList" parameterType="AppLicenses" resultMap="AppLicensesResult">
         <include refid="selectAppLicensesVo"/>
-        <where>  
-            <if test="deviceId != null "> and device_id = #{deviceId}</if>
+        <where>
+            <if test="licenseId != null  and licenseId != ''"> and license_id = #{licenseId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
             <if test="used != null  and used != ''"> and used = #{used}</if>
             <if test="enabled != null  and enabled != ''"> and enabled = #{enabled}</if>
             <if test="limitStart != null "> and limit_start = #{limitStart}</if>
@@ -41,19 +43,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectAppLicensesListByDeviceId" parameterType="Long" resultMap="AppLicensesResult">
+    <select id="selectAppLicensesById" parameterType="Long" resultMap="AppLicensesResult">
+        <include refid="selectAppLicensesVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectAppLicensesListByDeviceId" parameterType="String" resultMap="AppLicensesResult">
         <include refid="selectAppLicensesVo"/>
         where device_id = #{deviceId}
     </select>
-    
-    <select id="selectAppLicensesByLicenseId" parameterType="Long" resultMap="AppLicensesResult">
+
+    <select id="selectAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesResult">
         <include refid="selectAppLicensesVo"/>
         where license_id = #{licenseId}
     </select>
 
-    <insert id="insertAppLicenses" parameterType="AppLicenses" useGeneratedKeys="true" keyProperty="licenseId">
+    <insert id="insertAppLicenses" parameterType="AppLicenses" useGeneratedKeys="true" keyProperty="id">
         insert into app_licenses
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="licenseId != null and licenseId != ''">license_id,</if>
+            <if test="fileName != null">file_name,</if>
             <if test="deviceId != null">device_id,</if>
             <if test="used != null">used,</if>
             <if test="enabled != null">enabled,</if>
@@ -67,9 +75,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectName != null">project_name,</if>
             <if test="projectUsername != null">project_username,</if>
             <if test="projectMobile != null">project_mobile,</if>
-            <if test="fileName != null">file_name,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="licenseId != null and licenseId != ''">#{licenseId},</if>
+            <if test="fileName != null">#{fileName},</if>
             <if test="deviceId != null">#{deviceId},</if>
             <if test="used != null">#{used},</if>
             <if test="enabled != null">#{enabled},</if>
@@ -83,13 +92,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectName != null">#{projectName},</if>
             <if test="projectUsername != null">#{projectUsername},</if>
             <if test="projectMobile != null">#{projectMobile},</if>
-            <if test="fileName != null">#{fileName},</if>
         </trim>
     </insert>
 
     <update id="updateAppLicenses" parameterType="AppLicenses">
         update app_licenses
         <trim prefix="SET" suffixOverrides=",">
+            <if test="licenseId != null and licenseId != ''">license_id = #{licenseId},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
             <if test="deviceId != null">device_id = #{deviceId},</if>
             <if test="used != null">used = #{used},</if>
             <if test="enabled != null">enabled = #{enabled},</if>
@@ -103,19 +113,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectName != null">project_name = #{projectName},</if>
             <if test="projectUsername != null">project_username = #{projectUsername},</if>
             <if test="projectMobile != null">project_mobile = #{projectMobile},</if>
-            <if test="fileName != null">file_name = #{fileName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppLicensesById" parameterType="Long">
+        delete from app_licenses where id = #{id}
+    </delete>
+
+    <delete id="deleteAppLicensesByIds" parameterType="String">
+        delete from app_licenses where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <update id="updateAppLicensesStatus" parameterType="AppLicenses">
+        update app_licenses
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="used != null">used = #{used},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
         </trim>
         where license_id = #{licenseId}
     </update>
-
-    <delete id="deleteAppLicensesByLicenseId" parameterType="Long">
-        delete from app_licenses where license_id = #{licenseId}
-    </delete>
-
-    <delete id="deleteAppLicensesByLicenseIds" parameterType="String">
-        delete from app_licenses where license_id in 
-        <foreach item="licenseId" collection="array" open="(" separator="," close=")">
-            #{licenseId}
-        </foreach>
-    </delete>
 </mapper>

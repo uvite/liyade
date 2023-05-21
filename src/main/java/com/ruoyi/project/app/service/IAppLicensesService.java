@@ -6,27 +6,27 @@ import com.ruoyi.project.app.domain.AppSupplier;
 
 /**
  * 授权管理Service接口
- * 
+ *
  * @author ruoyi
- * @date 2023-05-20
+ * @date 2023-05-21
  */
-public interface IAppLicensesService 
+public interface IAppLicensesService
 {
     /**
      * 查询授权管理
-     * 
+     *
+     * @param id 授权管理主键
+     * @return 授权管理
+     */
+    public AppLicenses selectAppLicensesById(Long id);
+
+    /**
+     * 查询授权管理
+     *
      * @param licenseId 授权管理主键
      * @return 授权管理
      */
-    public AppLicenses selectAppLicensesByLicenseId(Long licenseId);
-
-    /**
-     * 查询授权管理列表
-     * 
-     * @param appLicenses 授权管理
-     * @return 授权管理集合
-     */
-    public List<AppLicenses> selectAppLicensesList(AppLicenses appLicenses);
+    public AppLicenses selectAppLicensesByLicenseId(String licenseId);
 
     /**
      * 查询授权管理列表
@@ -35,10 +35,17 @@ public interface IAppLicensesService
      * @return 授权管理集合
      */
     public List<AppLicenses> selectAppLicensesListByDeviceId(String licenseId);
+    /**
+     * 查询授权管理列表
+     *
+     * @param appLicenses 授权管理
+     * @return 授权管理集合
+     */
+    public List<AppLicenses> selectAppLicensesList(AppLicenses appLicenses);
 
     /**
      * 新增授权管理
-     * 
+     *
      * @param appLicenses 授权管理
      * @return 结果
      */
@@ -46,7 +53,7 @@ public interface IAppLicensesService
 
     /**
      * 修改授权管理
-     * 
+     *
      * @param appLicenses 授权管理
      * @return 结果
      */
@@ -54,20 +61,19 @@ public interface IAppLicensesService
 
     /**
      * 批量删除授权管理
-     * 
-     * @param licenseIds 需要删除的授权管理主键集合
+     *
+     * @param ids 需要删除的授权管理主键集合
      * @return 结果
      */
-    public int deleteAppLicensesByLicenseIds(Long[] licenseIds);
+    public int deleteAppLicensesByIds(Long[] ids);
 
     /**
      * 删除授权管理信息
-     * 
-     * @param licenseId 授权管理主键
+     *
+     * @param id 授权管理主键
      * @return 结果
      */
-    public int deleteAppLicensesByLicenseId(Long licenseId);
-
+    public int deleteAppLicensesById(Long id);
 
 
     /**

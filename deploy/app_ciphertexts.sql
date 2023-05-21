@@ -11,7 +11,7 @@
  Target Server Version : 101102 (10.11.2-MariaDB)
  File Encoding         : 65001
 
- Date: 20/05/2023 11:12:16
+ Date: 21/05/2023 21:49:21
 */
 
 SET NAMES utf8mb4;
@@ -36,12 +36,6 @@ CREATE TABLE `app_ciphertexts` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='密文管理';
-
--- ----------------------------
--- Records of app_ciphertexts
--- ----------------------------
-BEGIN;
-COMMIT;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='密文管理';
 
 SET FOREIGN_KEY_CHECKS = 1;

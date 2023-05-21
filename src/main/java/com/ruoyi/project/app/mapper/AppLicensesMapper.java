@@ -5,39 +5,36 @@ import com.ruoyi.project.app.domain.AppLicenses;
 
 /**
  * 授权管理Mapper接口
- * 
+ *
  * @author ruoyi
- * @date 2023-05-20
+ * @date 2023-05-21
  */
-public interface AppLicensesMapper 
+public interface AppLicensesMapper
 {
     /**
      * 查询授权管理
-     * 
-     * @param licenseId 授权管理主键
+     *
+     * @param id 授权管理主键
      * @return 授权管理
      */
-    public AppLicenses selectAppLicensesByLicenseId(Long licenseId);
+    public AppLicenses selectAppLicensesById(Long id);
+
+    public AppLicenses selectAppLicensesByLicenseId(String LicenseId);
+
+    public List<AppLicenses>  selectAppLicensesListByDeviceId(String DeviceId);
+
 
     /**
      * 查询授权管理列表
-     * 
+     *
      * @param appLicenses 授权管理
      * @return 授权管理集合
      */
     public List<AppLicenses> selectAppLicensesList(AppLicenses appLicenses);
 
     /**
-     * 查询授权管理列表
-     *
-     * @param deviceId 授权管理
-     * @return 授权管理集合
-     */
-    public List<AppLicenses> selectAppLicensesListByDeviceId(String deviceId);
-
-    /**
      * 新增授权管理
-     * 
+     *
      * @param appLicenses 授权管理
      * @return 结果
      */
@@ -45,25 +42,27 @@ public interface AppLicensesMapper
 
     /**
      * 修改授权管理
-     * 
+     *
      * @param appLicenses 授权管理
      * @return 结果
      */
     public int updateAppLicenses(AppLicenses appLicenses);
 
+    public int updateAppLicensesStatus(AppLicenses appLicenses);
+
     /**
      * 删除授权管理
-     * 
-     * @param licenseId 授权管理主键
+     *
+     * @param id 授权管理主键
      * @return 结果
      */
-    public int deleteAppLicensesByLicenseId(Long licenseId);
+    public int deleteAppLicensesById(Long id);
 
     /**
      * 批量删除授权管理
-     * 
-     * @param licenseIds 需要删除的数据主键集合
+     *
+     * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteAppLicensesByLicenseIds(Long[] licenseIds);
+    public int deleteAppLicensesByIds(Long[] ids);
 }

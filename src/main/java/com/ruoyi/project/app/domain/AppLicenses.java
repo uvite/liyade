@@ -11,14 +11,22 @@ import com.ruoyi.framework.web.domain.BaseEntity;
  * 授权管理对象 app_licenses
  *
  * @author ruoyi
- * @date 2023-05-20
+ * @date 2023-05-21
  */
 public class AppLicenses extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** ID */
-    private Long licenseId;
+    /** id */
+    private Long id;
+
+    /** license */
+    @Excel(name = "license")
+    private String licenseId;
+
+    /** 下载文件名称 */
+    @Excel(name = "下载文件名称")
+    private String fileName;
 
     /** 设备id */
     @Excel(name = "设备id")
@@ -54,18 +62,32 @@ public class AppLicenses extends BaseEntity
     @Excel(name = "联系人电话")
     private String projectMobile;
 
-    /** 下载文件名称 */
-    @Excel(name = "下载文件名称")
-    private String fileName;
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
 
-    public void setLicenseId(Long licenseId)
+    public Long getId()
+    {
+        return id;
+    }
+    public void setLicenseId(String licenseId)
     {
         this.licenseId = licenseId;
     }
 
-    public Long getLicenseId()
+    public String getLicenseId()
     {
         return licenseId;
+    }
+    public void setFileName(String fileName)
+    {
+        this.fileName = fileName;
+    }
+
+    public String getFileName()
+    {
+        return fileName;
     }
     public void setDeviceId(String deviceId)
     {
@@ -139,20 +161,13 @@ public class AppLicenses extends BaseEntity
     {
         return projectMobile;
     }
-    public void setFileName(String fileName)
-    {
-        this.fileName = fileName;
-    }
-
-    public String getFileName()
-    {
-        return fileName;
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
                 .append("licenseId", getLicenseId())
+                .append("fileName", getFileName())
                 .append("deviceId", getDeviceId())
                 .append("used", getUsed())
                 .append("enabled", getEnabled())
@@ -166,7 +181,6 @@ public class AppLicenses extends BaseEntity
                 .append("projectName", getProjectName())
                 .append("projectUsername", getProjectUsername())
                 .append("projectMobile", getProjectMobile())
-                .append("fileName", getFileName())
                 .toString();
     }
 }

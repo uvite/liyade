@@ -1,6 +1,7 @@
 package com.ruoyi.project.app.controller;
 
 import java.io.*;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -35,6 +36,7 @@ import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 授权管理Controller
@@ -61,25 +63,24 @@ public class AppLicensesController extends BaseController {
         return getDataTable(list);
     }
 
-    /**
-     * 导出授权管理列表
-     */
-    @PreAuthorize("@ss.hasPermi('app:licenses:export')")
-    @Log(title = "授权管理", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, AppLicenses appLicenses) {
-        List<AppLicenses> list = appLicensesService.selectAppLicensesList(appLicenses);
-        ExcelUtil<AppLicenses> util = new ExcelUtil<AppLicenses>(AppLicenses.class);
-        util.exportExcel(response, list, "授权管理数据");
-    }
+
 
     /**
      * 获取授权管理详细信息
      */
     @PreAuthorize("@ss.hasPermi('app:licenses:query')")
-    @GetMapping(value = "/{licenseId}")
-    public AjaxResult getInfo(@PathVariable("licenseId") Long licenseId) {
+    @GetMapping(value = "/getByLicenseId/{licenseId}")
+    public AjaxResult getInfo(@PathVariable("licenseId") String licenseId) {
         return success(appLicensesService.selectAppLicensesByLicenseId(licenseId));
+    }
+    /**
+     * 获取授权管理详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('app:licenses:query')")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Long id)
+    {
+        return success(appLicensesService.selectAppLicensesById(id));
     }
 
     /**
@@ -87,13 +88,21 @@ public class AppLicensesController extends BaseController {
      */
     @ApiOperation("授权文件创建")
     @PreAuthorize("@ss.hasPermi('app:licenses:add')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "limitStart", value = "开始日期", dataType = "Date", dataTypeClass = Date.class),
+            @ApiImplicitParam(name = "limitEnd", value = "截至日期", dataType = "Date", dataTypeClass = Date.class),
+            @ApiImplicitParam(name = "projectName", value = "项目名称", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "projectUsername", value = "联系人姓名", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "projectMobile", value = "联系人电话", dataType = "String", dataTypeClass = String.class),
+    })
     @Log(title = "授权管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody AppLicenses appLicenses) {
+    public AjaxResult add(@ApiIgnore @RequestBody AppLicenses appLicenses) {
 
         String uuid = IdUtils.simpleUUID();
 
-        String[] arguments = new String[]{"python3", "/product/liyade/exe/license_create.py", uuid, appLicenses.getDeviceId()};
+        String[] arguments = new String[]{"python3", "/data/liyade/deploy/license_create.py", uuid, appLicenses.getDeviceId()};
         try {
             Process process = Runtime.getRuntime().exec(arguments);
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream(),
@@ -111,6 +120,8 @@ public class AppLicensesController extends BaseController {
             e.printStackTrace();
         }
         appLicenses.setFileName(uuid);
+        appLicenses.setLicenseId(uuid);
+        System.out.println(appLicenses);
 
 
         return toAjax(appLicensesService.insertAppLicenses(appLicenses));
@@ -126,16 +137,6 @@ public class AppLicensesController extends BaseController {
         return toAjax(appLicensesService.updateAppLicenses(appLicenses));
     }
 
-    /**
-     * 删除授权管理
-     */
-    @PreAuthorize("@ss.hasPermi('app:licenses:remove')")
-    @Log(title = "授权管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{licenseIds}")
-    public AjaxResult remove(@PathVariable Long[] licenseIds) {
-        return toAjax(appLicensesService.deleteAppLicensesByLicenseIds(licenseIds));
-    }
-
 
     /**
      * 查询授权管理列表
@@ -145,7 +146,6 @@ public class AppLicensesController extends BaseController {
             @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", dataTypeClass = String.class),
     })
     @PreAuthorize("@ss.hasPermi('app:licenses:list')")
-
     @GetMapping("/list/{deviceId}")
     public AjaxResult list(@PathVariable("deviceId") String deviceId) {
 
@@ -159,12 +159,13 @@ public class AppLicensesController extends BaseController {
      */
     @ApiOperation("授权状态更新")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "licenseId", value = "license Id", dataType = "Long", dataTypeClass = Long.class),
+            @ApiImplicitParam(name = "used", value = "是否使用", dataType = "String", dataTypeClass = String.class),
     })
     @PreAuthorize("@ss.hasPermi('app:licenses:edit')")
     @Log(title = "授权管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
-    public AjaxResult changeStatus(@RequestBody AppLicenses appLicenses) {
+    public AjaxResult changeStatus(@ApiIgnore @RequestBody AppLicenses appLicenses) {
 
         return toAjax(appLicensesService.updateAppLicenseStatus(appLicenses));
     }
@@ -182,9 +183,13 @@ public class AppLicensesController extends BaseController {
             @ApiImplicitParam(name = "licenseId", value = "授权Id", dataType = "Long", dataTypeClass = Long.class),
     })
     @PostMapping("/file/download/{licenseId}")
-    public void download(@PathVariable("licenseId") Long licenseId, HttpServletResponse response) throws Exception {
+    public void download(@PathVariable("licenseId") String licenseId, HttpServletResponse response) throws Exception {
 
         AppLicenses appLicenses = appLicensesService.selectAppLicensesByLicenseId(licenseId);
+        if(appLicenses.getEnabled().equals("0")){
+            throw new Exception("没有审核不允许下载！");
+        }
+        //System.out.println(appLicenses.getEnabled()=="0");
 //        if (StringUtils.isEmpty(fileName))
 //        {
 //            throw new Exception("文件名称无效");
@@ -194,7 +199,7 @@ public class AppLicensesController extends BaseController {
 //        {
 //            throw new Exception("未找到日志文件目录");
 //        }
-        String filePath = "/product/liyade/exe/" + appLicenses.getFileName() + ".txt";
+        String filePath = "/data/liyade/deploy/" + appLicenses.getFileName() + ".txt";
 //        File directory = new File(logPath);
 //        List<File> files = (List<File>) FileUtils.listFiles(directory, null, true);
 //        for (File file : files)
