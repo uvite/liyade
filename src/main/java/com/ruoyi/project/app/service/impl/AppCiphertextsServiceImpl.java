@@ -2,6 +2,7 @@ package com.ruoyi.project.app.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.project.app.domain.AppLicenses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.app.mapper.AppCiphertextsMapper;
@@ -30,6 +31,19 @@ public class AppCiphertextsServiceImpl implements IAppCiphertextsService
     public AppCiphertexts selectAppCiphertextsById(Long id)
     {
         return appCiphertextsMapper.selectAppCiphertextsById(id);
+    }
+
+    
+    /**
+     * 查询密文管理
+     * 
+     * @param deviceId 密文管理主键
+     * @return 密文管理
+     */
+    @Override
+    public AppCiphertexts selectAppCiphertextsByDeviceId(String deviceId)
+    {
+        return appCiphertextsMapper.selectAppCiphertextsByDeviceId(deviceId);
     }
 
     /**
@@ -93,4 +107,17 @@ public class AppCiphertextsServiceImpl implements IAppCiphertextsService
     {
         return appCiphertextsMapper.deleteAppCiphertextsById(id);
     }
+
+    /**
+     * 修改状态
+     *
+     * @param appCiphertexts 信息
+     * @return 结果
+     */
+    @Override
+    public int updateAppCiphertextsStatus(AppCiphertexts appCiphertexts)
+    {
+        return appCiphertextsMapper.updateAppCiphertextsStatus(appCiphertexts);
+    }
 }
+

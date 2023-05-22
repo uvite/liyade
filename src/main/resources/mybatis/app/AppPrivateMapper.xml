@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="AppPrivate" id="AppPrivateResult">
         <result property="privateId"    column="private_id"    />
         <result property="publicKey"    column="public_key"    />
+        <result property="supplierId"    column="supplier_id"    />
         <result property="privateKey"    column="private_key"    />
         <result property="privateType"    column="private_type"    />
         <result property="validDate"    column="valid_date"    />
@@ -15,31 +16,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
-    </resultMap>
+        <association property="supplier"    column="supplierId" javaType="AppSupplier" resultMap="supplierResult" />
 
+    </resultMap>
+    <resultMap id="supplierResult" type="AppSupplier">
+        <id     property="supplierId"    column="supplier_id"     />
+        <result property="supplierName"  column="supplier_name"   />
+    </resultMap>
     <sql id="selectAppPrivateVo">
-        select private_id, public_key, private_key, private_type, valid_date, create_by, create_time, update_by, update_time, remark from app_private
+        select p.private_id, p.supplier_id,p.public_key, p.private_key, p.private_type, p.valid_date,
+               s.supplier_id,s.supplier_name
+        from app_private as p
+        left join app_supplier s on p.supplier_id = s.supplier_id
     </sql>
 
     <select id="selectAppPrivateList" parameterType="AppPrivate" resultMap="AppPrivateResult">
         <include refid="selectAppPrivateVo"/>
         <where>  
-            <if test="publicKey != null  and publicKey != ''"> and public_key = #{publicKey}</if>
-            <if test="privateKey != null  and privateKey != ''"> and private_key = #{privateKey}</if>
-            <if test="privateType != null  and privateType != ''"> and private_type = #{privateType}</if>
-            <if test="validDate != null "> and valid_date = #{validDate}</if>
+            <if test="supplierId != null  and supplierId != ''"> and p.supplier_id = #{supplierId}</if>
+
         </where>
-        order by private_id desc
+        order by p.private_id desc
     </select>
     
     <select id="selectAppPrivateByPrivateId" parameterType="Long" resultMap="AppPrivateResult">
         <include refid="selectAppPrivateVo"/>
-        where private_id = #{privateId}
+        where p.private_id = #{privateId}
     </select>
         
     <insert id="insertAppPrivate" parameterType="AppPrivate" useGeneratedKeys="true" keyProperty="privateId">
         insert into app_private
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierId != null">supplier_id,</if>
             <if test="publicKey != null">public_key,</if>
             <if test="privateKey != null">private_key,</if>
             <if test="privateType != null">private_type,</if>
@@ -51,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null">remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierId != null">#{supplierId},</if>
             <if test="publicKey != null">#{publicKey},</if>
             <if test="privateKey != null">#{privateKey},</if>
             <if test="privateType != null">#{privateType},</if>
@@ -66,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateAppPrivate" parameterType="AppPrivate">
         update app_private
         <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierId != null">supplier_id = #{supplierId},</if>
             <if test="publicKey != null">public_key = #{publicKey},</if>
             <if test="privateKey != null">private_key = #{privateKey},</if>
             <if test="privateType != null">private_type = #{privateType},</if>

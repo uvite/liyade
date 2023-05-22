@@ -2,6 +2,7 @@ package com.ruoyi.project.app.service;
 
 import java.util.List;
 import com.ruoyi.project.app.domain.AppCiphertexts;
+import com.ruoyi.project.app.domain.AppLicenses;
 
 /**
  * 密文管理Service接口
@@ -18,6 +19,9 @@ public interface IAppCiphertextsService
      * @return 密文管理
      */
     public AppCiphertexts selectAppCiphertextsById(Long id);
+
+
+    public AppCiphertexts selectAppCiphertextsByDeviceId(String deviceId);
 
     /**
      * 查询密文管理列表
@@ -58,4 +62,12 @@ public interface IAppCiphertextsService
      * @return 结果
      */
     public int deleteAppCiphertextsById(Long id);
+
+
+    /**
+     * 修改状态
+     * appSupplier
+     * @return 结果
+     */
+    public int updateAppCiphertextsStatus(AppCiphertexts appCiphertexts);
 }

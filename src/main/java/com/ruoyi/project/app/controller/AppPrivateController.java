@@ -2,6 +2,10 @@ package com.ruoyi.project.app.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.project.app.domain.AppDevice;
+import com.ruoyi.project.app.service.IAppSupplierService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +37,8 @@ public class AppPrivateController extends BaseController
 {
     @Autowired
     private IAppPrivateService appPrivateService;
-
+    @Autowired
+    private IAppSupplierService supplierService;
     /**
      * 查询秘钥列表
      */
@@ -63,10 +68,19 @@ public class AppPrivateController extends BaseController
      * 获取秘钥详细信息
      */
     @PreAuthorize("@ss.hasPermi('app:private:query')")
-    @GetMapping(value = "/{privateId}")
-    public AjaxResult getInfo(@PathVariable("privateId") Long privateId)
+    @GetMapping(value = {"/", "/{privateId}"})
+    public AjaxResult getInfo(@PathVariable(value = "privateId", required = false ) Long privateId)
     {
-        return success(appPrivateService.selectAppPrivateByPrivateId(privateId));
+        AjaxResult ajax = AjaxResult.success();
+
+        ajax.put("suppliers", supplierService.selectAppSupplierAll());
+        if (StringUtils.isNotNull(privateId)) {
+            AppPrivate appPrivate = appPrivateService.selectAppPrivateByPrivateId(privateId);
+            ajax.put(AjaxResult.DATA_TAG, appPrivate);
+            ajax.put("suppliers", supplierService.selectAppSupplierAll());
+
+        }
+        return ajax;
     }
 
     /**

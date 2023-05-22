@@ -77,7 +77,7 @@ public interface IAppLicensesService
 
 
     /**
-     * 修改供应商状态
+     * 修改状态
      * appSupplier
      * @return 结果
      */

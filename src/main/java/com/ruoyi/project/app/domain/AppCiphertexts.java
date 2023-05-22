@@ -20,7 +20,7 @@ public class AppCiphertexts extends BaseEntity
 
     /** 设备id */
     @Excel(name = "设备id")
-    private Long deviceId;
+    private String deviceId;
 
     /** 状态（0未烧写 */
     @Excel(name = "状态", readConverterExp = "状态（0未烧写")
@@ -55,12 +55,12 @@ public class AppCiphertexts extends BaseEntity
     {
         return id;
     }
-    public void setDeviceId(Long deviceId) 
+    public void setDeviceId(String deviceId) 
     {
         this.deviceId = deviceId;
     }
 
-    public Long getDeviceId() 
+    public String getDeviceId() 
     {
         return deviceId;
     }

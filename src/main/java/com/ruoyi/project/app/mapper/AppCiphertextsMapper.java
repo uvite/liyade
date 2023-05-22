@@ -2,6 +2,7 @@ package com.ruoyi.project.app.mapper;
 
 import java.util.List;
 import com.ruoyi.project.app.domain.AppCiphertexts;
+import com.ruoyi.project.app.domain.AppLicenses;
 
 /**
  * 密文管理Mapper接口
@@ -18,6 +19,16 @@ public interface AppCiphertextsMapper
      * @return 密文管理
      */
     public AppCiphertexts selectAppCiphertextsById(Long id);
+
+
+     /**
+     * 查询密文管理
+     * 
+     * @param id 密文管理主键
+     * @return 密文管理
+     */
+    public AppCiphertexts selectAppCiphertextsByDeviceId(String deviceId);
+
 
     /**
      * 查询密文管理列表
@@ -58,4 +69,8 @@ public interface AppCiphertextsMapper
      * @return 结果
      */
     public int deleteAppCiphertextsByIds(Long[] ids);
+
+
+    public int updateAppCiphertextsStatus(AppCiphertexts appCiphertexts);
+
 }
