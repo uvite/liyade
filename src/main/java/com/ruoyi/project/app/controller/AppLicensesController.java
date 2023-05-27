@@ -1,6 +1,11 @@
 package com.ruoyi.project.app.controller;
 
 import java.io.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +14,7 @@ import java.io.InputStreamReader;
 
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUtils;
+import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.framework.web.domain.R;
 
@@ -17,6 +23,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +56,9 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/app/licenses")
 public class AppLicensesController extends BaseController {
+
+    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+
     @Autowired
     private IAppLicensesService appLicensesService;
 
@@ -64,7 +75,6 @@ public class AppLicensesController extends BaseController {
     }
 
 
-
     /**
      * 获取授权管理详细信息
      */
@@ -73,13 +83,13 @@ public class AppLicensesController extends BaseController {
     public AjaxResult getInfo(@PathVariable("licenseId") String licenseId) {
         return success(appLicensesService.selectAppLicensesByLicenseId(licenseId));
     }
+
     /**
      * 获取授权管理详细信息
      */
     @PreAuthorize("@ss.hasPermi('app:licenses:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(appLicensesService.selectAppLicensesById(id));
     }
 
@@ -101,25 +111,52 @@ public class AppLicensesController extends BaseController {
     public AjaxResult add(@ApiIgnore @RequestBody AppLicenses appLicenses) {
 
         String uuid = IdUtils.simpleUUID();
+        String licPath = "data/lic/" + uuid + ".lic";
 
-        String[] arguments = new String[]{"python3", "/data/liyade/deploy/license_create.py", uuid, appLicenses.getDeviceId()};
+        SimpleDateFormat format2 = new SimpleDateFormat("yyyy年MM月dd日");
+        String limitEnd= format2.format(appLicenses.getLimitEnd()) ;
         try {
-            Process process = Runtime.getRuntime().exec(arguments);
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream(),
-                    "GBK"));
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
+
+
+            // 设置命令参数
+            List<String> cmds = new ArrayList<>();
+            cmds.add("clt_license");
+            cmds.add("--deviceId");
+            cmds.add(appLicenses.getDeviceId());
+            cmds.add("--password");
+            cmds.add("123456");
+            cmds.add("--date1");
+            cmds.add(limitEnd);
+            cmds.add("--mode");
+            cmds.add("0");
+            cmds.add("--output");
+            cmds.add(licPath);
+
+            ProcessBuilder processBuilder = new ProcessBuilder().command(cmds);
+
+            processBuilder.redirectErrorStream(true);
+            log.info("完整命令：{}", String.join(StringUtils.SPACE, processBuilder.command()));
+            // 执行
+            Process process = processBuilder.start();
+            // 输出结果信息
+            BufferedReader br1;
+            br1 = new BufferedReader(new InputStreamReader(process.getInputStream(), "gbk"));
+            String line1 = null;
+            while ((line1 = br1.readLine()) != null) {
+                System.out.println(line1);
             }
-            in.close();
-            //java代码中的process.waitFor()返回值为0表示我们调用python脚本成功，
-            //返回值为1表示调用python脚本失败，这和我们通常意义上见到的0与1定义正好相反
-            int re = process.waitFor();
-            System.out.println(re);
+            // 关闭Process
+            if (process.isAlive()) {
+                process.destroy();
+            }
+
+
         } catch (Exception e) {
-            e.printStackTrace();
+            String msg = "启动任务失败:" + e.getMessage();
+            log.error(msg, e);
         }
-        appLicenses.setFileName(uuid);
+
+        appLicenses.setFileName(licPath);
         appLicenses.setLicenseId(uuid);
         System.out.println(appLicenses);
 
@@ -186,30 +223,12 @@ public class AppLicensesController extends BaseController {
     public void download(@PathVariable("licenseId") String licenseId, HttpServletResponse response) throws Exception {
 
         AppLicenses appLicenses = appLicensesService.selectAppLicensesByLicenseId(licenseId);
-        if(appLicenses.getEnabled().equals("0")){
+        if (appLicenses.getEnabled().equals("0")) {
             throw new Exception("没有审核不允许下载！");
         }
-        //System.out.println(appLicenses.getEnabled()=="0");
-//        if (StringUtils.isEmpty(fileName))
-//        {
-//            throw new Exception("文件名称无效");
-//        }
-//        String logPath = "/product/liyade/exe/";
-//        if (StringUtils.isEmpty(logPath))
-//        {
-//            throw new Exception("未找到日志文件目录");
-//        }
-        String filePath = "/data/liyade/deploy/" + appLicenses.getFileName() + ".txt";
-//        File directory = new File(logPath);
-//        List<File> files = (List<File>) FileUtils.listFiles(directory, null, true);
-//        for (File file : files)
-//        {
-//            if (file.getName().equals(fileName) && file.isFile() && file.exists())
-//            {
-//                filePath = file.getPath();
-//                break;
-//            }
-//        }
+
+        String filePath = appLicenses.getFileName();
+
         if (StringUtils.isEmpty(filePath)) {
             throw new Exception("没有找到文件！");
         }

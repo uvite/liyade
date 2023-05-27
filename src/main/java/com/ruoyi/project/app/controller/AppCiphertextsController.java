@@ -5,10 +5,12 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
@@ -47,15 +49,14 @@ import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * 密文管理Controller
- * 
+ *
  * @author ruoyi
  * @date 2023-05-20
  */
 @Api("密文管理")
 @RestController
 @RequestMapping("/app/ciphertexts")
-public class AppCiphertextsController extends BaseController
-{
+public class AppCiphertextsController extends BaseController {
 
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
@@ -67,8 +68,7 @@ public class AppCiphertextsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:list')")
     @GetMapping("/list")
-    public TableDataInfo list(AppCiphertexts appCiphertexts)
-    {
+    public TableDataInfo list(AppCiphertexts appCiphertexts) {
         startPage();
         List<AppCiphertexts> list = appCiphertextsService.selectAppCiphertextsList(appCiphertexts);
         return getDataTable(list);
@@ -80,8 +80,7 @@ public class AppCiphertextsController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:export')")
     @Log(title = "密文管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, AppCiphertexts appCiphertexts)
-    {
+    public void export(HttpServletResponse response, AppCiphertexts appCiphertexts) {
         List<AppCiphertexts> list = appCiphertextsService.selectAppCiphertextsList(appCiphertexts);
         ExcelUtil<AppCiphertexts> util = new ExcelUtil<AppCiphertexts>(AppCiphertexts.class);
         util.exportExcel(response, list, "密文管理数据");
@@ -92,8 +91,7 @@ public class AppCiphertextsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(appCiphertextsService.selectAppCiphertextsById(id));
     }
 
@@ -103,8 +101,7 @@ public class AppCiphertextsController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:add')")
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody AppCiphertexts appCiphertexts)
-    {
+    public AjaxResult add(@RequestBody AppCiphertexts appCiphertexts) {
         return toAjax(appCiphertextsService.insertAppCiphertexts(appCiphertexts));
     }
 
@@ -114,8 +111,7 @@ public class AppCiphertextsController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:edit')")
     @Log(title = "密文管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody AppCiphertexts appCiphertexts)
-    {
+    public AjaxResult edit(@RequestBody AppCiphertexts appCiphertexts) {
         return toAjax(appCiphertextsService.updateAppCiphertexts(appCiphertexts));
     }
 
@@ -124,9 +120,8 @@ public class AppCiphertextsController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:remove')")
     @Log(title = "密文管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(appCiphertextsService.deleteAppCiphertextsByIds(ids));
     }
 
@@ -140,25 +135,25 @@ public class AppCiphertextsController extends BaseController
             @ApiImplicitParam(name = "productType", value = "产品型号", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "provider", value = "供应商", dataType = "String", dataTypeClass = String.class)
 
-    }) 
+    })
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:add')")
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/gor")
     public AjaxResult gor(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
         //查询是否存在
-        AppCiphertexts appCiphertext =appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
-        if(appCiphertext!=null){
+        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
+        if (appCiphertext != null) {
             return success(appCiphertext);
-        }else{
+        } else {
             //生成json文件
             String uuid = IdUtils.simpleUUID();
             String jsonPath = "data/temp/temp.json";
-            String cpPath =  "data/cp/"+uuid + ".cp";
+            String cpPath = "data/cp/" + uuid + ".cp";
 
             JSONObject json = new JSONObject();
             try {
                 json.put("deviceId", appCiphertexts.getDeviceId());
-              //  json.put("args", arguments);
+                //  json.put("args", arguments);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -183,7 +178,7 @@ public class AppCiphertextsController extends BaseController
                 cmds.add(appCiphertexts.getDeviceId());
                 ProcessBuilder processBuilder = new ProcessBuilder().command(cmds);
                 // 设置工作目录这样他就会去D:\javaTool目录下找jar
-             //   processBuilder.directory(new File("D:\\javaTool"));
+                //   processBuilder.directory(new File("D:\\javaTool"));
                 // 是否合并标准错误和标准输出
                 processBuilder.redirectErrorStream(true);
                 log.info("完整命令：{}", String.join(StringUtils.SPACE, processBuilder.command()));
@@ -214,13 +209,43 @@ public class AppCiphertextsController extends BaseController
                 appCiphertexts.setMd5(md5);
 
 
+//                try {
+//                    Path File_Path = Paths.get(cpPath);
+//
+//                    byte[] Demo_Array = Files.readAllBytes(File_Path);
+//                    System.out.print(Arrays.toString(Demo_Array));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+
+                try {
+                    File File_Path = new File(cpPath);
+
+                    FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+
+                    // Create a byte array
+                    byte[] Demo_Array = new byte[(int) File_Path.length()];
+
+                    // Read file content to byte array
+                    File_Input_Stream.read(Demo_Array);
+
+                    //Close the instance
+                    File_Input_Stream.close();
+
+                    appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
+
+                    // Print the above byte array
+                    System.out.print(Arrays.toString(Demo_Array));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 appCiphertexts.setCiphertextPath(cpPath);
 
             } catch (Exception e) {
                 String msg = "启动任务失败:" + e.getMessage();
                 log.error(msg, e);
             }
-
 
 
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
@@ -248,7 +273,6 @@ public class AppCiphertextsController extends BaseController
     }
 
 
-
     /**
      * 请求密文
      */
@@ -263,14 +287,14 @@ public class AppCiphertextsController extends BaseController
     @PostMapping("/verify")
     public AjaxResult verify(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
         //查询是否存在
-        AppCiphertexts appCiphertext =appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
-        if(appCiphertext!=null){
-            if(appCiphertext.getCiphertext().equals(appCiphertexts.getCiphertext())) {
+        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
+        if (appCiphertext != null) {
+            if (appCiphertext.getCiphertext().equals(appCiphertexts.getCiphertext())) {
                 return success(appCiphertext);
-            }else{
+            } else {
                 return error("校验失败");
             }
-        }else{
+        } else {
             return error("校验失败");
         }
 
