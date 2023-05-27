@@ -24,7 +24,7 @@ public interface AppCiphertextsMapper
      /**
      * 查询密文管理
      * 
-     * @param id 密文管理主键
+     * @param deviceId 密文管理主键
      * @return 密文管理
      */
     public AppCiphertexts selectAppCiphertextsByDeviceId(String deviceId);

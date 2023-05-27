@@ -145,44 +145,44 @@ public class AppCiphertextsController extends BaseController {
     @PostMapping("/gor")
     public AjaxResult gor(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
         //查询是否存在
-        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
-        if (appCiphertext != null) {
-            AjaxResult ajax = AjaxResult.success();
-
-            ajax.put("deviceId", appCiphertexts.getDeviceId());
-
-            System.out.print(appCiphertexts);
-            try {
-                File File_Path = new File(appCiphertexts.getCiphertextPath());
-
-                FileInputStream File_Input_Stream = new FileInputStream(File_Path);
-
-                // Create a byte array
-                byte[] Demo_Array = new byte[(int) File_Path.length()];
-
-                // Read file content to byte array
-                File_Input_Stream.read(Demo_Array);
-
-                //Close the instance
-                File_Input_Stream.close();
-//                int[] i1 = new int[] { 33, 12, 98 };
+//        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
+//        if (appCiphertext != null) {
+//            AjaxResult ajax = AjaxResult.success();
 //
-//                byte b[] = { 20 , 10 , 30 , 5 };
-                int[] intArray = IntStream.range(0, Demo_Array.length)
-                        .map(i -> Demo_Array[i] & 0xff)
-                        .toArray();
-                // appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
-                ajax.put("ciphertext",intArray);
-               // ajax.put("aaa",b);
-                // Print the above byte array
-               // System.out.print(Arrays.toString(Demo_Array));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return ajax;
-           // return success(appCiphertext);
-        } else {
+//            ajax.put("deviceId", appCiphertexts.getDeviceId());
+//
+//            System.out.print(appCiphertexts);
+//            try {
+//                File File_Path = new File(appCiphertexts.getCiphertextPath());
+//
+//                FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+//
+//                // Create a byte array
+//                byte[] Demo_Array = new byte[(int) File_Path.length()];
+//
+//                // Read file content to byte array
+//                File_Input_Stream.read(Demo_Array);
+//
+//                //Close the instance
+//                File_Input_Stream.close();
+////                int[] i1 = new int[] { 33, 12, 98 };
+////
+////                byte b[] = { 20 , 10 , 30 , 5 };
+//                int[] intArray = IntStream.range(0, Demo_Array.length)
+//                        .map(i -> Demo_Array[i] & 0xff)
+//                        .toArray();
+//                // appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
+//                ajax.put("ciphertext",intArray);
+//               // ajax.put("aaa",b);
+//                // Print the above byte array
+//               // System.out.print(Arrays.toString(Demo_Array));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            return ajax;
+//           // return success(appCiphertext);
+//        } else {
             //生成json文件
             String uuid = IdUtils.simpleUUID();
             String jsonPath = "data/temp/temp.json";
@@ -280,7 +280,7 @@ public class AppCiphertextsController extends BaseController {
             }
 
             return ajax;
-        }
+        //}
 
     }
 
