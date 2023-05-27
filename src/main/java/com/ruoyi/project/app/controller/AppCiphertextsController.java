@@ -144,7 +144,7 @@ public class AppCiphertextsController extends BaseController
         }else{
             //生成json文件
 
-            String jsonPath = "temp/temp.json";
+            String jsonPath = "data/temp/temp.json";
             JSONObject json = new JSONObject();
             try {
                 json.put("deviceId", appCiphertexts.getDeviceId());
@@ -159,10 +159,10 @@ public class AppCiphertextsController extends BaseController
             }
 
             String uuid = IdUtils.simpleUUID();
-            String cpPath =  "cpdata/"+uuid + ".cp";
+            String cpPath =  "data/cp/"+uuid + ".cp";
            // clt_cipherText --input eth.json --output 1.cp --mode 0 --deviceId
 
-            String[] arguments = new String[]{"clt_cipherText", "--input temp.json --output ", cpPath,"--mode 0" ,"--deviceId ", appCiphertexts.getDeviceId()};
+            String[] arguments = new String[]{"clt_cipherText", "--input ", jsonPath," --output ", cpPath,"--mode 0" ,"--deviceId ", appCiphertexts.getDeviceId()};
             try {
                 Process process = Runtime.getRuntime().exec(arguments);
                 BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream(),
