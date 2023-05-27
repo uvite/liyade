@@ -48,6 +48,8 @@
             <if test="ciphertextPath != null  and ciphertextPath != ''">and ciphertext_path = #{ciphertextPath}</if>
             <if test="md5 != null  and md5 != ''">and md5 = #{md5}</if>
         </where>
+
+        order by id desc
     </select>
 
     <select id="selectAppCiphertextsById" parameterType="Long" resultMap="AppCiphertextsResult">

@@ -19,27 +19,35 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String cpPath = "2d1a777f6da1486585dcfd0575855cb6.cp";
 
-        try {
-            File File_Path = new File(cpPath);
 
-            FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+        Map<String, Object> vAllowed = new HashMap<>();
+        vAllowed.put("asdf",1);
+        vAllowed.put("asd333f",new String[] { "kylin@163.com", "kylin@263.com" });
 
-            // Create a byte array
-            byte[] Demo_Array = new byte[(int) File_Path.length()];
+        System.out.print( vAllowed);
 
-            // Read file content to byte array
-            File_Input_Stream.read(Demo_Array);
-
-            //Close the instance
-            File_Input_Stream.close();
-
-            // Print the above byte array
-            System.out.print(Arrays.toString(Demo_Array));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        String cpPath = "1.lic.txt";
+//
+//        try {
+//            File File_Path = new File(cpPath);
+//
+//            FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+//
+//            // Create a byte array
+//            byte[] Demo_Array = new byte[(int) File_Path.length()];
+//
+//            // Read file content to byte array
+//            File_Input_Stream.read(Demo_Array);
+//
+//            //Close the instance
+//            File_Input_Stream.close();
+//            System.out.print( (Demo_Array));
+//            // Print the above byte array
+//            //System.out.print(Arrays.toString(Demo_Array));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 }

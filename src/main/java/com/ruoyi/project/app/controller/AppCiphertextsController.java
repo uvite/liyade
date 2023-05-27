@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson2.JSONException;
@@ -46,6 +47,9 @@ import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
 import springfox.documentation.annotations.ApiIgnore;
+
+
+
 
 /**
  * 密文管理Controller
@@ -143,7 +147,41 @@ public class AppCiphertextsController extends BaseController {
         //查询是否存在
         AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
         if (appCiphertext != null) {
-            return success(appCiphertext);
+            AjaxResult ajax = AjaxResult.success();
+
+            ajax.put("deviceId", appCiphertexts.getDeviceId());
+
+            System.out.print(appCiphertexts);
+            try {
+                File File_Path = new File(appCiphertexts.getCiphertextPath());
+
+                FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+
+                // Create a byte array
+                byte[] Demo_Array = new byte[(int) File_Path.length()];
+
+                // Read file content to byte array
+                File_Input_Stream.read(Demo_Array);
+
+                //Close the instance
+                File_Input_Stream.close();
+//                int[] i1 = new int[] { 33, 12, 98 };
+//
+//                byte b[] = { 20 , 10 , 30 , 5 };
+                int[] intArray = IntStream.range(0, Demo_Array.length)
+                        .map(i -> Demo_Array[i] & 0xff)
+                        .toArray();
+                // appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
+                ajax.put("ciphertext",intArray);
+               // ajax.put("aaa",b);
+                // Print the above byte array
+               // System.out.print(Arrays.toString(Demo_Array));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return ajax;
+           // return success(appCiphertext);
         } else {
             //生成json文件
             String uuid = IdUtils.simpleUUID();
@@ -208,49 +246,40 @@ public class AppCiphertextsController extends BaseController {
 
                 appCiphertexts.setMd5(md5);
 
-
-//                try {
-//                    Path File_Path = Paths.get(cpPath);
-//
-//                    byte[] Demo_Array = Files.readAllBytes(File_Path);
-//                    System.out.print(Arrays.toString(Demo_Array));
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
-
-                try {
-                    File File_Path = new File(cpPath);
-
-                    FileInputStream File_Input_Stream = new FileInputStream(File_Path);
-
-                    // Create a byte array
-                    byte[] Demo_Array = new byte[(int) File_Path.length()];
-
-                    // Read file content to byte array
-                    File_Input_Stream.read(Demo_Array);
-
-                    //Close the instance
-                    File_Input_Stream.close();
-
-                    appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
-
-                    // Print the above byte array
-                    System.out.print(Arrays.toString(Demo_Array));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 appCiphertexts.setCiphertextPath(cpPath);
 
             } catch (Exception e) {
                 String msg = "启动任务失败:" + e.getMessage();
                 log.error(msg, e);
             }
-
-
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
+            AjaxResult ajax = AjaxResult.success();
 
-            return success(appCiphertexts);
+            ajax.put("deviceId", appCiphertexts.getDeviceId());
+            try {
+                File File_Path = new File(cpPath);
+
+                FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+
+                // Create a byte array
+                byte[] Demo_Array = new byte[(int) File_Path.length()];
+
+                // Read file content to byte array
+                File_Input_Stream.read(Demo_Array);
+
+                //Close the instance
+                File_Input_Stream.close();
+
+                int[] intArray = IntStream.range(0, Demo_Array.length)
+                        .map(i -> Demo_Array[i] & 0xff)
+                        .toArray();
+                // appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
+                ajax.put("ciphertext",intArray);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return ajax;
         }
 
     }

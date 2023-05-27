@@ -41,6 +41,7 @@
             <if test="projectUsername != null  and projectUsername != ''"> and project_username like concat('%', #{projectUsername}, '%')</if>
             <if test="projectMobile != null  and projectMobile != ''"> and project_mobile = #{projectMobile}</if>
         </where>
+        order by id desc
     </select>
 
     <select id="selectAppLicensesById" parameterType="Long" resultMap="AppLicensesResult">
