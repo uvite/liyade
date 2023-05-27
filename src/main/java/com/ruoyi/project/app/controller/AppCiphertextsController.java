@@ -200,6 +200,21 @@ public class AppCiphertextsController extends BaseController
                 if (process.isAlive()) {
                     process.destroy();
                 }
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(cpPath))) {
+                    byte[] buffer = new byte[1024];
+                    int read = 0;
+                    while ((read = bis.read(buffer)) != -1) {
+                        md.update(buffer, 0, read);
+                    }
+                }
+                byte[] digest = md.digest();
+                String md5 = String.format("%032x", new BigInteger(1, digest));
+
+                appCiphertexts.setMd5(md5);
+
+
+                appCiphertexts.setCiphertextPath(cpPath);
 
             } catch (Exception e) {
                 String msg = "启动任务失败:" + e.getMessage();
@@ -207,21 +222,7 @@ public class AppCiphertextsController extends BaseController
             }
 
 
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(cpPath))) {
-                byte[] buffer = new byte[1024];
-                int read = 0;
-                while ((read = bis.read(buffer)) != -1) {
-                    md.update(buffer, 0, read);
-                }
-            }
-            byte[] digest = md.digest();
-            String md5 = String.format("%032x", new BigInteger(1, digest));
 
-            appCiphertexts.setMd5(md5);
-
-
-            appCiphertexts.setCiphertextPath(cpPath);
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
 
             return success(appCiphertexts);
