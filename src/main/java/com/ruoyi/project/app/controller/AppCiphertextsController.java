@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson2.JSONException;
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.project.app.domain.AppLicenses;
 import io.swagger.annotations.Api;
@@ -140,10 +142,27 @@ public class AppCiphertextsController extends BaseController
         if(appCiphertext!=null){
             return success(appCiphertext);
         }else{
+            //生成json文件
+
+            String jsonPath = "temp/temp.json";
+            JSONObject json = new JSONObject();
+            try {
+                json.put("deviceId", appCiphertexts.getDeviceId());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try (PrintWriter out = new PrintWriter(new FileWriter(jsonPath))) {
+                out.write(json.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             String uuid = IdUtils.simpleUUID();
+            String cpPath =  "cpdata/"+uuid + ".cp";
+           // clt_cipherText --input eth.json --output 1.cp --mode 0 --deviceId
 
-            String[] arguments = new String[]{"python3", "/data/liyade/deploy/ciphertext_create.py", uuid, appCiphertexts.getDeviceId()};
+            String[] arguments = new String[]{"clt_cipherText", "--input temp.json --output ", cpPath,"--mode 0" ,"--deviceId ", appCiphertexts.getDeviceId()};
             try {
                 Process process = Runtime.getRuntime().exec(arguments);
                 BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream(),
@@ -161,9 +180,9 @@ public class AppCiphertextsController extends BaseController
                 e.printStackTrace();
             }
             MessageDigest md = MessageDigest.getInstance("MD5");
-            String file = "/data/liyade/deploy/" + uuid + ".txt";
 
-            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+
+            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(cpPath))) {
                 byte[] buffer = new byte[1024];
                 int read = 0;
                 while ((read = bis.read(buffer)) != -1) {
@@ -179,17 +198,17 @@ public class AppCiphertextsController extends BaseController
 
 
 
-            String content = null;
-            try {
-                content = Files.lines(Paths.get(file))
-                        .collect(Collectors.joining(System.lineSeparator()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println(content);
-
-            appCiphertexts.setCiphertext(content);
+//            String content = null;
+//            try {
+//                content = Files.lines(Paths.get(file))
+//                        .collect(Collectors.joining(System.lineSeparator()));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            System.out.println(content);
+//
+//            appCiphertexts.setCiphertext(content);
 
             appCiphertexts.setCiphertextPath(uuid);
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
