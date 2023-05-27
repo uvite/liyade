@@ -11,53 +11,34 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.nio.file.Path;
 
+import java.util.Arrays;
 
 public class Main {
 
 
     public static void main(String[] args) {
+        String cpPath = "2d1a777f6da1486585dcfd0575855cb6.cp";
 
-
-        String uuid = "12323";
-        String jsonPath = "data/temp/temp.json";
-        String cpPath =  "data/cp/"+uuid + ".cp";
         try {
-            // 设置命令参数
-            List<String> cmds = new ArrayList<>();
-            cmds.add("clt_cipherText");
-            cmds.add("--input");
-            cmds.add(jsonPath);
-            cmds.add("--output");
-            cmds.add(cpPath);
-            cmds.add("--mode");
-            cmds.add("0");
-            cmds.add("--deviceId");
-            cmds.add("123");
-            //cmds.add(appCiphertexts.getDeviceId());
-            ProcessBuilder processBuilder = new ProcessBuilder().command(cmds);
-            // 设置工作目录这样他就会去D:\javaTool目录下找jar
-            //   processBuilder.directory(new File("D:\\javaTool"));
-            // 是否合并标准错误和标准输出
-            processBuilder.redirectErrorStream(true);
-            System.out.println( String.join(" ", processBuilder.command()));
-            // 执行com.ruoyi.project.app.service.IAppCiphertextsService
-            Process process = processBuilder.start();
-            // 输出结果信息
-            BufferedReader br1;
-            br1 = new BufferedReader(new InputStreamReader(process.getInputStream(), "gbk"));
-            String line1 = null;
-            while ((line1 = br1.readLine()) != null) {
-                System.out.println(line1);
-            }
-            // 关闭Process
-            if (process.isAlive()) {
-                process.destroy();
-            }
+            File File_Path = new File(cpPath);
 
-        } catch (Exception e) {
-            String msg = "启动任务失败:" + e.getMessage();
-            System.out.println(msg);
+            FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+
+            // Create a byte array
+            byte[] Demo_Array = new byte[(int) File_Path.length()];
+
+            // Read file content to byte array
+            File_Input_Stream.read(Demo_Array);
+
+            //Close the instance
+            File_Input_Stream.close();
+
+            // Print the above byte array
+            System.out.print(Arrays.toString(Demo_Array));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
