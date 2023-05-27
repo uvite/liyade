@@ -143,11 +143,18 @@ public class AppCiphertextsController extends BaseController
             return success(appCiphertext);
         }else{
             //生成json文件
-
+            String uuid = IdUtils.simpleUUID();
             String jsonPath = "data/temp/temp.json";
+            String cpPath =  "data/cp/"+uuid + ".cp";
+            // clt_cipherText --input eth.json --output 1.cp --mode 0 --deviceId
+
+            String[] arguments = new String[]{" clt_cipherText ", "--input ", jsonPath," --output ", cpPath," --mode 0" ," --deviceId ", appCiphertexts.getDeviceId()};
+
+
             JSONObject json = new JSONObject();
             try {
                 json.put("deviceId", appCiphertexts.getDeviceId());
+                json.put("args", arguments);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -158,11 +165,8 @@ public class AppCiphertextsController extends BaseController
                 e.printStackTrace();
             }
 
-            String uuid = IdUtils.simpleUUID();
-            String cpPath =  "data/cp/"+uuid + ".cp";
-           // clt_cipherText --input eth.json --output 1.cp --mode 0 --deviceId
 
-            String[] arguments = new String[]{"clt_cipherText", "--input ", jsonPath," --output ", cpPath,"--mode 0" ,"--deviceId ", appCiphertexts.getDeviceId()};
+            System.out.println(arguments);
             try {
                 Process process = Runtime.getRuntime().exec(arguments);
                 BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream(),
