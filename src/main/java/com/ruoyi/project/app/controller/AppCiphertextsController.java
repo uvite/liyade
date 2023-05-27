@@ -8,18 +8,23 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.project.app.domain.AppLicenses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +56,9 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("/app/ciphertexts")
 public class AppCiphertextsController extends BaseController
 {
+
+    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+
     @Autowired
     private IAppCiphertextsService appCiphertextsService;
 
@@ -146,15 +154,11 @@ public class AppCiphertextsController extends BaseController
             String uuid = IdUtils.simpleUUID();
             String jsonPath = "data/temp/temp.json";
             String cpPath =  "data/cp/"+uuid + ".cp";
-            // clt_cipherText --input eth.json --output 1.cp --mode 0 --deviceId
-
-            String[] arguments = new String[]{" clt_cipherText ", "--input ", jsonPath," --output ", cpPath," --mode 0" ," --deviceId ", appCiphertexts.getDeviceId()};
-
 
             JSONObject json = new JSONObject();
             try {
                 json.put("deviceId", appCiphertexts.getDeviceId());
-                json.put("args", arguments);
+              //  json.put("args", arguments);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -165,27 +169,45 @@ public class AppCiphertextsController extends BaseController
                 e.printStackTrace();
             }
 
-
-            System.out.println(arguments);
             try {
-                Process process = Runtime.getRuntime().exec(arguments);
-                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream(),
-                        "GBK"));
-                String line = null;
-                while ((line = in.readLine()) != null) {
-                    System.out.println(line);
+                // 设置命令参数
+                List<String> cmds = new ArrayList<>();
+                cmds.add("clt_cipherText");
+                cmds.add("--input");
+                cmds.add(jsonPath);
+                cmds.add("--output");
+                cmds.add(cpPath);
+                cmds.add("--mode");
+                cmds.add("0");
+                cmds.add("--deviceId");
+                cmds.add(appCiphertexts.getDeviceId());
+                ProcessBuilder processBuilder = new ProcessBuilder().command(cmds);
+                // 设置工作目录这样他就会去D:\javaTool目录下找jar
+             //   processBuilder.directory(new File("D:\\javaTool"));
+                // 是否合并标准错误和标准输出
+                processBuilder.redirectErrorStream(true);
+                log.info("完整命令：{}", String.join(StringUtils.SPACE, processBuilder.command()));
+                // 执行
+                Process process = processBuilder.start();
+                // 输出结果信息
+                BufferedReader br1;
+                br1 = new BufferedReader(new InputStreamReader(process.getInputStream(), "gbk"));
+                String line1 = null;
+                while ((line1 = br1.readLine()) != null) {
+                    System.out.println(line1);
                 }
-                in.close();
-                //java代码中的process.waitFor()返回值为0表示我们调用python脚本成功，
-                //返回值为1表示调用python脚本失败，这和我们通常意义上见到的0与1定义正好相反
-                int re = process.waitFor();
-                System.out.println(re);
+                // 关闭Process
+                if (process.isAlive()) {
+                    process.destroy();
+                }
+
             } catch (Exception e) {
-                e.printStackTrace();
+                String msg = "启动任务失败:" + e.getMessage();
+                log.error(msg, e);
             }
+
+
             MessageDigest md = MessageDigest.getInstance("MD5");
-
-
             try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(cpPath))) {
                 byte[] buffer = new byte[1024];
                 int read = 0;
@@ -199,22 +221,7 @@ public class AppCiphertextsController extends BaseController
             appCiphertexts.setMd5(md5);
 
 
-
-
-
-//            String content = null;
-//            try {
-//                content = Files.lines(Paths.get(file))
-//                        .collect(Collectors.joining(System.lineSeparator()));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            System.out.println(content);
-//
-//            appCiphertexts.setCiphertext(content);
-
-            appCiphertexts.setCiphertextPath(uuid);
+            appCiphertexts.setCiphertextPath(cpPath);
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
 
             return success(appCiphertexts);
