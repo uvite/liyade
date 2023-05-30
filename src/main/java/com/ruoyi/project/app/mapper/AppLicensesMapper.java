@@ -19,9 +19,9 @@ public interface AppLicensesMapper
      */
     public AppLicenses selectAppLicensesById(Long id);
 
-    public AppLicenses selectAppLicensesByLicenseId(String LicenseId);
+    public List<AppLicenses> selectAppLicensesByLicenseId(String LicenseId);
 
-    public List<AppLicenses>  selectAppLicensesListByDeviceId(String DeviceId);
+    public List<AppLicenses>  selectAppLicensesListByDeviceIds(String[] DeviceId);
 
 
     /**
@@ -49,6 +49,9 @@ public interface AppLicensesMapper
     public int updateAppLicenses(AppLicenses appLicenses);
 
     public int updateAppLicensesStatus(AppLicenses appLicenses);
+
+    //审核
+    public int updateAppLicensesEnabled(AppLicenses appLicenses);
 
     /**
      * 删除授权管理

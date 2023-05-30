@@ -21,6 +21,8 @@ import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.project.app.controller.request.BodyCiphertexts;
+import com.ruoyi.project.app.controller.utils.CipherText;
 import com.ruoyi.project.app.domain.AppLicenses;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -47,8 +49,6 @@ import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
 import springfox.documentation.annotations.ApiIgnore;
-
-
 
 
 /**
@@ -135,7 +135,7 @@ public class AppCiphertextsController extends BaseController {
      */
     @ApiOperation("请求密文")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "device id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "deviceId", value = "device id", dataType = "String", required = true, dataTypeClass = String.class),
             @ApiImplicitParam(name = "productType", value = "产品型号", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "provider", value = "供应商", dataType = "String", dataTypeClass = String.class)
 
@@ -145,142 +145,27 @@ public class AppCiphertextsController extends BaseController {
     @PostMapping("/gor")
     public AjaxResult gor(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
         //查询是否存在
-//        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
-//        if (appCiphertext != null) {
-//            AjaxResult ajax = AjaxResult.success();
-//
-//            ajax.put("deviceId", appCiphertexts.getDeviceId());
-//
-//            System.out.print(appCiphertexts);
-//            try {
-//                File File_Path = new File(appCiphertexts.getCiphertextPath());
-//
-//                FileInputStream File_Input_Stream = new FileInputStream(File_Path);
-//
-//                // Create a byte array
-//                byte[] Demo_Array = new byte[(int) File_Path.length()];
-//
-//                // Read file content to byte array
-//                File_Input_Stream.read(Demo_Array);
-//
-//                //Close the instance
-//                File_Input_Stream.close();
-////                int[] i1 = new int[] { 33, 12, 98 };
-////
-////                byte b[] = { 20 , 10 , 30 , 5 };
-//                int[] intArray = IntStream.range(0, Demo_Array.length)
-//                        .map(i -> Demo_Array[i] & 0xff)
-//                        .toArray();
-//                // appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
-//                ajax.put("ciphertext",intArray);
-//               // ajax.put("aaa",b);
-//                // Print the above byte array
-//               // System.out.print(Arrays.toString(Demo_Array));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            return ajax;
-//           // return success(appCiphertext);
-//        } else {
-            //生成json文件
-            String uuid = IdUtils.simpleUUID();
-            String jsonPath = "data/temp/temp.json";
-            String cpPath = "data/cp/" + uuid + ".cp";
-
-            JSONObject json = new JSONObject();
-            try {
-                json.put("deviceId", appCiphertexts.getDeviceId());
-                //  json.put("args", arguments);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            try (PrintWriter out = new PrintWriter(new FileWriter(jsonPath))) {
-                out.write(json.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                // 设置命令参数
-                List<String> cmds = new ArrayList<>();
-                cmds.add("clt_cipherText");
-                cmds.add("--input");
-                cmds.add(jsonPath);
-                cmds.add("--output");
-                cmds.add(cpPath);
-                cmds.add("--mode");
-                cmds.add("0");
-                cmds.add("--deviceId");
-                cmds.add(appCiphertexts.getDeviceId());
-                ProcessBuilder processBuilder = new ProcessBuilder().command(cmds);
-                // 设置工作目录这样他就会去D:\javaTool目录下找jar
-                //   processBuilder.directory(new File("D:\\javaTool"));
-                // 是否合并标准错误和标准输出
-                processBuilder.redirectErrorStream(true);
-                log.info("完整命令：{}", String.join(StringUtils.SPACE, processBuilder.command()));
-                // 执行
-                Process process = processBuilder.start();
-                // 输出结果信息
-                BufferedReader br1;
-                br1 = new BufferedReader(new InputStreamReader(process.getInputStream(), "gbk"));
-                String line1 = null;
-                while ((line1 = br1.readLine()) != null) {
-                    System.out.println(line1);
-                }
-                // 关闭Process
-                if (process.isAlive()) {
-                    process.destroy();
-                }
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(cpPath))) {
-                    byte[] buffer = new byte[1024];
-                    int read = 0;
-                    while ((read = bis.read(buffer)) != -1) {
-                        md.update(buffer, 0, read);
-                    }
-                }
-                byte[] digest = md.digest();
-                String md5 = String.format("%032x", new BigInteger(1, digest));
-
-                appCiphertexts.setMd5(md5);
-
-                appCiphertexts.setCiphertextPath(cpPath);
-
-            } catch (Exception e) {
-                String msg = "启动任务失败:" + e.getMessage();
-                log.error(msg, e);
-            }
+        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("deviceId", appCiphertexts.getDeviceId());
+        System.out.println(appCiphertext);
+        if (appCiphertext == null) {
+            appCiphertexts = CipherText.createCiphertext(appCiphertexts);
+            System.out.println(appCiphertext);
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
-            AjaxResult ajax = AjaxResult.success();
+            int[] intArray = CipherText.getCiphertext(appCiphertexts.getCiphertextPath());
 
-            ajax.put("deviceId", appCiphertexts.getDeviceId());
-            try {
-                File File_Path = new File(cpPath);
+            ajax.put("ciphertext", Arrays.toString(intArray));
+        } else {
+            int[] intArray = CipherText.getCiphertext(appCiphertext.getCiphertextPath());
 
-                FileInputStream File_Input_Stream = new FileInputStream(File_Path);
 
-                // Create a byte array
-                byte[] Demo_Array = new byte[(int) File_Path.length()];
+            ajax.put("ciphertext", Arrays.toString(intArray));
+        }
 
-                // Read file content to byte array
-                File_Input_Stream.read(Demo_Array);
 
-                //Close the instance
-                File_Input_Stream.close();
+        return ajax;
 
-                int[] intArray = IntStream.range(0, Demo_Array.length)
-                        .map(i -> Demo_Array[i] & 0xff)
-                        .toArray();
-                // appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
-                ajax.put("ciphertext",intArray);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return ajax;
-        //}
 
     }
 
@@ -307,19 +192,29 @@ public class AppCiphertextsController extends BaseController {
      */
     @ApiOperation("密文验证")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "device id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "deviceId", value = "device id", dataType = "String", dataTypeClass = String.class,required = true),
             @ApiImplicitParam(name = "productType", value = "产品型号", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "ciphertext", value = "密文", dataType = "String", dataTypeClass = String.class)
+            @ApiImplicitParam(name = "ciphertext", value = "密文", dataType = "Integer", allowMultiple = true, required = true),
 
     })
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/verify")
-    public AjaxResult verify(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
+    public AjaxResult verify(@ApiIgnore @RequestBody BodyCiphertexts appCiphertexts) throws
+            NoSuchAlgorithmException, IOException {
         //查询是否存在
-        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
-        if (appCiphertext != null) {
-            if (appCiphertext.getCiphertext().equals(appCiphertexts.getCiphertext())) {
-                return success(appCiphertext);
+        AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
+
+
+        if (ciphertext != null) {
+
+
+            int[] intArray = CipherText.getCiphertext(ciphertext.getCiphertextPath());
+
+
+            System.out.println("error"+appCiphertexts.getCiphertext().toString());
+            System.out.println("error"+ (Arrays.toString(intArray)));
+            if (Arrays.toString(intArray).equals(appCiphertexts.getCiphertext().toString())) {
+                return success(ciphertext);
             } else {
                 return error("校验失败");
             }

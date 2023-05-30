@@ -1,24 +1,19 @@
 package com.ruoyi.project.app.controller;
 
-import java.io.*;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
-import com.ruoyi.framework.web.domain.R;
 
-import com.ruoyi.project.app.domain.AppSupplier;
+import com.ruoyi.project.app.controller.request.BodyLicenses;
+import com.ruoyi.project.app.controller.utils.License;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -31,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +36,6 @@ import com.ruoyi.project.app.domain.AppLicenses;
 import com.ruoyi.project.app.service.IAppLicensesService;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -99,7 +92,7 @@ public class AppLicensesController extends BaseController {
     @ApiOperation("授权文件创建")
     @PreAuthorize("@ss.hasPermi('app:licenses:add')")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", allowMultiple = true, required = true),
             @ApiImplicitParam(name = "limitStart", value = "开始日期", dataType = "Date", dataTypeClass = Date.class),
             @ApiImplicitParam(name = "limitEnd", value = "截至日期", dataType = "Date", dataTypeClass = Date.class),
             @ApiImplicitParam(name = "projectName", value = "项目名称", dataType = "String", dataTypeClass = String.class),
@@ -108,60 +101,11 @@ public class AppLicensesController extends BaseController {
     })
     @Log(title = "授权管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@ApiIgnore @RequestBody AppLicenses appLicenses) {
+    public AjaxResult add(@ApiIgnore @RequestBody BodyLicenses appLicenses) {
 
-        String uuid = IdUtils.simpleUUID();
-        String licPath = "data/lic/" + uuid + ".lic";
+       appLicenses= License.createLicense(appLicenses);
 
-        SimpleDateFormat format2 = new SimpleDateFormat("yyyy年MM月dd日");
-        String limitEnd= format2.format(appLicenses.getLimitEnd()) ;
-        try {
-
-
-            // 设置命令参数
-            List<String> cmds = new ArrayList<>();
-            cmds.add("clt_license");
-            cmds.add("--deviceId");
-            cmds.add(appLicenses.getDeviceId());
-            cmds.add("--password");
-            cmds.add("123456");
-            cmds.add("--date1");
-            cmds.add(limitEnd);
-            cmds.add("--mode");
-            cmds.add("0");
-            cmds.add("--output");
-            cmds.add(licPath);
-
-            ProcessBuilder processBuilder = new ProcessBuilder().command(cmds);
-
-            processBuilder.redirectErrorStream(true);
-            log.info("完整命令：{}", String.join(StringUtils.SPACE, processBuilder.command()));
-            // 执行
-            Process process = processBuilder.start();
-            // 输出结果信息
-            BufferedReader br1;
-            br1 = new BufferedReader(new InputStreamReader(process.getInputStream(), "gbk"));
-            String line1 = null;
-            while ((line1 = br1.readLine()) != null) {
-                System.out.println(line1);
-            }
-            // 关闭Process
-            if (process.isAlive()) {
-                process.destroy();
-            }
-
-
-        } catch (Exception e) {
-            String msg = "启动任务失败:" + e.getMessage();
-            log.error(msg, e);
-        }
-
-        appLicenses.setFileName(licPath);
-        appLicenses.setLicenseId(uuid);
-        System.out.println(appLicenses);
-
-
-        return toAjax(appLicensesService.insertAppLicenses(appLicenses));
+        return toAjax(appLicensesService.insertBatchAppLicenses(appLicenses));
     }
 
     /**
@@ -185,8 +129,41 @@ public class AppLicensesController extends BaseController {
     @PreAuthorize("@ss.hasPermi('app:licenses:list')")
     @GetMapping("/list/{deviceId}")
     public AjaxResult list(@PathVariable("deviceId") String deviceId) {
+        List<String> deviceIds = new ArrayList<String>();
+        deviceIds.add(deviceId);
+        List<AppLicenses> list = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+        //如果没有记录，生成为期三个月的授权
+        if (list.size() == 0) {
+            BodyLicenses appLicenses = License.createThreeMonthLicense(deviceIds);
+            appLicensesService.insertBatchAppLicenses(appLicenses);
+            list = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+        }
+        return success(list);
+    }
 
-        List<AppLicenses> list = appLicensesService.selectAppLicensesListByDeviceId(deviceId);
+    /**
+     * 批量查询授权管理列表
+     */
+    @ApiOperation("批量授权信息获取")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", allowMultiple = true, required = true),
+    })
+    @PreAuthorize("@ss.hasPermi('app:licenses:list')")
+    @PostMapping("/list/device_id")
+    public AjaxResult listDevices(@ApiIgnore @RequestBody BodyLicenses appLicenses) {
+
+        List<String> deviceIds = appLicenses.getDeviceId();
+        List<AppLicenses> list = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+        List<String> existIds = list.stream().map(AppLicenses::getDeviceId).collect(Collectors.toList());
+        List<String> notExistIds = deviceIds.stream().filter(item -> !existIds.contains(item)).collect(Collectors.toList());
+
+        if (notExistIds.size() >= 0) {
+
+            BodyLicenses bodyLicenses = License.createThreeMonthLicense(notExistIds);
+            appLicensesService.insertBatchAppLicenses(bodyLicenses);
+            list = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+
+        }
         return success(list);
     }
 
@@ -196,15 +173,27 @@ public class AppLicensesController extends BaseController {
      */
     @ApiOperation("授权状态更新")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "licenseId", value = "license Id", dataType = "Long", dataTypeClass = Long.class),
-            @ApiImplicitParam(name = "used", value = "是否使用", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "licenseId", value = "license Id", dataType = "String",required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", allowMultiple = true, required = true),
+            @ApiImplicitParam(name = "used", value = "是否使用", dataType = "String", dataTypeClass = String.class,required = true),
     })
     @PreAuthorize("@ss.hasPermi('app:licenses:edit')")
     @Log(title = "授权管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
-    public AjaxResult changeStatus(@ApiIgnore @RequestBody AppLicenses appLicenses) {
+    public AjaxResult changeStatus(@ApiIgnore @RequestBody BodyLicenses appLicenses) {
 
-        return toAjax(appLicensesService.updateAppLicenseStatus(appLicenses));
+        return toAjax(appLicensesService.updateBatchAppLicenseStatus(appLicenses));
+    }
+    /**
+     * 审核
+     */
+
+    @PreAuthorize("@ss.hasPermi('app:licenses:edit')")
+    @Log(title = "授权管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeEnabled")
+    public AjaxResult changeEnabled(@ApiIgnore @RequestBody AppLicenses appLicenses) {
+
+        return toAjax(appLicensesService.updateAppLicenseEnabled(appLicenses));
     }
 
 
@@ -221,17 +210,12 @@ public class AppLicensesController extends BaseController {
     })
     @PostMapping("/file/download/{licenseId}")
     public void download(@PathVariable("licenseId") String licenseId, HttpServletResponse response) throws Exception {
+        List<AppLicenses> list = appLicensesService.selectAppLicensesByLicenseId(licenseId);
 
-        AppLicenses appLicenses = appLicensesService.selectAppLicensesByLicenseId(licenseId);
-        if (appLicenses.getEnabled().equals("0")) {
-            throw new Exception("没有审核不允许下载！");
-        }
-
-        String filePath = appLicenses.getFileName();
-
-        if (StringUtils.isEmpty(filePath)) {
+        if (list.size()==0) {
             throw new Exception("没有找到文件！");
         }
+        String filePath = list.get(0).getFileName();
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         FileUtils.writeBytes(filePath, response.getOutputStream());
     }

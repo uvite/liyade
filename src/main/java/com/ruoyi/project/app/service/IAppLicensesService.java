@@ -1,8 +1,9 @@
 package com.ruoyi.project.app.service;
 
 import java.util.List;
+
+import com.ruoyi.project.app.controller.request.BodyLicenses;
 import com.ruoyi.project.app.domain.AppLicenses;
-import com.ruoyi.project.app.domain.AppSupplier;
 
 /**
  * 授权管理Service接口
@@ -26,15 +27,15 @@ public interface IAppLicensesService
      * @param licenseId 授权管理主键
      * @return 授权管理
      */
-    public AppLicenses selectAppLicensesByLicenseId(String licenseId);
+    public List<AppLicenses> selectAppLicensesByLicenseId(String licenseId);
 
     /**
      * 查询授权管理列表
      *
-     * @param licenseId 授权管理
+     * @param deviceIds 授权管理
      * @return 授权管理集合
      */
-    public List<AppLicenses> selectAppLicensesListByDeviceId(String licenseId);
+    public List<AppLicenses> selectAppLicensesListByDeviceIds(List<String> deviceIds);
     /**
      * 查询授权管理列表
      *
@@ -50,6 +51,14 @@ public interface IAppLicensesService
      * @return 结果
      */
     public int insertAppLicenses(AppLicenses appLicenses);
+
+    /**
+     * 批量新增授权管理
+     *
+     * @param appLicenses 授权管理
+     * @return 结果
+     */
+    public int insertBatchAppLicenses(BodyLicenses appLicenses);
 
     /**
      * 修改授权管理
@@ -77,9 +86,23 @@ public interface IAppLicensesService
 
 
     /**
+     * 审核
+     * appSupplier
+     * @return 结果
+     */
+    public int updateAppLicenseEnabled(AppLicenses appLicenses);
+
+    /**
      * 修改状态
      * appSupplier
      * @return 结果
      */
     public int updateAppLicenseStatus(AppLicenses appLicenses);
+
+    /**
+     * 批量修改状态
+     * appSupplier
+     * @return 结果
+     */
+    public int updateBatchAppLicenseStatus(BodyLicenses appLicenses);
 }
