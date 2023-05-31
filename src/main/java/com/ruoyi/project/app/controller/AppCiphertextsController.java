@@ -155,12 +155,12 @@ public class AppCiphertextsController extends BaseController {
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
             int[] intArray = CipherText.getCiphertext(appCiphertexts.getCiphertextPath());
 
-            ajax.put("ciphertext", Arrays.toString(intArray));
+            ajax.put("ciphertext", intArray);
         } else {
             int[] intArray = CipherText.getCiphertext(appCiphertext.getCiphertextPath());
 
 
-            ajax.put("ciphertext", Arrays.toString(intArray));
+            ajax.put("ciphertext", intArray);
         }
 
 
