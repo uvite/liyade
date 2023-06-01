@@ -3,10 +3,13 @@ package com.ruoyi.project.app.controller.utils;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.project.app.controller.request.BodyLicenses;
 import com.ruoyi.project.app.domain.AppCiphertexts;
+import com.ruoyi.project.app.domain.AppDevicesStatus;
+import com.ruoyi.project.app.domain.AppLicenses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +83,7 @@ public class License {
 
     }
 
-    public static BodyLicenses createThreeMonthLicense(List<String> deviceIds) {
+    public static AppLicenses createThreeMonthLicense(List<String> deviceIds) {
 
         Date dNow = new Date();   //当前时间
         Date dAfterThreeMonth = new Date();
@@ -98,11 +101,25 @@ public class License {
         bodyLicenses.setDeviceId(deviceIds);
         bodyLicenses.setEnabled("1");
         bodyLicenses.setLimitEnd(dAfterThreeMonth);
-        License.createLicense(bodyLicenses);
+        bodyLicenses=License.createLicense(bodyLicenses);
 
-        return bodyLicenses;
+        AppLicenses licenses = new AppLicenses();
+        BeanUtils.copyBeanProp(licenses, bodyLicenses);
+        List<AppDevicesStatus> list = new ArrayList<AppDevicesStatus>();
+        for (int i = 0; i < bodyLicenses.getDeviceId().size(); i++) {
+            AppDevicesStatus appDevicesStatus=new AppDevicesStatus();
+            appDevicesStatus.setDeviceId(bodyLicenses.getDeviceId().get(i));
+            appDevicesStatus.setUsed("0");
+            appDevicesStatus.setEnabled("1");
+            list.add(appDevicesStatus);
+        }
+        licenses.setAppDevicesStatusList(list);
+
+        return licenses;
 
     }
+
+
 
 
 }

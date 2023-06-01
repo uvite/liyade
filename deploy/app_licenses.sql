@@ -11,7 +11,7 @@
  Target Server Version : 101102 (10.11.2-MariaDB)
  File Encoding         : 65001
 
- Date: 30/05/2023 17:46:50
+ Date: 01/06/2023 17:30:11
 */
 
 SET NAMES utf8mb4;
@@ -25,9 +25,6 @@ CREATE TABLE `app_licenses` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `license_id` varchar(255) DEFAULT NULL COMMENT 'license Id',
   `file_name` varchar(255) DEFAULT NULL COMMENT '下载文件名称',
-  `device_id` varchar(255) DEFAULT NULL COMMENT '设备id',
-  `used` char(1) DEFAULT NULL COMMENT '是否使用（0未使用 1使用）',
-  `enabled` char(1) DEFAULT '0' COMMENT '状态（0未审核 1审核）',
   `limit_start` datetime DEFAULT NULL COMMENT '更新时间',
   `limit_end` datetime DEFAULT NULL COMMENT '更新时间',
   `create_by` varchar(64) DEFAULT '' COMMENT '创建者',

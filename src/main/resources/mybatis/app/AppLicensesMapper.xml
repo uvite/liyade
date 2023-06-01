@@ -1,95 +1,85 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.project.app.mapper.AppLicensesMapper">
-
+    
     <resultMap type="AppLicenses" id="AppLicensesResult">
-        <result property="id" column="id"/>
-        <result property="licenseId" column="license_id"/>
-        <result property="fileName" column="file_name"/>
-        <result property="deviceId" column="device_id"/>
-        <result property="used" column="used"/>
-        <result property="enabled" column="enabled"/>
-        <result property="limitStart" column="limit_start"/>
-        <result property="limitEnd" column="limit_end"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="remark" column="remark"/>
-        <result property="projectName" column="project_name"/>
-        <result property="projectUsername" column="project_username"/>
-        <result property="projectMobile" column="project_mobile"/>
+        <result property="id"    column="id"    />
+        <result property="licenseId"    column="license_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="limitStart"    column="limit_start"    />
+        <result property="limitEnd"    column="limit_end"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectUsername"    column="project_username"    />
+        <result property="projectMobile"    column="project_mobile"    />
+    </resultMap>
+
+    <resultMap id="AppLicensesAppDevicesStatusResult" type="AppLicenses" extends="AppLicensesResult">
+        <collection property="devices" notNullColumn="sub_id" javaType="java.util.List" resultMap="AppDevicesStatusResult" />
+    </resultMap>
+
+    <resultMap type="AppDevicesStatus" id="AppDevicesStatusResult">
+        <result property="id"    column="sub_id"    />
+        <result property="deviceId"    column="sub_device_id"    />
+        <result property="used"    column="sub_used"    />
+        <result property="enabled"    column="sub_enabled"    />
     </resultMap>
 
     <sql id="selectAppLicensesVo">
-        select id,
-               license_id,
-               file_name,
-               device_id,
-               used,
-               enabled,
-               limit_start,
-               limit_end,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               remark,
-               project_name,
-               project_username,
-               project_mobile
-        from app_licenses
+        select id, license_id, file_name, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name, project_username, project_mobile from app_licenses
     </sql>
 
     <select id="selectAppLicensesList" parameterType="AppLicenses" resultMap="AppLicensesResult">
         <include refid="selectAppLicensesVo"/>
-        <where>
-            <if test="licenseId != null  and licenseId != ''">and license_id = #{licenseId}</if>
-            <if test="fileName != null  and fileName != ''">and file_name like concat('%', #{fileName}, '%')</if>
-            <if test="deviceId != null  and deviceId != ''">and device_id = #{deviceId}</if>
-            <if test="used != null  and used != ''">and used = #{used}</if>
-            <if test="enabled != null  and enabled != ''">and enabled = #{enabled}</if>
-            <if test="limitStart != null ">and limit_start = #{limitStart}</if>
-            <if test="limitEnd != null ">and limit_end = #{limitEnd}</if>
-            <if test="projectName != null  and projectName != ''">and project_name like concat('%', #{projectName},
-                '%')
-            </if>
-            <if test="projectUsername != null  and projectUsername != ''">and project_username like concat('%',
-                #{projectUsername}, '%')
-            </if>
-            <if test="projectMobile != null  and projectMobile != ''">and project_mobile = #{projectMobile}</if>
+        <where>  
+            <if test="licenseId != null  and licenseId != ''"> and license_id = #{licenseId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="limitStart != null "> and limit_start = #{limitStart}</if>
+            <if test="limitEnd != null "> and limit_end = #{limitEnd}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectUsername != null  and projectUsername != ''"> and project_username like concat('%', #{projectUsername}, '%')</if>
+            <if test="projectMobile != null  and projectMobile != ''"> and project_mobile = #{projectMobile}</if>
         </where>
-        order by id desc
+    </select>
+    
+    <select id="selectAppLicensesById" parameterType="Long" resultMap="AppLicensesAppDevicesStatusResult">
+        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username, a.project_mobile,
+ b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
+        from app_licenses a
+        left join app_devices_status b on b.id = a.id
+        where a.id = #{id}
+    </select>
+    <select id="getAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
+        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username, a.project_mobile,
+ b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
+        from app_licenses a
+        left join app_devices_status b on b.id = a.id
+        where a.license_id = #{license_id}
     </select>
 
-    <select id="selectAppLicensesById" parameterType="Long" resultMap="AppLicensesResult">
-        <include refid="selectAppLicensesVo"/>
-        where id = #{id}
-    </select>
 
-    <select id="selectAppLicensesListByDeviceIds" parameterType="String" resultMap="AppLicensesResult">
-        <include refid="selectAppLicensesVo"/>
-        where device_id in
+    <select id="selectAppLicensesListByDeviceIds" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
+        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username, a.project_mobile,
+ b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
+        from app_licenses a
+        left join app_devices_status b on b.license_id = a.id
+        where b.device_id in
         <foreach item="deviceId" collection="array" open="(" separator="," close=")">
             #{deviceId}
         </foreach>
     </select>
-
-    <select id="selectAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesResult">
-        <include refid="selectAppLicensesVo"/>
-        where license_id = #{licenseId} and enabled="1"
-    </select>
-
+        
     <insert id="insertAppLicenses" parameterType="AppLicenses" useGeneratedKeys="true" keyProperty="id">
         insert into app_licenses
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="licenseId != null and licenseId != ''">license_id,</if>
+            <if test="licenseId != null">license_id,</if>
             <if test="fileName != null">file_name,</if>
-            <if test="deviceId != null">device_id,</if>
-            <if test="used != null">used,</if>
-            <if test="enabled != null">enabled,</if>
             <if test="limitStart != null">limit_start,</if>
             <if test="limitEnd != null">limit_end,</if>
             <if test="createBy != null">create_by,</if>
@@ -100,13 +90,10 @@
             <if test="projectName != null">project_name,</if>
             <if test="projectUsername != null">project_username,</if>
             <if test="projectMobile != null">project_mobile,</if>
-        </trim>
+         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="licenseId != null and licenseId != ''">#{licenseId},</if>
+            <if test="licenseId != null">#{licenseId},</if>
             <if test="fileName != null">#{fileName},</if>
-            <if test="deviceId != null">#{deviceId},</if>
-            <if test="used != null">#{used},</if>
-            <if test="enabled != null">#{enabled},</if>
             <if test="limitStart != null">#{limitStart},</if>
             <if test="limitEnd != null">#{limitEnd},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -117,17 +104,14 @@
             <if test="projectName != null">#{projectName},</if>
             <if test="projectUsername != null">#{projectUsername},</if>
             <if test="projectMobile != null">#{projectMobile},</if>
-        </trim>
+         </trim>
     </insert>
 
     <update id="updateAppLicenses" parameterType="AppLicenses">
         update app_licenses
         <trim prefix="SET" suffixOverrides=",">
-            <if test="licenseId != null and licenseId != ''">license_id = #{licenseId},</if>
+            <if test="licenseId != null">license_id = #{licenseId},</if>
             <if test="fileName != null">file_name = #{fileName},</if>
-            <if test="deviceId != null">device_id = #{deviceId},</if>
-            <if test="used != null">used = #{used},</if>
-            <if test="enabled != null">enabled = #{enabled},</if>
             <if test="limitStart != null">limit_start = #{limitStart},</if>
             <if test="limitEnd != null">limit_end = #{limitEnd},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
@@ -143,33 +127,40 @@
     </update>
 
     <delete id="deleteAppLicensesById" parameterType="Long">
-        delete
-        from app_licenses
-        where id = #{id}
+        delete from app_licenses where id = #{id}
     </delete>
 
     <delete id="deleteAppLicensesByIds" parameterType="String">
-        delete from app_licenses where id in
+        delete from app_licenses where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteAppDevicesStatusByIds" parameterType="String">
+        delete from app_devices_status where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
+    <delete id="deleteAppDevicesStatusById" parameterType="Long">
+        delete from app_devices_status where id = #{id}
+    </delete>
 
-    <update id="updateAppLicensesStatus" parameterType="AppLicenses">
-        update app_licenses
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="used != null">used = #{used},</if>
-            <if test="enabled != null">enabled = #{enabled},</if>
-        </trim>
-        where license_id = #{licenseId} and device_id=#{deviceId} and enabled="1"
-    </update>
+    <delete id="deleteAppDevicesStatusByLicenseId" parameterType="Long">
+        delete from app_devices_status where licens_id = #{id}
+    </delete>
 
-    <update id="updateAppLicensesEnabled" parameterType="AppLicenses">
-        update app_licenses
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="enabled != null">enabled = #{enabled},</if>
-        </trim>
-        where id= #{id}
-    </update>
+    <insert id="batchAppDevicesStatus">
+        insert into app_devices_status( id,license_id, device_id, used, enabled) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.licenseId}, #{item.deviceId}, #{item.used}, #{item.enabled})
+        </foreach>
+    </insert>
+
+    <select id="selectAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesResult">
+        <include refid="selectAppLicensesVo"/>
+        where license_id = #{licenseId}
+    </select>
 </mapper>

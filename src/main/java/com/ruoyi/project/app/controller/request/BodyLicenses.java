@@ -44,7 +44,7 @@ public class BodyLicenses extends BaseEntity
 
     /** 是否使用（0未使用 */
     @Excel(name = "是否使用", readConverterExp = "是否使用（0未使用")
-    private String used;
+    private List<String> used;
 
     /** 状态（0未审核 */
     @Excel(name = "状态", readConverterExp = "状态（0未审核")
@@ -100,12 +100,12 @@ public class BodyLicenses extends BaseEntity
         return fileName;
     }
 
-    public void setUsed(String used)
+    public void setUsed(List<String> used)
     {
         this.used = used;
     }
 
-    public String getUsed()
+    public List<String> getUsed()
     {
         return used;
     }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.app.mapper.AppDevicesStatusMapper">
+    
+    <resultMap type="AppDevicesStatus" id="AppDevicesStatusResult">
+        <result property="id"    column="id"    />
+        <result property="licenseId"    column="license_id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="used"    column="used"    />
+        <result property="enabled"    column="enabled"    />
+    </resultMap>
+
+    <sql id="selectAppDevicesStatusVo">
+        select id,license_id, device_id, used, enabled from app_devices_status
+    </sql>
+
+    <select id="selectAppDevicesStatusList" parameterType="AppDevicesStatus" resultMap="AppDevicesStatusResult">
+        <include refid="selectAppDevicesStatusVo"/>
+        <where>  
+            <if test="licenseId != null  and licenseId != ''"> and license_id = #{licenseId}</if>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+            <if test="used != null  and used != ''"> and used = #{used}</if>
+            <if test="enabled != null  and enabled != ''"> and enabled = #{enabled}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppDevicesStatusById" parameterType="Long" resultMap="AppDevicesStatusResult">
+        <include refid="selectAppDevicesStatusVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectAppDevicesStatusListByDeviceIds" parameterType="String" resultMap="AppDevicesStatusResult">
+        select id,license_id, device_id, used, enabled from app_devices_status
+        where  device_id in
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </select>
+
+    <insert id="insertAppDevicesStatus" parameterType="AppDevicesStatus" useGeneratedKeys="true" keyProperty="id">
+        insert into app_devices_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="licenseId != null">license_id,</if>
+            <if test="deviceId != null">device_id,</if>
+            <if test="used != null">used,</if>
+            <if test="enabled != null">enabled,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="licenseId != null">#{licenseId},</if>
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="used != null">#{used},</if>
+            <if test="enabled != null">#{enabled},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppDevicesStatus" parameterType="AppDevicesStatus">
+        update app_devices_status
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="licenseId != null">license_id = #{licenseId},</if>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="used != null">used = #{used},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateAppDevicesStatusUsed" parameterType="AppDevicesStatus">
+        update app_devices_status
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="used != null">used = #{used},</if>
+        </trim>
+        where license_id = #{licenseId} and device_id =#{deviceId}
+    </update>
+
+    <delete id="deleteAppDevicesStatusById" parameterType="Long">
+        delete from app_devices_status where id = #{id}
+    </delete>
+
+    <delete id="deleteAppDevicesStatusByIds" parameterType="String">
+        delete from app_devices_status where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="checkAppDevicesStatusByIds" parameterType="String">
+        update app_devices_status set enabled="1"
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>
