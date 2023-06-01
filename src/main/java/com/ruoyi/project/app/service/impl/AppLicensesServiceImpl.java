@@ -184,16 +184,19 @@ public class AppLicensesServiceImpl implements IAppLicensesService
 
 
         AppLicenses licenses = appLicensesMapper.getAppLicensesByLicenseId(appLicenses.getLicenseId());
-
         int ret=0;
-        for (int i = 0; i < appLicenses.getDeviceId().size(); i++) {
-            AppDevicesStatus appDevicesStatus=new AppDevicesStatus();
-            appDevicesStatus.setLicenseId(licenses.getId());
-            appDevicesStatus.setDeviceId(appLicenses.getDeviceId().get(i));
-            appDevicesStatus.setUsed(appLicenses.getUsed().get(i));
-            ret+=appDevicesStatusMapper.updateAppDevicesStatusUsed(appDevicesStatus);
+        if(licenses!=null){
 
+            for (int i = 0; i < appLicenses.getDeviceId().size(); i++) {
+                AppDevicesStatus appDevicesStatus=new AppDevicesStatus();
+                appDevicesStatus.setLicenseId(licenses.getId());
+                appDevicesStatus.setDeviceId(appLicenses.getDeviceId().get(i));
+                appDevicesStatus.setUsed(appLicenses.getUsed().get(i));
+                ret+=appDevicesStatusMapper.updateAppDevicesStatusUsed(appDevicesStatus);
+
+            }
         }
+
 
         return  ret;
     }

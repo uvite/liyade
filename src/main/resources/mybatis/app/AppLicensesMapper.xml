@@ -24,8 +24,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <collection property="devices" notNullColumn="sub_id" javaType="java.util.List" resultMap="AppDevicesStatusResult" />
     </resultMap>
 
-    <resultMap type="AppDevicesStatus" id="AppDevicesStatusResult">
-        <result property="id"    column="sub_id"    />
+    <resultMap type="DevicesStatus" id="AppDevicesStatusResult">
+
         <result property="deviceId"    column="sub_device_id"    />
         <result property="used"    column="sub_used"    />
         <result property="enabled"    column="sub_enabled"    />
