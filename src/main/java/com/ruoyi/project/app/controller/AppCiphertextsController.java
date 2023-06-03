@@ -1,29 +1,15 @@
 package com.ruoyi.project.app.controller;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson2.JSONException;
-import com.alibaba.fastjson2.JSONObject;
-import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
-import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.controller.utils.CipherText;
-import com.ruoyi.project.app.domain.AppLicenses;
+import com.ruoyi.project.app.service.IAppDeviceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -61,7 +47,8 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/app/ciphertexts")
 public class AppCiphertextsController extends BaseController {
-
+    @Autowired
+    private IAppDeviceService appDeviceService;
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
     @Autowired
@@ -144,6 +131,9 @@ public class AppCiphertextsController extends BaseController {
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/gor")
     public AjaxResult gor(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
+
+        appDeviceService.checkDeviceCode(appCiphertexts.getDeviceId());
+
         //查询是否存在
         AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
         AjaxResult ajax = AjaxResult.success();

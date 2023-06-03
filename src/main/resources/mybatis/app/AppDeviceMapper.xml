@@ -65,6 +65,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectAppDeviceVo"/>
         where d.device_id = #{deviceId}
     </select>
+
+    <select id="selectAppDeviceByDeviceCode" parameterType="String" resultMap="AppDeviceResult">
+        <include refid="selectAppDeviceVo"/>
+        where d.device_code = #{deviceCode}
+    </select>
         
     <insert id="insertAppDevice" parameterType="AppDevice" useGeneratedKeys="true" keyProperty="deviceId">
         insert into app_device

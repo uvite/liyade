@@ -20,6 +20,14 @@ public interface AppDeviceMapper
     public AppDevice selectAppDeviceByDeviceId(Long deviceId);
 
     /**
+     * 查询参数配置
+     *
+     * @param deviceCode 参数配置主键
+     * @return 参数配置
+     */
+    public AppDevice selectAppDeviceByDeviceCode(String deviceCode);
+
+    /**
      * 查询参数配置列表
      * 
      * @param appDevice 参数配置

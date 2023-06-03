@@ -32,6 +32,22 @@ public class AppDeviceServiceImpl implements IAppDeviceService
         return appDeviceMapper.selectAppDeviceByDeviceId(deviceId);
     }
 
+    @Override
+    public AppDevice selectAppDeviceByDeviceCode(String deviceCode) {
+        return appDeviceMapper.selectAppDeviceByDeviceCode(deviceCode);
+    }
+
+    @Override
+    public AppDevice checkDeviceCode(String deviceCode) {
+        AppDevice appDevice = appDeviceMapper.selectAppDeviceByDeviceCode(deviceCode);
+        if(appDevice==null){
+            AppDevice device = new AppDevice();
+            device.setDeviceCode(deviceCode);
+            appDeviceMapper.insertAppDevice(device);
+        }
+        return appDevice;
+    }
+
     /**
      * 查询参数配置列表
      * 
