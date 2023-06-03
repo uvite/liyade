@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.project.app.mapper.AppDeviceMapper">
-    
+
     <resultMap type="AppDevice" id="AppDeviceResult">
-        <result property="deviceId"    column="device_id"    />
+        <result property="id"    column="id"    />
         <result property="productId"    column="product_id"    />
         <result property="supplierId"    column="supplier_id"    />
+        <result property="used"    column="used"    />
         <result property="deviceStatus"    column="device_status"    />
-        <result property="deviceCode"    column="device_code"    />
+        <result property="deviceId"    column="device_id"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -25,7 +26,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isDeleted"    column="is_deleted"    />
         <association property="supplier"    column="supplierId" javaType="AppSupplier" resultMap="supplierResult" />
         <association property="product"    column="productId" javaType="AppProduct" resultMap="productResult" />
-
     </resultMap>
     <resultMap id="supplierResult" type="AppSupplier">
         <id     property="supplierId"    column="supplier_id"     />
@@ -33,26 +33,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
     <resultMap id="productResult" type="AppProduct">
         <id     property="productId"    column="product_id"     />
-        <result property="productName"  column="product_name"   />  
+        <result property="productName"  column="product_name"   />
         <result property="productType"  column="product_type"   />
     </resultMap>
     <sql id="selectAppDeviceVo">
-    select device_id, d.product_id, d.supplier_id, d.device_status, d.device_code, d.create_by, d.create_time, d.update_by, d.update_time, d.remark, d.device_in_stock_by, d.device_in_stock_time, d.device_out_stock_by, d.device_out_stock_time, d.stock_status, d.delete_by, d.delete_time, d.is_deleted 
-    ,s.supplier_id,s.supplier_name,p.product_name,p.product_id,p.product_type
-    from app_device as d
-    left join app_supplier s on d.supplier_id = s.supplier_id
-    left join app_product p on d.product_id = p.product_id
-
+        select d.id,d.device_id, d.product_id, d.used,d.supplier_id, d.device_status,   d.create_by, d.create_time, d.update_by, d.update_time, d.remark, d.device_in_stock_by, d.device_in_stock_time, d.device_out_stock_by, d.device_out_stock_time, d.stock_status, d.delete_by, d.delete_time, d.is_deleted
+             ,s.supplier_id,s.supplier_name,p.product_name,p.product_id,p.product_type
+        from app_device as d
+                 left join app_supplier s on d.supplier_id = s.supplier_id
+                 left join app_product p on d.product_id = p.product_id
     </sql>
 
     <select id="selectAppDeviceList" parameterType="AppDevice" resultMap="AppDeviceResult">
         <include refid="selectAppDeviceVo"/>
-        <where>  
+        <where>
             d.is_deleted=0
             <if test="productId != null "> and d.product_id = #{productId}</if>
             <if test="supplierId != null "> and d.supplier_id = #{supplierId}</if>
             <if test="deviceStatus != null  and deviceStatus != ''"> and d.device_status = #{deviceStatus}</if>
-            <if test="deviceCode != null  and deviceCode != ''"> and d.device_code = #{deviceCode}</if>
+            <if test="deviceId != null  and deviceId != ''"> and d.device_id = #{deviceId}</if>
             <if test="stockStatus != null  and stockStatus != ''"> and d.stock_status = #{stockStatus}</if>
             <if test="deviceInStockBy != null  and deviceInStockBy != ''"> and d.device_in_stock_by = #{deviceInStockBy}</if>
             <if test="deviceOutStockBy != null  and deviceOutStockBy != ''"> and d.device_out_stock_by = #{deviceOutStockBy}</if>
@@ -60,24 +59,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDeleted != null "> and d.is_deleted = #{isDeleted}</if>
         </where>
     </select>
-    
-    <select id="selectAppDeviceByDeviceId" parameterType="Long" resultMap="AppDeviceResult">
+
+    <select id="selectAppDeviceById" parameterType="Long" resultMap="AppDeviceResult">
+        <include refid="selectAppDeviceVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectAppDeviceByDeviceId" parameterType="String" resultMap="AppDeviceResult">
         <include refid="selectAppDeviceVo"/>
         where d.device_id = #{deviceId}
     </select>
 
-    <select id="selectAppDeviceByDeviceCode" parameterType="String" resultMap="AppDeviceResult">
-        <include refid="selectAppDeviceVo"/>
-        where d.device_code = #{deviceCode}
-    </select>
-        
-    <insert id="insertAppDevice" parameterType="AppDevice" useGeneratedKeys="true" keyProperty="deviceId">
+
+    <insert id="insertAppDevice" parameterType="AppDevice" useGeneratedKeys="true" keyProperty="id">
         insert into app_device
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="productId != null">product_id,</if>
             <if test="supplierId != null">supplier_id,</if>
+            <if test="used != null">used,</if>
             <if test="deviceStatus != null">device_status,</if>
-            <if test="deviceCode != null">device_code,</if>
+            <if test="deviceId != null">device_id,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -91,12 +92,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deleteBy != null">delete_by,</if>
             <if test="deleteTime != null">delete_time,</if>
             <if test="isDeleted != null">is_deleted,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="productId != null">#{productId},</if>
             <if test="supplierId != null">#{supplierId},</if>
+            <if test="used != null">#{used},</if>
             <if test="deviceStatus != null">#{deviceStatus},</if>
-            <if test="deviceCode != null">#{deviceCode},</if>
+            <if test="deviceId != null">#{deviceId},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -110,7 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deleteBy != null">#{deleteBy},</if>
             <if test="deleteTime != null">#{deleteTime},</if>
             <if test="isDeleted != null">#{isDeleted},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateAppDevice" parameterType="AppDevice">
@@ -118,8 +120,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="productId != null">product_id = #{productId},</if>
             <if test="supplierId != null">supplier_id = #{supplierId},</if>
+            <if test="used != null">used = #{used},</if>
             <if test="deviceStatus != null">device_status = #{deviceStatus},</if>
-            <if test="deviceCode != null">device_code = #{deviceCode},</if>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
@@ -134,35 +137,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deleteTime != null">delete_time = #{deleteTime},</if>
             <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
         </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateAppDeviceUsed" parameterType="AppDevice">
+        update app_device
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="used != null">used = #{used},</if>
+
+        </trim>
         where device_id = #{deviceId}
     </update>
 
-    <delete id="deleteAppDeviceByDeviceId" parameterType="Long">
-        delete from app_device where device_id = #{deviceId}
+    <delete id="deleteAppDeviceById" parameterType="Long">
+        delete from app_device where id = #{id}
     </delete>
 
-    <delete id="deleteAppDeviceByDeviceIds" parameterType="String">
-        delete from app_device where device_id in 
-        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
-            #{deviceId}
+    <delete id="deleteAppDeviceByIds" parameterType="String">
+        delete from app_device where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
         </foreach>
     </delete>
 
+
     <delete id="logicDeleteById" parameterType="Long">
-        update  app_device set is_deleted=1 where device_id = #{deviceId}
+        update  app_device set is_deleted=1 where id = #{id}
     </delete>
 
     <delete id="logicDeleteBatch" parameterType="String">
-        update  app_device set is_deleted=1 where device_id in
-        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
-            #{deviceId}
+        update  app_device set is_deleted=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
         </foreach>
     </delete>
 
     <select id="selectInStockCount" resultType="Integer">
         select count(1) from app_device where stock_status=0
     </select>
-     <select id="selectDeviceStatusCount" resultType="Integer">
+    <select id="selectDeviceStatusCount" resultType="Integer">
         select count(1) from app_device where device_status=1
     </select>
 </mapper>

@@ -27,25 +27,14 @@ public class AppDeviceServiceImpl implements IAppDeviceService
      * @return 参数配置
      */
     @Override
-    public AppDevice selectAppDeviceByDeviceId(Long deviceId)
+    public AppDevice selectAppDeviceByDeviceId(String deviceId)
     {
         return appDeviceMapper.selectAppDeviceByDeviceId(deviceId);
     }
 
     @Override
-    public AppDevice selectAppDeviceByDeviceCode(String deviceCode) {
-        return appDeviceMapper.selectAppDeviceByDeviceCode(deviceCode);
-    }
-
-    @Override
-    public AppDevice checkDeviceCode(String deviceCode) {
-        AppDevice appDevice = appDeviceMapper.selectAppDeviceByDeviceCode(deviceCode);
-        if(appDevice==null){
-            AppDevice device = new AppDevice();
-            device.setDeviceCode(deviceCode);
-            appDeviceMapper.insertAppDevice(device);
-        }
-        return appDevice;
+    public AppDevice selectAppDeviceById(Long id) {
+        return appDeviceMapper.selectAppDeviceById(id);
     }
 
     /**
@@ -86,29 +75,34 @@ public class AppDeviceServiceImpl implements IAppDeviceService
         return appDeviceMapper.updateAppDevice(appDevice);
     }
 
-    /**
-     * 批量删除参数配置
-     * 
-     * @param deviceIds 需要删除的参数配置主键
-     * @return 结果
-     */
     @Override
-    public int deleteAppDeviceByDeviceIds(Long[] deviceIds)
-    {
-        return appDeviceMapper.deleteAppDeviceByDeviceIds(deviceIds);
+    public int updateAppDeviceUsed(AppDevice appDevice) {
+         return appDeviceMapper.updateAppDeviceUsed(appDevice);
     }
 
-    /**
-     * 删除参数配置信息
-     * 
-     * @param deviceId 参数配置主键
-     * @return 结果
-     */
     @Override
-    public int deleteAppDeviceByDeviceId(Long deviceId)
-    {
-        return appDeviceMapper.deleteAppDeviceByDeviceId(deviceId);
+    public int deleteAppDeviceByIds(Long[] ids) {
+        return appDeviceMapper.deleteAppDeviceByIds(ids);
     }
+
+    @Override
+    public int deleteAppDeviceById(Long id) {
+        return appDeviceMapper.deleteAppDeviceById(id);
+
+    }
+
+    @Override
+    public AppDevice checkDeviceId(String deviceId) {
+        AppDevice appDevice = appDeviceMapper.selectAppDeviceByDeviceId(deviceId);
+        if(appDevice==null){
+            AppDevice device = new AppDevice();
+            device.setDeviceId(deviceId);
+            appDeviceMapper.insertAppDevice(device);
+        }
+        return appDevice;
+    }
+
+
 
     @Override
     public int logicDeleteById(Long deviceId) {

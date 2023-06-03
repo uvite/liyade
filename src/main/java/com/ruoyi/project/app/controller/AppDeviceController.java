@@ -69,14 +69,14 @@ public class AppDeviceController extends BaseController {
      * 获取设备管理详细信息
      */
     @PreAuthorize("@ss.hasPermi('app:device:query')")
-    @GetMapping(value = {"/", "/{deviceId}"})
-    public AjaxResult getInfo(@PathVariable(value = "deviceId", required = false) Long deviceId) {
+    @GetMapping(value = {"/", "/{id}"})
+    public AjaxResult getInfo(@PathVariable(value = "id", required = false) Long id) {
 
         AjaxResult ajax = AjaxResult.success();
         ajax.put("products", productService.selectAppProductAll());
         ajax.put("suppliers", supplierService.selectAppSupplierAll());
-        if (StringUtils.isNotNull(deviceId)) {
-            AppDevice appDevice = appDeviceService.selectAppDeviceByDeviceId(deviceId);
+        if (StringUtils.isNotNull(id)) {
+            AppDevice appDevice = appDeviceService.selectAppDeviceById(id);
             ajax.put(AjaxResult.DATA_TAG, appDevice);
             ajax.put("products", productService.selectAppProductAll());
             ajax.put("suppliers", supplierService.selectAppSupplierAll());
@@ -110,9 +110,9 @@ public class AppDeviceController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('app:device:remove')")
     @Log(title = "设备管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{deviceIds}")
-    public AjaxResult remove(@PathVariable Long[] deviceIds) {
-        return toAjax(appDeviceService.logicDeleteBatch(deviceIds));
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
+        return toAjax(appDeviceService.logicDeleteBatch(ids));
     }
 
 

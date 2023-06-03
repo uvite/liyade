@@ -1,6 +1,8 @@
 package com.ruoyi.project.app.mapper;
 
 import java.util.List;
+
+import com.ruoyi.project.app.domain.AppDevice;
 import com.ruoyi.project.app.domain.AppDevicesStatus;
 import com.ruoyi.project.app.domain.AppLicenses;
 
@@ -85,5 +87,6 @@ public interface AppDevicesStatusMapper
      */
     public int updateAppDevicesStatusUsed(AppDevicesStatus appDevicesStatus);
 
+    public AppDevicesStatus selectAppDeviceByDeviceId(String deviceId);
 
 }

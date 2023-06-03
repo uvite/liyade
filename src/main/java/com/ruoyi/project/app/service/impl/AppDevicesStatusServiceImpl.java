@@ -1,6 +1,8 @@
 package com.ruoyi.project.app.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.project.app.domain.AppDevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.app.mapper.AppDevicesStatusMapper;
@@ -106,6 +108,20 @@ public class AppDevicesStatusServiceImpl implements IAppDevicesStatusService
     @Override
     public int updateAppLicenseEnabled(AppDevicesStatus appDevicesStatus) {
         return appDevicesStatusMapper.updateAppDevicesStatus(appDevicesStatus);
+    }
+
+    @Override
+    public AppDevicesStatus checkDeviceId(String deviceid) {
+        AppDevicesStatus appDevicesStatus = appDevicesStatusMapper.selectAppDeviceByDeviceId(deviceid);
+        if(appDevicesStatus==null){
+            AppDevicesStatus device = new AppDevicesStatus();
+            device.setDeviceId(deviceid);
+            device.setEnabled("0");
+            device.setUsed("0");
+            appDevicesStatusMapper.insertAppDevicesStatus(device);
+
+        }
+        return appDevicesStatus;
     }
 
     @Override

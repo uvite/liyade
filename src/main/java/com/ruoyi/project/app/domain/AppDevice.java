@@ -20,7 +20,7 @@ public class AppDevice extends BaseEntity
     private AppProduct product;
 
     /** 设备ID */
-    private Long deviceId;
+    private Long id;
 
     /** 产品名称 */
     @Excel(name = "产品名称")
@@ -36,7 +36,11 @@ public class AppDevice extends BaseEntity
 
     /** 编号 */
     @Excel(name = "编号")
-    private String deviceCode;
+    private String deviceId;
+
+    /** 是否使用（0未使用 */
+    @Excel(name = "是否使用", readConverterExp = "是否使用（0未使用")
+    private String used;
 
     /** 入库人 */
     @Excel(name = "入库人")
@@ -74,14 +78,14 @@ public class AppDevice extends BaseEntity
     @Excel(name = "逻辑删除标识位")
     private Integer isDeleted;
 
-    public void setDeviceId(Long deviceId) 
+    public void setId(Long id)
     {
-        this.deviceId = deviceId;
+        this.id = id;
     }
 
-    public Long getDeviceId() 
+    public Long getId()
     {
-        return deviceId;
+        return id;
     }
     public void setProductId(Long productId) 
     {
@@ -110,14 +114,24 @@ public class AppDevice extends BaseEntity
     {
         return deviceStatus;
     }
-    public void setDeviceCode(String deviceCode) 
+    public void setUsed(String used)
     {
-        this.deviceCode = deviceCode;
+        this.used = used;
     }
 
-    public String getDeviceCode() 
+    public String getUsed()
     {
-        return deviceCode;
+        return used;
+    }
+
+    public void setDeviceId(String deviceId)
+    {
+        this.deviceId = deviceId;
+    }
+
+    public String getDeviceId()
+    {
+        return deviceId;
     }
     public void setDeviceInStockBy(String deviceInStockBy) 
     {
@@ -200,11 +214,11 @@ public class AppDevice extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("deviceId", getDeviceId())
+            .append("id", getId())
             .append("productId", getProductId())
             .append("supplierId", getSupplierId())
             .append("deviceStatus", getDeviceStatus())
-            .append("deviceCode", getDeviceCode())
+            .append("deviceId", getDeviceId())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

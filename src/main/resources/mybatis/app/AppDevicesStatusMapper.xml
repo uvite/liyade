@@ -30,6 +30,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectAppDevicesStatusVo"/>
         where id = #{id}
     </select>
+    <select id="selectAppDeviceByDeviceId" parameterType="String" resultMap="AppDevicesStatusResult">
+        <include refid="selectAppDevicesStatusVo"/>
+        where device_id = #{deviceId}
+    </select>
 
     <select id="selectAppDevicesStatusListByDeviceIds" parameterType="String" resultMap="AppDevicesStatusResult">
         select id,license_id, device_id, used, enabled from app_devices_status

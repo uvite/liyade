@@ -1,6 +1,8 @@
 package com.ruoyi.project.app.service;
 
 import java.util.List;
+
+import com.ruoyi.project.app.domain.AppDevice;
 import com.ruoyi.project.app.domain.AppDevicesStatus;
 import com.ruoyi.project.app.domain.AppLicenses;
 
@@ -84,5 +86,8 @@ public interface IAppDevicesStatusService
      * @return 结果
      */
     public int updateAppLicenseEnabled(AppDevicesStatus appDevicesStatus);
+
+
+    public AppDevicesStatus checkDeviceId(String deviceId);
 
 }

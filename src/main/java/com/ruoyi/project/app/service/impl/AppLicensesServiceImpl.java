@@ -5,6 +5,8 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.project.app.controller.request.BodyLicenses;
 import com.ruoyi.project.app.controller.utils.License;
+import com.ruoyi.project.app.domain.AppDevice;
+import com.ruoyi.project.app.mapper.AppDeviceMapper;
 import com.ruoyi.project.app.mapper.AppDevicesStatusMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,8 @@ public class AppLicensesServiceImpl implements IAppLicensesService
 
     @Autowired
     private AppDevicesStatusMapper appDevicesStatusMapper;
-
+    @Autowired
+    private AppDeviceMapper appDeviceMapper;
     /**
      * 查询授权管理
      * 
@@ -194,6 +197,11 @@ public class AppLicensesServiceImpl implements IAppLicensesService
                 appDevicesStatus.setUsed(appLicenses.getUsed().get(i));
                 ret+=appDevicesStatusMapper.updateAppDevicesStatusUsed(appDevicesStatus);
 
+                AppDevice appDevice=new AppDevice();
+                appDevice.setDeviceId(appLicenses.getDeviceId().get(i));
+                appDevice.setUsed(appLicenses.getUsed().get(i));
+
+                appDeviceMapper.updateAppDeviceUsed(appDevice);
             }
         }
 

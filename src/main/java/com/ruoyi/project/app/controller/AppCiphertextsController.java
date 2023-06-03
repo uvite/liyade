@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.controller.utils.CipherText;
 import com.ruoyi.project.app.service.IAppDeviceService;
+import com.ruoyi.project.app.service.IAppDevicesStatusService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -132,7 +133,7 @@ public class AppCiphertextsController extends BaseController {
     @PostMapping("/gor")
     public AjaxResult gor(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
 
-        appDeviceService.checkDeviceCode(appCiphertexts.getDeviceId());
+        appDeviceService.checkDeviceId(appCiphertexts.getDeviceId());
 
         //查询是否存在
         AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
