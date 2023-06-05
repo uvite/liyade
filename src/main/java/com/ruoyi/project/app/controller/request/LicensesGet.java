@@ -13,35 +13,24 @@ import java.util.List;
  * @author ruoyi
  * @date 2023-05-21
  */
-public class LicensesGet
-{
+public class LicensesGet {
     private static final long serialVersionUID = 1L;
-
-
-
-
-    /** 设备id */
+    /**
+     * 设备id
+     */
     @Excel(name = "设备id")
-    @JsonProperty("device_id")
     private List<String> deviceId;
     public List<String> getDeviceId() {
         return deviceId;
     }
-
     public void setDeviceId(List<String> deviceId) {
         this.deviceId = deviceId;
     }
 
-
-
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("deviceId", getDeviceId())
-
-
                 .toString();
     }
 }

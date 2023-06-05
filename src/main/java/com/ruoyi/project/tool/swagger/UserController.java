@@ -1,14 +1,12 @@
 package com.ruoyi.project.tool.swagger;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.framework.security.LoginBody;
 import com.ruoyi.framework.security.service.SysLoginService;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.app.controller.utils.License;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,11 +34,11 @@ import io.swagger.annotations.ApiOperation;
 @Api("用户管理")
 @RestController
 
-public class UserController extends BaseController
-{
+public class UserController extends BaseController {
 
     @Autowired
     private SysLoginService loginService;
+
     /**
      * 登录方法
      *
@@ -52,149 +50,55 @@ public class UserController extends BaseController
             @ApiImplicitParam(name = "password", value = "用户密码", dataType = "String", dataTypeClass = String.class),
     })
     @PostMapping("/userlogin")
-    public R<String> userLogin(@RequestBody UserEntity user)
-    {
+    public AjaxResult userLogin(@RequestBody UserEntity user) {
 
 
        // AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.userLogin(user.getUsername(), user.getPassword());
-        //ajax.put(Constants.TOKEN, token);
-        return R.ok(token);
+        Map<String, String> res = new HashMap<String, String>();
+        res.put(Constants.TOKEN, token);
+
+        return success(res);
     }
-//        public R<String> save(UserEntity user)
-//    {
-//        if (StringUtils.isNull(user) || StringUtils.isNull(user.getUserId()))
-//        {
-//            return R.fail("用户ID不能为空");
-//        }
-//        users.put(user.getUserId(), user);
-//        return R.ok();
-//    }
-//    private final static Map<Integer, UserEntity> users = new LinkedHashMap<Integer, UserEntity>();
-//    {
-//        users.put(1, new UserEntity(1, "admin", "admin123", "15888888888"));
-//        users.put(2, new UserEntity(2, "ry", "admin123", "15666666666"));
-//    }
-//
-//    @ApiOperation("获取用户列表")
-//    @GetMapping("/list")
-//    public R<List<UserEntity>> userList()
-//    {
-//        List<UserEntity> userList = new ArrayList<UserEntity>(users.values());
-//        return R.ok(userList);
-//    }
-//
-//    @ApiOperation("获取用户详细")
-//    @ApiImplicitParam(name = "userId", value = "用户ID", required = true, dataType = "int", paramType = "path", dataTypeClass = Integer.class)
-//    @GetMapping("/{userId}")
-//    public R<UserEntity> getUser(@PathVariable Integer userId)
-//    {
-//        if (!users.isEmpty() && users.containsKey(userId))
-//        {
-//            return R.ok(users.get(userId));
-//        }
-//        else
-//        {
-//            return R.fail("用户不存在");
-//        }
-//    }
-//
-//    @ApiOperation("新增用户")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "userId", value = "用户id", dataType = "Integer", dataTypeClass = Integer.class),
-//            @ApiImplicitParam(name = "username", value = "用户名称", dataType = "String", dataTypeClass = String.class),
-//            @ApiImplicitParam(name = "password", value = "用户密码", dataType = "String", dataTypeClass = String.class),
-//            @ApiImplicitParam(name = "mobile", value = "用户手机", dataType = "String", dataTypeClass = String.class)
-//    })
-//    @PostMapping("/save")
-//    public R<String> save(UserEntity user)
-//    {
-//        if (StringUtils.isNull(user) || StringUtils.isNull(user.getUserId()))
-//        {
-//            return R.fail("用户ID不能为空");
-//        }
-//        users.put(user.getUserId(), user);
-//        return R.ok();
-//    }
-//
-//    @ApiOperation("更新用户")
-//    @PutMapping("/update")
-//    public R<String> update(@RequestBody UserEntity user)
-//    {
-//        if (StringUtils.isNull(user) || StringUtils.isNull(user.getUserId()))
-//        {
-//            return R.fail("用户ID不能为空");
-//        }
-//        if (users.isEmpty() || !users.containsKey(user.getUserId()))
-//        {
-//            return R.fail("用户不存在");
-//        }
-//        users.remove(user.getUserId());
-//        users.put(user.getUserId(), user);
-//        return R.ok();
-//    }
-//
-//    @ApiOperation("删除用户信息")
-//    @ApiImplicitParam(name = "userId", value = "用户ID", required = true, dataType = "int", paramType = "path", dataTypeClass = Integer.class)
-//    @DeleteMapping("/{userId}")
-//    public R<String> delete(@PathVariable Integer userId)
-//    {
-//        if (!users.isEmpty() && users.containsKey(userId))
-//        {
-//            users.remove(userId);
-//            return R.ok();
-//        }
-//        else
-//        {
-//            return R.fail("用户不存在");
-//        }
-//    }
+
 }
 
 @ApiModel(value = "UserEntity", description = "用户实体")
-class UserEntity
-{
-   
+class UserEntity {
 
-   @ApiModelProperty("用户名称")
-   private String username;
 
-   @ApiModelProperty("用户密码")
-   private String password; 
+    @ApiModelProperty("用户名称")
+    private String username;
 
-   public UserEntity()
-   {
+    @ApiModelProperty("用户密码")
+    private String password;
 
-   }
+    public UserEntity() {
 
-   public UserEntity(Integer userId, String username, String password, String mobile)
-   {
-      
-       this.username = username;
-       this.password = password;
-       
-   }
+    }
 
-   
+    public UserEntity(Integer userId, String username, String password, String mobile) {
 
-   public String getUsername()
-   {
-       return username;
-   }
+        this.username = username;
+        this.password = password;
 
-   public void setUsername(String username)
-   {
-       this.username = username;
-   }
+    }
 
-   public String getPassword()
-   {
-       return password;
-   }
 
-   public void setPassword(String password)
-   {
-       this.password = password;
-   } 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

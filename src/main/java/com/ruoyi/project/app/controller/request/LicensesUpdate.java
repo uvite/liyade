@@ -15,8 +15,7 @@ import java.util.List;
  * @author ruoyi
  * @date 2023-05-21
  */
-public class LicensesUpdate
-{
+public class LicensesUpdate {
     private static final long serialVersionUID = 1L;
 
     public String getLicenseId() {
@@ -27,16 +26,19 @@ public class LicensesUpdate
         this.licenseId = licenseId;
     }
 
-    /** license */
+    /**
+     * license
+     */
     @Excel(name = "license")
-    @JsonProperty("license_id")
     private String licenseId;
 
 
-    /** 设备id */
+    /**
+     * 设备id
+     */
     @Excel(name = "设备id")
-    @JsonProperty("device_id")
     private List<String> deviceId;
+
     public List<String> getDeviceId() {
         return deviceId;
     }
@@ -53,19 +55,17 @@ public class LicensesUpdate
         this.used = used;
     }
 
-    /** 是否使用（0未使用 */
+    /**
+     * 是否使用（0未使用
+     */
     @Excel(name = "是否使用", readConverterExp = "是否使用（0未使用")
     private List<String> used;
 
 
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("deviceId", getDeviceId())
-
-
                 .toString();
     }
 }

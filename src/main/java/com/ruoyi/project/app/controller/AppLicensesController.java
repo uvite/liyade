@@ -49,7 +49,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @Api("授权管理")
 @RestController
-@RequestMapping("/app/licenses")
+@RequestMapping("/app/license")
 public class AppLicensesController extends BaseController
 {
     @Autowired
@@ -100,7 +100,7 @@ public class AppLicensesController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:licenses:add')")
 
     @Log(title = "授权管理", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/gen")
     public AjaxResult add(@RequestBody LicensesCreate appLicenses) {
 
         Map<String, String> newLicense=License.createLicense(appLicenses);
@@ -180,8 +180,8 @@ public class AppLicensesController extends BaseController
     @ApiOperation("批量授权信息获取")
 
     @PreAuthorize("@ss.hasPermi('app:licenses:list')")
-    @PostMapping("/list/device_id")
-    public AjaxResult listDevices(  @RequestBody LicensesGet appLicenses) {
+    @PostMapping("/list/deviceId")
+    public AjaxResult listDevices(@RequestBody LicensesGet appLicenses) {
 
         List<String> deviceIds = appLicenses.getDeviceId();
         System.out.println("appLicenses");
@@ -210,7 +210,7 @@ public class AppLicensesController extends BaseController
 
     @PreAuthorize("@ss.hasPermi('app:licenses:edit')")
     @Log(title = "授权管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/changeStatus")
+    @PutMapping("/status")
     public AjaxResult changeStatus( @RequestBody LicensesUpdate appLicenses) {
 
         return toAjax(appLicensesService.updateBatchAppLicenseStatus(appLicenses));
@@ -234,12 +234,11 @@ public class AppLicensesController extends BaseController
      * @param license_id 文件名称
      * @return
      */
-
     @ApiOperation("授权文件获取")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "license_id", value = "授权Id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "licenseId", value = "授权Id", dataType = "String", dataTypeClass = String.class),
     })
-    @PostMapping("/file/download/{license_id}")
+    @PostMapping("/download/{license_id}")
     public void download(@PathVariable("license_id") String license_id, HttpServletResponse response) throws Exception {
         List<AppLicenses> list = appLicensesService.selectAppLicensesByLicenseId(license_id);
 

@@ -3,6 +3,7 @@ package com.ruoyi.project.app.domain;
 import java.util.List;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
@@ -64,6 +65,7 @@ public class AppLicenses extends BaseEntity
     private String projectMobile;
 
     /** 授权管理信息 */
+
     private List<AppDevicesStatus> devices;
 
     public void setId(Long id) 
@@ -139,6 +141,7 @@ public class AppLicenses extends BaseEntity
         return projectMobile;
     }
 
+    //@JsonGetter("devices")
     public List<AppDevicesStatus> getAppDevicesStatusList()
     {
         return devices;
