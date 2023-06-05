@@ -59,6 +59,7 @@
 
             <if test="isDeleted != null "> and d.is_deleted = #{isDeleted}</if>
         </where>
+        order by d.id desc
     </select>
 
     <select id="selectAppDeviceById" parameterType="Long" resultMap="AppDeviceResult">

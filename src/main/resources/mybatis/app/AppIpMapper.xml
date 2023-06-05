@@ -18,6 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
         </where>
+        order by id desc
     </select>
     
     <select id="selectAppIpById" parameterType="Long" resultMap="AppIpResult">
