@@ -30,6 +30,7 @@
     <resultMap id="supplierResult" type="AppSupplier">
         <id     property="supplierId"    column="supplier_id"     />
         <result property="supplierName"  column="supplier_name"   />
+        <result property="supplierShortName"  column="supplier_short_name"   />
     </resultMap>
     <resultMap id="productResult" type="AppProduct">
         <id     property="productId"    column="product_id"     />
@@ -38,7 +39,7 @@
     </resultMap>
     <sql id="selectAppDeviceVo">
         select d.id,d.device_id, d.product_id, d.used,d.supplier_id, d.device_status,   d.create_by, d.create_time, d.update_by, d.update_time, d.remark, d.device_in_stock_by, d.device_in_stock_time, d.device_out_stock_by, d.device_out_stock_time, d.stock_status, d.delete_by, d.delete_time, d.is_deleted
-             ,s.supplier_id,s.supplier_name,p.product_name,p.product_id,p.product_type
+             ,s.supplier_id,s.supplier_name,s.supplier_short_name,p.product_name,p.product_id,p.product_type
         from app_device as d
                  left join app_supplier s on d.supplier_id = s.supplier_id
                  left join app_product p on d.product_id = p.product_id

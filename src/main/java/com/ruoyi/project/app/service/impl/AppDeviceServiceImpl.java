@@ -2,6 +2,11 @@ package com.ruoyi.project.app.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.project.app.controller.request.BodyCiphertexts;
+import com.ruoyi.project.app.domain.AppProduct;
+import com.ruoyi.project.app.domain.AppSupplier;
+import com.ruoyi.project.app.mapper.AppProductMapper;
+import com.ruoyi.project.app.mapper.AppSupplierMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.app.mapper.AppDeviceMapper;
@@ -19,6 +24,10 @@ public class AppDeviceServiceImpl implements IAppDeviceService
 {
     @Autowired
     private AppDeviceMapper appDeviceMapper;
+    @Autowired
+    private AppSupplierMapper appSupplierMapper;
+    @Autowired
+    private AppProductMapper appProductMapper;
 
     /**
      * 查询参数配置
@@ -92,11 +101,21 @@ public class AppDeviceServiceImpl implements IAppDeviceService
     }
 
     @Override
-    public AppDevice checkDeviceId(String deviceId) {
+    public AppDevice checkDeviceId(BodyCiphertexts bodyCiphertexts) {
+        String deviceId=bodyCiphertexts.getDeviceId();
+
+        AppSupplier appSupplier= appSupplierMapper.selectAppSupplierBySupplierShortName(bodyCiphertexts.getProvider());
+        AppProduct appProduct= appProductMapper.selectAppProductByProductCode(bodyCiphertexts.getProductType());
+
         AppDevice appDevice = appDeviceMapper.selectAppDeviceByDeviceId(deviceId);
         if(appDevice==null){
             AppDevice device = new AppDevice();
             device.setDeviceId(deviceId);
+            device.setSupplierId(appSupplier.getSupplierId());
+            device.setProductId(appProduct.getProductId());
+            device.setCreateBy(bodyCiphertexts.getCreateBy());
+            device.setCreateTime(DateUtils.getNowDate());
+
             appDeviceMapper.insertAppDevice(device);
         }
         return appDevice;

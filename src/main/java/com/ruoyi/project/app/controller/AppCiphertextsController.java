@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.controller.utils.CipherText;
@@ -131,20 +132,27 @@ public class AppCiphertextsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:add')")
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/gor")
-    public AjaxResult gor(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) throws NoSuchAlgorithmException, IOException {
+    public AjaxResult gor(@ApiIgnore @RequestBody BodyCiphertexts bodyCiphertexts) throws NoSuchAlgorithmException, IOException {
+        bodyCiphertexts.setCreateBy(getUsername());
 
-        appDeviceService.checkDeviceId(appCiphertexts.getDeviceId());
+
+        appDeviceService.checkDeviceId(bodyCiphertexts);
 
         //查询是否存在
-        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
+        AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
         AjaxResult ajax = AjaxResult.success();
-        ajax.put("deviceId", appCiphertexts.getDeviceId());
+        ajax.put("deviceId", bodyCiphertexts.getDeviceId());
         System.out.println(appCiphertext);
         if (appCiphertext == null) {
-            appCiphertexts = CipherText.createCiphertext(appCiphertexts);
+            bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);
             System.out.println(appCiphertext);
+            AppCiphertexts appCiphertexts=new AppCiphertexts();
+            BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
+            System.out.println("===========");
+            System.out.println(appCiphertext);
+            System.out.println(bodyCiphertexts);
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
-            int[] intArray = CipherText.getCiphertext(appCiphertexts.getCiphertextPath());
+            int[] intArray = CipherText.getCiphertext(bodyCiphertexts.getCiphertextPath());
 
             ajax.put("ciphertext", intArray);
         } else {

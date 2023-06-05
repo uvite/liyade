@@ -64,6 +64,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectAppProductVo"/>
         where p.product_id = #{productId}
     </select>
+
+    <select id="selectAppProductByProductCode" parameterType="String" resultMap="AppProductResult">
+        <include refid="selectAppProductVo"/>
+        where p.product_code = #{productCode}
+    </select>
         
     <insert id="insertAppProduct" parameterType="AppProduct" useGeneratedKeys="true" keyProperty="productId">
         insert into app_product

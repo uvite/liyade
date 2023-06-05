@@ -1,6 +1,8 @@
 package com.ruoyi.project.app.service;
 
 import java.util.List;
+
+import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.domain.AppDevice;
 
 /**
@@ -68,7 +70,7 @@ public interface IAppDeviceService
      */
     public int deleteAppDeviceById(Long id);
 
-    public AppDevice checkDeviceId(String deviceId);
+    public AppDevice checkDeviceId(BodyCiphertexts bodyCiphertexts);
 
 
 

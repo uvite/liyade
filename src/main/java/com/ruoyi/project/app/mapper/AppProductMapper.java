@@ -33,6 +33,13 @@ public interface AppProductMapper
      * @return 产品管理
      */
     public AppProduct selectAppProductByProductId(Long productId);
+ /**
+     * 查询产品管理
+     *
+     * @param productCode 产品管理编号
+     * @return 产品管理
+     */
+    public AppProduct selectAppProductByProductCode(String productCode);
 
     /**
      * 查询产品管理列表

@@ -33,6 +33,13 @@ public interface AppSupplierMapper
      * @return 供应商管理
      */
     public AppSupplier selectAppSupplierBySupplierId(Long supplierId);
+    /**
+     * 查询供应商管理
+     *
+     * @param supplierShortName 供应商管理主键
+     * @return 供应商管理
+     */
+    public AppSupplier selectAppSupplierBySupplierShortName(String supplierShortName);
 
     /**
      * 查询供应商管理列表

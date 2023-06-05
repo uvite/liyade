@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.controller.request.BodyLicenses;
 import com.ruoyi.project.app.domain.AppCiphertexts;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class CipherText {
 
 
     //生成密文
-    public static AppCiphertexts createCiphertext(AppCiphertexts appCiphertexts) {
+    public static BodyCiphertexts createCiphertext(BodyCiphertexts appCiphertexts) {
 
         String uuid = IdUtils.simpleUUID();
         String jsonPath = "data/temp/temp.json";
