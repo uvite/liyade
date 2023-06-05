@@ -148,30 +148,30 @@ public class AppLicensesController extends BaseController
     }
 
 
-    /**
-     * 查询授权管理列表
-     */
-    @ApiOperation("授权信息获取")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "device_id", value = "设备Id", dataType = "String", dataTypeClass = String.class),
-    })
-    @PreAuthorize("@ss.hasPermi('app:licenses:list')")
-    @GetMapping("/list/{device_id}")
-    public AjaxResult list(@PathVariable("device_id") String deviceId) {
-        List<String> deviceIds = new ArrayList<String>();
-        deviceIds.add(deviceId);
-        List<AppDevicesStatus> list = appDevicesStatusService.selectAppDevicesStatusListByDeviceIds(deviceIds);
-
-        //如果没有记录，生成为期三个月的授权
-        if (list.size() == 0) {
-            AppLicenses bodyLicenses = License.createThreeMonthLicense(deviceIds);
-            appLicensesService.insertAppLicenses(bodyLicenses);
-        }
-        List<AppLicenses> listLicense = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
-
-        return success(listLicense);
-
-    }
+//    /**
+//     * 查询授权管理列表
+//     */
+//    @ApiOperation("授权信息获取")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "device_id", value = "设备Id", dataType = "String", dataTypeClass = String.class),
+//    })
+//    @PreAuthorize("@ss.hasPermi('app:licenses:list')")
+//    @GetMapping("/list/{device_id}")
+//    public AjaxResult list(@PathVariable("device_id") String deviceId) {
+//        List<String> deviceIds = new ArrayList<String>();
+//        deviceIds.add(deviceId);
+//        List<AppDevicesStatus> list = appDevicesStatusService.selectAppDevicesStatusListByDeviceIds(deviceIds);
+//
+//        //如果没有记录，生成为期三个月的授权
+//        if (list.size() == 0) {
+//            AppLicenses bodyLicenses = License.createThreeMonthLicense(deviceIds);
+//            appLicensesService.insertAppLicenses(bodyLicenses);
+//        }
+//        List<AppLicenses> listLicense = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+//
+//        return success(listLicense);
+//
+//    }
 
 
     /**
@@ -183,9 +183,11 @@ public class AppLicensesController extends BaseController
     @PostMapping("/list/deviceId")
     public AjaxResult listDevices(@RequestBody LicensesGet appLicenses) {
 
-        List<String> deviceIds = appLicenses.getDeviceId();
         System.out.println("appLicenses");
         System.out.println(appLicenses);
+
+        List<String> deviceIds = appLicenses.getDeviceId();
+
 
 
         List<AppDevicesStatus> list = appDevicesStatusService.selectAppDevicesStatusListByDeviceIds(deviceIds);
