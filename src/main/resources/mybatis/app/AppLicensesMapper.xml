@@ -16,6 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="projectName"    column="project_name"    />
+        <result property="projectAddress"    column="project_address"    />
         <result property="projectUsername"    column="project_username"    />
         <result property="projectMobile"    column="project_mobile"    />
     </resultMap>
@@ -32,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAppLicensesVo">
-        select id, license_id, file_name, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name, project_username, project_mobile from app_licenses
+        select id, license_id, file_name, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name,project_address, project_username, project_mobile from app_licenses
     </sql>
 
     <select id="selectAppLicensesList" parameterType="AppLicenses" resultMap="AppLicensesResult">
@@ -50,14 +51,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectAppLicensesById" parameterType="Long" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username, a.project_mobile,
+        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address, a.project_username, a.project_mobile,
  b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
         from app_licenses a
         left join app_devices_status b on b.id = a.id
         where a.id = #{id}
     </select>
     <select id="getAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username, a.project_mobile,
+        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username,a.project_address, a.project_mobile,
  b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
         from app_licenses a
         left join app_devices_status b on b.id = a.id
@@ -66,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectAppLicensesListByDeviceIds" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username, a.project_mobile,
+        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address, a.project_username, a.project_mobile,
  b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
         from app_licenses a
         left join app_devices_status b on b.license_id = a.id
@@ -89,6 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
             <if test="projectName != null">project_name,</if>
+            <if test="projectAddress != null">project_address,</if>
             <if test="projectUsername != null">project_username,</if>
             <if test="projectMobile != null">project_mobile,</if>
          </trim>
@@ -103,6 +105,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
             <if test="projectName != null">#{projectName},</if>
+            <if test="projectAddress != null">#{projectAddress},</if>
+
             <if test="projectUsername != null">#{projectUsername},</if>
             <if test="projectMobile != null">#{projectMobile},</if>
          </trim>
@@ -121,6 +125,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="projectAddress != null">project_address = #{projectAddress},</if>
             <if test="projectUsername != null">project_username = #{projectUsername},</if>
             <if test="projectMobile != null">project_mobile = #{projectMobile},</if>
         </trim>

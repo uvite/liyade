@@ -117,6 +117,10 @@ public class AppLicensesController extends BaseController
             appDevicesStatus.setEnabled("0");
             list.add(appDevicesStatus);
         }
+        licenses.setProjectName(appLicenses.getProject().getName());
+        licenses.setProjectAddress(appLicenses.getProject().getAddress());
+        licenses.setProjectUsername(appLicenses.getProject().getContact().getName());
+        licenses.setProjectMobile(appLicenses.getProject().getContact().getMobile());
         licenses.setAppDevicesStatusList(list);
         return toAjax(appLicensesService.insertAppLicenses(licenses));
     }

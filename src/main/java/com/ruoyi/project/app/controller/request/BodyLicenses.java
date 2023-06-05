@@ -72,6 +72,16 @@ public class BodyLicenses extends BaseEntity
     @Excel(name = "联系人电话")
     private String projectMobile;
 
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    private Project project;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -183,6 +193,7 @@ public class BodyLicenses extends BaseEntity
                 .append("projectName", getProjectName())
                 .append("projectUsername", getProjectUsername())
                 .append("projectMobile", getProjectMobile())
+                .append("project", getProject())
                 .toString();
     }
 }

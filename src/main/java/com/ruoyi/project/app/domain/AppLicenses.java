@@ -43,6 +43,18 @@ public class AppLicenses extends BaseEntity
     @Excel(name = "项目名称")
     private String projectName;
 
+    public String getProjectAddress() {
+        return projectAddress;
+    }
+
+    public void setProjectAddress(String projectAddress) {
+        this.projectAddress = projectAddress;
+    }
+
+    /** 项目名称 */
+    @Excel(name = "项目地址")
+    private String projectAddress;
+
     /** 联系人姓名 */
     @Excel(name = "联系人姓名")
     private String projectUsername;

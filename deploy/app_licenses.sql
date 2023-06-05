@@ -11,7 +11,7 @@
  Target Server Version : 101102 (10.11.2-MariaDB)
  File Encoding         : 65001
 
- Date: 01/06/2023 17:30:11
+ Date: 05/06/2023 16:28:51
 */
 
 SET NAMES utf8mb4;
@@ -33,9 +33,10 @@ CREATE TABLE `app_licenses` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   `project_name` varchar(255) DEFAULT NULL COMMENT '项目名称',
+  `project_address` varchar(255) DEFAULT NULL COMMENT '地址',
   `project_username` varchar(255) DEFAULT NULL COMMENT '联系人姓名',
   `project_mobile` varchar(255) DEFAULT NULL COMMENT '联系人电话',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='授权管理';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='授权管理';
 
 SET FOREIGN_KEY_CHECKS = 1;
