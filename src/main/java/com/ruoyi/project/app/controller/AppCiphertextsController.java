@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.project.app.controller.request.BodyCiphertexts;
+import com.ruoyi.project.app.controller.request.CiphertextsVerify;
 import com.ruoyi.project.app.controller.utils.CipherText;
 import com.ruoyi.project.app.service.IAppDeviceService;
 import com.ruoyi.project.app.service.IAppDevicesStatusService;
@@ -124,8 +125,8 @@ public class AppCiphertextsController extends BaseController {
      */
     @ApiOperation("请求密文")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "device id", dataType = "String", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = "productType", value = "产品型号", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "device_id", value = "device id", dataType = "String", required = true, dataTypeClass = String.class),
+            @ApiImplicitParam(name = "product_type", value = "产品型号", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "provider", value = "供应商", dataType = "String", dataTypeClass = String.class)
 
     })
@@ -174,13 +175,13 @@ public class AppCiphertextsController extends BaseController {
      */
     @ApiOperation("密文状态更新")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "device Id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "device_id", value = "device Id", dataType = "String", dataTypeClass = String.class),
             @ApiImplicitParam(name = "status", value = "是否烧写", dataType = "String", dataTypeClass = String.class),
     })
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:edit')")
     @Log(title = "密文状态", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
-    public AjaxResult changeStatus(@ApiIgnore @RequestBody AppCiphertexts appCiphertexts) {
+    public AjaxResult changeStatus(@ApiIgnore @RequestBody BodyCiphertexts appCiphertexts) {
 
         return toAjax(appCiphertextsService.updateAppCiphertextsStatus(appCiphertexts));
     }
@@ -190,15 +191,10 @@ public class AppCiphertextsController extends BaseController {
      * 请求密文
      */
     @ApiOperation("密文验证")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "device id", dataType = "String", dataTypeClass = String.class,required = true),
-            @ApiImplicitParam(name = "productType", value = "产品型号", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "ciphertext", value = "密文", dataType = "Integer", allowMultiple = true, required = true),
 
-    })
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/verify")
-    public AjaxResult verify(@ApiIgnore @RequestBody BodyCiphertexts appCiphertexts) throws
+    public AjaxResult verify( @RequestBody CiphertextsVerify appCiphertexts) throws
             NoSuchAlgorithmException, IOException {
         //查询是否存在
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());

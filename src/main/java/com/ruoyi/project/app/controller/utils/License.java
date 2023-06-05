@@ -7,6 +7,7 @@ import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.project.app.controller.request.BodyLicenses;
+import com.ruoyi.project.app.controller.request.LicensesCreate;
 import com.ruoyi.project.app.domain.AppCiphertexts;
 import com.ruoyi.project.app.domain.AppDevicesStatus;
 import com.ruoyi.project.app.domain.AppLicenses;
@@ -17,16 +18,13 @@ import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class License {
 
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
-    public static BodyLicenses createLicense(BodyLicenses bodyLicenses) {
+    public static Map<String, String> createLicense(LicensesCreate bodyLicenses) {
 
         String uuid = IdUtils.simpleUUID();
         String licPath = "data/lic/" + uuid + ".lic";
@@ -74,12 +72,14 @@ public class License {
             String msg = "启动任务失败:" + e.getMessage();
             log.error(msg, e);
         }
+        Map<String, String> res=new HashMap<>();
 
-        bodyLicenses.setFileName(licPath);
 
-        bodyLicenses.setLicenseId(uuid);
+        res.put("fileName",licPath);
+        res.put("licenseId",uuid);
 
-        return bodyLicenses;
+
+        return res;
 
     }
 
@@ -97,11 +97,12 @@ public class License {
         System.out.println("到期时间===========" + defaultEndDate);
         System.out.println("设备id" + deviceIds);
 
-        BodyLicenses bodyLicenses = new BodyLicenses();
+        LicensesCreate bodyLicenses = new LicensesCreate();
         bodyLicenses.setDeviceId(deviceIds);
-        bodyLicenses.setEnabled("1");
+
         bodyLicenses.setLimitEnd(dAfterThreeMonth);
-        bodyLicenses=License.createLicense(bodyLicenses);
+
+        Map<String, String> newLicense=License.createLicense(bodyLicenses);
 
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, bodyLicenses);
@@ -113,6 +114,9 @@ public class License {
             appDevicesStatus.setEnabled("1");
             list.add(appDevicesStatus);
         }
+
+        licenses.setLicenseId(newLicense.get("licenseId"));
+        licenses.setFileName(newLicense.get("fileName"));
         licenses.setAppDevicesStatusList(list);
 
         return licenses;

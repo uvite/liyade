@@ -3,12 +3,16 @@ package com.ruoyi.project.app.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.project.app.controller.request.BodyLicenses;
+import com.ruoyi.project.app.controller.request.LicensesCreate;
+import com.ruoyi.project.app.controller.request.LicensesGet;
+import com.ruoyi.project.app.controller.request.LicensesUpdate;
 import com.ruoyi.project.app.controller.utils.License;
 import com.ruoyi.project.app.domain.AppDevicesStatus;
 import com.ruoyi.project.app.service.IAppDevicesStatusService;
@@ -94,19 +98,13 @@ public class AppLicensesController extends BaseController
      */
     @ApiOperation("授权文件创建")
     @PreAuthorize("@ss.hasPermi('app:licenses:add')")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", allowMultiple = true, required = true),
-            @ApiImplicitParam(name = "limitStart", value = "开始日期", dataType = "Date", dataTypeClass = Date.class),
-            @ApiImplicitParam(name = "limitEnd", value = "截至日期", dataType = "Date", dataTypeClass = Date.class),
-            @ApiImplicitParam(name = "projectName", value = "项目名称", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "projectUsername", value = "联系人姓名", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "projectMobile", value = "联系人电话", dataType = "String", dataTypeClass = String.class),
-    })
+
     @Log(title = "授权管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@ApiIgnore @RequestBody BodyLicenses appLicenses) {
+    public AjaxResult add(@RequestBody LicensesCreate appLicenses) {
 
-        appLicenses= License.createLicense(appLicenses);
+        Map<String, String> newLicense=License.createLicense(appLicenses);
+       // appLicenses= License.createLicense(appLicenses);
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, appLicenses);
         List<AppDevicesStatus> list = new ArrayList<AppDevicesStatus>();
@@ -117,6 +115,8 @@ public class AppLicensesController extends BaseController
             appDevicesStatus.setEnabled("0");
             list.add(appDevicesStatus);
         }
+        licenses.setLicenseId(newLicense.get("licenseId"));
+        licenses.setFileName(newLicense.get("fileName"));
         licenses.setProjectName(appLicenses.getProject().getName());
         licenses.setProjectAddress(appLicenses.getProject().getAddress());
         licenses.setProjectUsername(appLicenses.getProject().getContact().getName());
@@ -153,11 +153,11 @@ public class AppLicensesController extends BaseController
      */
     @ApiOperation("授权信息获取")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "device_id", value = "设备Id", dataType = "String", dataTypeClass = String.class),
     })
     @PreAuthorize("@ss.hasPermi('app:licenses:list')")
-    @GetMapping("/list/{deviceId}")
-    public AjaxResult list(@PathVariable("deviceId") String deviceId) {
+    @GetMapping("/list/{device_id}")
+    public AjaxResult list(@PathVariable("device_id") String deviceId) {
         List<String> deviceIds = new ArrayList<String>();
         deviceIds.add(deviceId);
         List<AppDevicesStatus> list = appDevicesStatusService.selectAppDevicesStatusListByDeviceIds(deviceIds);
@@ -178,14 +178,14 @@ public class AppLicensesController extends BaseController
      * 批量查询授权管理列表
      */
     @ApiOperation("批量授权信息获取")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", allowMultiple = true, required = true),
-    })
+
     @PreAuthorize("@ss.hasPermi('app:licenses:list')")
     @PostMapping("/list/device_id")
-    public AjaxResult listDevices(@ApiIgnore @RequestBody BodyLicenses appLicenses) {
+    public AjaxResult listDevices(  @RequestBody LicensesGet appLicenses) {
 
         List<String> deviceIds = appLicenses.getDeviceId();
+        System.out.println("appLicenses");
+        System.out.println(appLicenses);
 
 
         List<AppDevicesStatus> list = appDevicesStatusService.selectAppDevicesStatusListByDeviceIds(deviceIds);
@@ -207,15 +207,11 @@ public class AppLicensesController extends BaseController
      * 状态修改
      */
     @ApiOperation("授权状态更新")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "licenseId", value = "license Id", dataType = "String",required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = "deviceId", value = "设备Id", dataType = "String", allowMultiple = true, required = true),
-            @ApiImplicitParam(name = "used", value = "是否使用", dataType = "String",allowMultiple = true, dataTypeClass = String.class,required = true),
-    })
+
     @PreAuthorize("@ss.hasPermi('app:licenses:edit')")
     @Log(title = "授权管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
-    public AjaxResult changeStatus(@ApiIgnore @RequestBody BodyLicenses appLicenses) {
+    public AjaxResult changeStatus( @RequestBody LicensesUpdate appLicenses) {
 
         return toAjax(appLicensesService.updateBatchAppLicenseStatus(appLicenses));
     }
@@ -235,17 +231,17 @@ public class AppLicensesController extends BaseController
     /**
      * 文件下载
      *
-     * @param licenseId 文件名称
+     * @param license_id 文件名称
      * @return
      */
 
     @ApiOperation("授权文件获取")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "licenseId", value = "授权Id", dataType = "Long", dataTypeClass = Long.class),
+            @ApiImplicitParam(name = "license_id", value = "授权Id", dataType = "String", dataTypeClass = String.class),
     })
-    @PostMapping("/file/download/{licenseId}")
-    public void download(@PathVariable("licenseId") String licenseId, HttpServletResponse response) throws Exception {
-        List<AppLicenses> list = appLicensesService.selectAppLicensesByLicenseId(licenseId);
+    @PostMapping("/file/download/{license_id}")
+    public void download(@PathVariable("license_id") String license_id, HttpServletResponse response) throws Exception {
+        List<AppLicenses> list = appLicensesService.selectAppLicensesByLicenseId(license_id);
 
         if (list.size()==0) {
             throw new Exception("没有找到文件！");

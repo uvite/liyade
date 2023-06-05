@@ -1,5 +1,6 @@
 package com.ruoyi.project.app.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -22,6 +23,7 @@ public class BodyCiphertexts extends BaseEntity
 
     /** 设备id */
     @Excel(name = "设备id")
+    @JsonProperty("device_id")
     private String deviceId;
 
     /** 状态（0未烧写 */
@@ -30,6 +32,7 @@ public class BodyCiphertexts extends BaseEntity
 
     /** 产品类型 */
     @Excel(name = "产品类型")
+    @JsonProperty("product_type")
     private String productType;
 
     /** 供应商 */

@@ -4,6 +4,7 @@ import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.project.app.controller.request.BodyLicenses;
+import com.ruoyi.project.app.controller.request.LicensesUpdate;
 import com.ruoyi.project.app.controller.utils.License;
 import com.ruoyi.project.app.domain.AppDevice;
 import com.ruoyi.project.app.mapper.AppDeviceMapper;
@@ -183,7 +184,7 @@ public class AppLicensesServiceImpl implements IAppLicensesService
         return appLicensesMapper.updateAppLicensesStatus(appLicenses);
     }
     @Override
-    public int updateBatchAppLicenseStatus(BodyLicenses appLicenses) {
+    public int updateBatchAppLicenseStatus(LicensesUpdate appLicenses) {
 
 
         AppLicenses licenses = appLicensesMapper.getAppLicensesByLicenseId(appLicenses.getLicenseId());

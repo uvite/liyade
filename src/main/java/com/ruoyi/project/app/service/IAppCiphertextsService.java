@@ -1,6 +1,8 @@
 package com.ruoyi.project.app.service;
 
 import java.util.List;
+
+import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.domain.AppCiphertexts;
 import com.ruoyi.project.app.domain.AppLicenses;
 
@@ -69,5 +71,5 @@ public interface IAppCiphertextsService
      * appSupplier
      * @return 结果
      */
-    public int updateAppCiphertextsStatus(AppCiphertexts appCiphertexts);
+    public int updateAppCiphertextsStatus(BodyCiphertexts appCiphertexts);
 }

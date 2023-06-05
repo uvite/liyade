@@ -2,6 +2,7 @@ package com.ruoyi.project.app.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.domain.AppLicenses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -115,7 +116,7 @@ public class AppCiphertextsServiceImpl implements IAppCiphertextsService
      * @return 结果
      */
     @Override
-    public int updateAppCiphertextsStatus(AppCiphertexts appCiphertexts)
+    public int updateAppCiphertextsStatus(BodyCiphertexts appCiphertexts)
     {
         return appCiphertextsMapper.updateAppCiphertextsStatus(appCiphertexts);
     }

@@ -3,6 +3,7 @@ package com.ruoyi.project.app.service;
 import java.util.List;
 
 import com.ruoyi.project.app.controller.request.BodyLicenses;
+import com.ruoyi.project.app.controller.request.LicensesUpdate;
 import com.ruoyi.project.app.domain.AppLicenses;
 
 /**
@@ -99,5 +100,5 @@ public interface IAppLicensesService
      * appSupplier
      * @return 结果
      */
-    public int updateBatchAppLicenseStatus(BodyLicenses appLicenses);
+    public int updateBatchAppLicenseStatus(LicensesUpdate appLicenses);
 }

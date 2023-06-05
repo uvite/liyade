@@ -1,6 +1,7 @@
 package com.ruoyi.project.app.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,6 +25,7 @@ public class BodyLicenses extends BaseEntity
 
     /** license */
     @Excel(name = "license")
+    @JsonProperty("license_id")
     private String licenseId;
 
     /** 下载文件名称 */
@@ -40,6 +42,7 @@ public class BodyLicenses extends BaseEntity
 
     /** 设备id */
     @Excel(name = "设备id")
+    @JsonProperty("device_id")
     private List<String> deviceId;
 
     /** 是否使用（0未使用 */
@@ -53,24 +56,16 @@ public class BodyLicenses extends BaseEntity
     /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonProperty("limit_start")
     private Date limitStart;
 
     /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonProperty("limit_end")
     private Date limitEnd;
 
-    /** 项目名称 */
-    @Excel(name = "项目名称")
-    private String projectName;
 
-    /** 联系人姓名 */
-    @Excel(name = "联系人姓名")
-    private String projectUsername;
-
-    /** 联系人电话 */
-    @Excel(name = "联系人电话")
-    private String projectMobile;
 
     public Project getProject() {
         return project;
@@ -146,53 +141,16 @@ public class BodyLicenses extends BaseEntity
     {
         return limitEnd;
     }
-    public void setProjectName(String projectName)
-    {
-        this.projectName = projectName;
-    }
 
-    public String getProjectName()
-    {
-        return projectName;
-    }
-    public void setProjectUsername(String projectUsername)
-    {
-        this.projectUsername = projectUsername;
-    }
-
-    public String getProjectUsername()
-    {
-        return projectUsername;
-    }
-    public void setProjectMobile(String projectMobile)
-    {
-        this.projectMobile = projectMobile;
-    }
-
-    public String getProjectMobile()
-    {
-        return projectMobile;
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-                .append("id", getId())
-                .append("licenseId", getLicenseId())
-                .append("fileName", getFileName())
+
                 .append("deviceId", getDeviceId())
-                .append("used", getUsed())
-                .append("enabled", getEnabled())
+
                 .append("limitStart", getLimitStart())
                 .append("limitEnd", getLimitEnd())
-                .append("createBy", getCreateBy())
-                .append("createTime", getCreateTime())
-                .append("updateBy", getUpdateBy())
-                .append("updateTime", getUpdateTime())
-                .append("remark", getRemark())
-                .append("projectName", getProjectName())
-                .append("projectUsername", getProjectUsername())
-                .append("projectMobile", getProjectMobile())
                 .append("project", getProject())
                 .toString();
     }
