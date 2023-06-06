@@ -107,9 +107,9 @@ public class License {
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, bodyLicenses);
         List<AppDevicesStatus> list = new ArrayList<AppDevicesStatus>();
-        for (int i = 0; i < bodyLicenses.getDeviceId().size(); i++) {
+        for (int i = 0; i < deviceIds.size(); i++) {
             AppDevicesStatus appDevicesStatus=new AppDevicesStatus();
-            appDevicesStatus.setDeviceId(bodyLicenses.getDeviceId().get(i));
+            appDevicesStatus.setDeviceId(deviceIds.get(i));
             appDevicesStatus.setUsed("0");
             appDevicesStatus.setEnabled("1");
             list.add(appDevicesStatus);

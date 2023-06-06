@@ -191,16 +191,21 @@ public class AppLicensesController extends BaseController
 
         List<String> deviceIds = appLicenses.getDeviceId();
 
-
+        if(deviceIds.size()==0){
+            return error("设备ID不能为空");
+        }
 
         List<AppDevicesStatus> list = appDevicesStatusService.selectAppDevicesStatusListByDeviceIds(deviceIds);
         List<String> existIds = list.stream().map(AppDevicesStatus::getDeviceId).collect(Collectors.toList());
         List<String> notExistIds = deviceIds.stream().filter(item -> !existIds.contains(item)).collect(Collectors.toList());
-        //如果不存在设备的授权文件则创建一个三个月的
-        if (notExistIds.size() >= 0) {
-            AppLicenses bodyLicenses = License.createThreeMonthLicense(notExistIds);
-            appLicensesService.insertAppLicenses(bodyLicenses);
-        }
+
+        System.out.println("notExistIds");
+        System.out.println(notExistIds);
+//        //如果不存在设备的授权文件则创建一个三个月的
+//        if (notExistIds.size() >= 0) {
+//            AppLicenses bodyLicenses = License.createThreeMonthLicense(notExistIds);
+//            appLicensesService.insertAppLicenses(bodyLicenses);
+//        }
         List<AppLicenses> listLicense = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
 
         return success(listLicense);
