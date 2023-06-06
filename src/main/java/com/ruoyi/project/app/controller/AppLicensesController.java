@@ -98,10 +98,13 @@ public class AppLicensesController extends BaseController
      */
     @ApiOperation("授权文件创建")
     @PreAuthorize("@ss.hasPermi('app:licenses:add')")
-
     @Log(title = "授权管理", businessType = BusinessType.INSERT)
     @PostMapping("/gen")
     public AjaxResult add(@RequestBody LicensesCreate appLicenses) {
+
+        if(appLicenses.getDeviceId().size()==0){
+            return error("设备ID不能为空");
+        }
 
         Map<String, String> newLicense=License.createLicense(appLicenses);
        // appLicenses= License.createLicense(appLicenses);
