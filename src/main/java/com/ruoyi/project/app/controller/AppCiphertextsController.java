@@ -11,8 +11,10 @@ import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.controller.request.CiphertextsVerify;
 import com.ruoyi.project.app.controller.utils.CipherText;
+import com.ruoyi.project.app.domain.AppProduct;
 import com.ruoyi.project.app.service.IAppDeviceService;
 import com.ruoyi.project.app.service.IAppDevicesStatusService;
+import com.ruoyi.project.app.service.IAppProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -56,6 +58,9 @@ public class AppCiphertextsController extends BaseController {
 
     @Autowired
     private IAppCiphertextsService appCiphertextsService;
+
+    @Autowired
+    private IAppProductService appProductService;
 
     /**
      * 查询密文管理列表
@@ -125,9 +130,8 @@ public class AppCiphertextsController extends BaseController {
      */
     @ApiOperation("请求密文")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "device_id", value = "device id", dataType = "String", required = true, dataTypeClass = String.class),
-            @ApiImplicitParam(name = "product_type", value = "产品型号", dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "provider", value = "供应商", dataType = "String", dataTypeClass = String.class)
+            @ApiImplicitParam(name = "deviceId", value = "设备 id", required = true, dataType = "long"),
+            @ApiImplicitParam(name = "productId", value = "产品型号Id", required = true, dataType = "long"),
 
     })
     @PreAuthorize("@ss.hasPermi('app:ciphertexts:add')")
@@ -135,37 +139,33 @@ public class AppCiphertextsController extends BaseController {
     @PostMapping("/gor")
     public AjaxResult gor(@ApiIgnore @RequestBody BodyCiphertexts bodyCiphertexts) throws NoSuchAlgorithmException, IOException {
         bodyCiphertexts.setCreateBy(getUsername());
+        AppProduct appProduct = appProductService.selectAppProductByProductId(bodyCiphertexts.getProductId());
+        if (appProduct == null) {
+            return error("产品id不存在");
+        }
+        //检测设备是否注册，没注册则自动注册
+        appDeviceService.checkDeviceId(bodyCiphertexts, appProduct);
 
-
-        appDeviceService.checkDeviceId(bodyCiphertexts);
-
-        //查询是否存在
+        //查询是否存该设备的秘文
         AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
         AjaxResult ajax = AjaxResult.success();
         ajax.put("deviceId", bodyCiphertexts.getDeviceId());
-        System.out.println(appCiphertext);
+
         if (appCiphertext == null) {
             bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);
             System.out.println(appCiphertext);
-            AppCiphertexts appCiphertexts=new AppCiphertexts();
+            AppCiphertexts appCiphertexts = new AppCiphertexts();
             BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
-            System.out.println("===========");
-            System.out.println(appCiphertext);
-            System.out.println(bodyCiphertexts);
+
+
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
             int[] intArray = CipherText.getCiphertext(bodyCiphertexts.getCiphertextPath());
-
             ajax.put("ciphertext", intArray);
         } else {
             int[] intArray = CipherText.getCiphertext(appCiphertext.getCiphertextPath());
-
-
             ajax.put("ciphertext", intArray);
         }
-
-
         return ajax;
-
 
     }
 
@@ -194,7 +194,7 @@ public class AppCiphertextsController extends BaseController {
 
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/verify")
-    public AjaxResult verify( @RequestBody CiphertextsVerify appCiphertexts) throws
+    public AjaxResult verify(@RequestBody CiphertextsVerify appCiphertexts) throws
             NoSuchAlgorithmException, IOException {
         //查询是否存在
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
@@ -206,8 +206,8 @@ public class AppCiphertextsController extends BaseController {
             int[] intArray = CipherText.getCiphertext(ciphertext.getCiphertextPath());
 
 
-            System.out.println("error"+appCiphertexts.getCiphertext().toString());
-            System.out.println("error"+ (Arrays.toString(intArray)));
+            System.out.println("error" + appCiphertexts.getCiphertext().toString());
+            System.out.println("error" + (Arrays.toString(intArray)));
             if (Arrays.toString(intArray).equals(appCiphertexts.getCiphertext().toString())) {
                 return success(ciphertext);
             } else {

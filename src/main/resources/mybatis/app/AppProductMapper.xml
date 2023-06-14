@@ -24,6 +24,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <association property="supplier"    column="supplierId" javaType="AppSupplier" resultMap="supplierResult" />
 
     </resultMap>
+
+    <resultMap type="Product" id="AppProductResultSimple">
+        <result property="productId"    column="product_id"    />
+        <result property="productName"    column="product_name"    />
+    </resultMap>
+
     <resultMap id="supplierResult" type="AppSupplier">
         <id     property="supplierId"    column="supplier_id"     />
         <result property="supplierName"  column="supplier_name"   />
@@ -51,8 +57,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by p.product_id desc
     </select>
 
+    <select id="getAppProductList"  resultMap="AppProductResultSimple">
+        select  product_id,  product_name
+        from app_product
+        <where>
+             is_deleted=0
+        </where>
+        order by  product_id desc
+    </select>
+
     <select id="selectAppProductAll" resultMap="AppProductResult">
         <include refid="selectAppProductVo"/>
+        <where>
+            is_deleted=0
+        </where>
+        order by  product_id desc
     </select>
 
 

@@ -15,6 +15,9 @@ public class AppCiphertexts extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+
+
+    private AppProduct product;
     /** ID */
     private Long id;
 
@@ -26,13 +29,12 @@ public class AppCiphertexts extends BaseEntity
     @Excel(name = "状态", readConverterExp = "状态（0未烧写")
     private String status;
 
+
     /** 产品类型 */
     @Excel(name = "产品类型")
-    private String productType;
+    private Long productId;
 
-    /** 供应商 */
-    @Excel(name = "供应商")
-    private String provider;
+
 
     /** 密文内容 */
     @Excel(name = "密文内容")
@@ -73,24 +75,7 @@ public class AppCiphertexts extends BaseEntity
     {
         return status;
     }
-    public void setProductType(String productType) 
-    {
-        this.productType = productType;
-    }
 
-    public String getProductType() 
-    {
-        return productType;
-    }
-    public void setProvider(String provider) 
-    {
-        this.provider = provider;
-    }
-
-    public String getProvider() 
-    {
-        return provider;
-    }
     public void setCiphertext(String ciphertext) 
     {
         this.ciphertext = ciphertext;
@@ -119,14 +104,26 @@ public class AppCiphertexts extends BaseEntity
         return md5;
     }
 
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+
+    public AppProduct getProduct() {
+        return product;
+    }
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("deviceId", getDeviceId())
+            .append("productId", getProductId())
             .append("status", getStatus())
-            .append("productType", getProductType())
-            .append("provider", getProvider())
+
             .append("ciphertext", getCiphertext())
             .append("ciphertextPath", getCiphertextPath())
             .append("md5", getMd5())
@@ -137,4 +134,5 @@ public class AppCiphertexts extends BaseEntity
             .append("remark", getRemark())
             .toString();
     }
+
 }

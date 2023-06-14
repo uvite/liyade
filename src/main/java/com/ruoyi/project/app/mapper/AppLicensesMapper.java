@@ -22,6 +22,13 @@ public interface AppLicensesMapper
 
     /**
      * 查询授权管理
+     * @param md5
+     * @return 授权管理
+     */
+    public AppLicenses getAppLicensesByLicenseMd5(String md5);
+
+    /**
+     * 查询授权管理
      *
      * @param license_id 授权管理主键
      * @return 授权管理

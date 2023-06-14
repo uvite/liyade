@@ -4,8 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.project.app.domain.AppDevice;
-import com.ruoyi.project.app.domain.AppSupplier;
+import com.ruoyi.project.app.domain.Product;
 import com.ruoyi.project.app.service.IAppSupplierService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +50,22 @@ public class AppProductController extends BaseController
         startPage();
         List<AppProduct> list = appProductService.selectAppProductList(appProduct);
         return getDataTable(list);
+    }
+
+    /**
+     * 查询产品管理列表
+     */
+    @PreAuthorize("@ss.hasPermi('app:product:list')")
+    @GetMapping("/getlist")
+    public AjaxResult getlist(AppProduct appProduct)
+    {
+
+        List<Product> list = appProductService.getAppProductList(appProduct);
+
+        System.out.println(list);
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("products", list);
+        return ajax;
     }
 
     /**

@@ -1,8 +1,9 @@
 package com.ruoyi.project.app.mapper;
 
 import java.util.List;
+
+import com.ruoyi.project.app.domain.Product;
 import com.ruoyi.project.app.domain.AppProduct;
-import com.ruoyi.project.app.domain.AppSupplier;
 
 /**
  * 产品管理Mapper接口
@@ -48,6 +49,14 @@ public interface AppProductMapper
      * @return 产品管理集合
      */
     public List<AppProduct> selectAppProductList(AppProduct appProduct);
+
+    /**
+     * 查询产品管理列表
+     *
+     * @param appProduct 产品管理
+     * @return 产品管理集合
+     */
+    public List<Product> getAppProductList(AppProduct appProduct);
 
     /**
      * 新增产品管理

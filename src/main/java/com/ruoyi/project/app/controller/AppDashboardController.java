@@ -11,6 +11,8 @@ import com.ruoyi.project.app.domain.AppDevice;
 import com.ruoyi.project.app.service.IAppDeviceService;
 import com.ruoyi.project.app.service.IAppProductService;
 import com.ruoyi.project.app.service.IAppSupplierService;
+import com.ruoyi.project.monitor.domain.SysOperLog;
+import com.ruoyi.project.monitor.service.ISysOperLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,8 @@ public class AppDashboardController extends BaseController {
     private IAppSupplierService supplierService;
     @Autowired
     private IAppProductService productService;
-
+    @Autowired
+    private ISysOperLogService operLogService;
     /**
      * 统计报表
      */
@@ -48,6 +51,18 @@ public class AppDashboardController extends BaseController {
         ajax.put("deviceAuthorization", deviceService.AuthorizationCount());
 
         return ajax;
+    }
+
+    /**
+     * 操作日志
+     * @return
+     */
+    @GetMapping("/logs")
+    public TableDataInfo list(SysOperLog operLog)
+    {
+        startPage();
+        List<SysOperLog> list = operLogService.selectOperLogList(operLog);
+        return getDataTable(list);
     }
 
 

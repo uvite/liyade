@@ -19,9 +19,6 @@ public class LicensesCreate
 {
     private static final long serialVersionUID = 1L;
 
-
-
-
     /** 设备id */
     @Excel(name = "设备id")
     private List<String> deviceId;

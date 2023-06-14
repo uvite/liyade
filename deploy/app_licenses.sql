@@ -3,15 +3,15 @@
 
  Source Server         : localhost_3306
  Source Server Type    : MySQL
- Source Server Version : 101102 (10.11.2-MariaDB)
+ Source Server Version : 110002 (11.0.2-MariaDB)
  Source Host           : 127.0.0.1:3306
  Source Schema         : liyade
 
  Target Server Type    : MySQL
- Target Server Version : 101102 (10.11.2-MariaDB)
+ Target Server Version : 110002 (11.0.2-MariaDB)
  File Encoding         : 65001
 
- Date: 05/06/2023 16:28:51
+ Date: 14/06/2023 14:12:56
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,9 @@ CREATE TABLE `app_licenses` (
   `project_address` varchar(255) DEFAULT NULL COMMENT '地址',
   `project_username` varchar(255) DEFAULT NULL COMMENT '联系人姓名',
   `project_mobile` varchar(255) DEFAULT NULL COMMENT '联系人电话',
+  `project_sn` varchar(255) DEFAULT NULL COMMENT '项目编号',
+  `md5` varchar(255) DEFAULT NULL COMMENT '重复提交校验',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='授权管理';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='授权管理';
 
 SET FOREIGN_KEY_CHECKS = 1;

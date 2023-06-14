@@ -101,21 +101,16 @@ public class AppDeviceServiceImpl implements IAppDeviceService
     }
 
     @Override
-    public AppDevice checkDeviceId(BodyCiphertexts bodyCiphertexts) {
+    public AppDevice checkDeviceId(BodyCiphertexts bodyCiphertexts,AppProduct appProduct) {
         String deviceId=bodyCiphertexts.getDeviceId();
-
-        AppSupplier appSupplier= appSupplierMapper.selectAppSupplierBySupplierShortName(bodyCiphertexts.getProvider());
-        AppProduct appProduct= appProductMapper.selectAppProductByProductCode(bodyCiphertexts.getProductType());
-
         AppDevice appDevice = appDeviceMapper.selectAppDeviceByDeviceId(deviceId);
         if(appDevice==null){
             AppDevice device = new AppDevice();
             device.setDeviceId(deviceId);
-            device.setSupplierId(appSupplier.getSupplierId());
+            device.setSupplierId(appProduct.getSupplierId());
             device.setProductId(appProduct.getProductId());
             device.setCreateBy(bodyCiphertexts.getCreateBy());
             device.setCreateTime(DateUtils.getNowDate());
-
             appDeviceMapper.insertAppDevice(device);
         }
         return appDevice;

@@ -8,8 +8,8 @@
         <result property="id" column="id"/>
         <result property="deviceId" column="device_id"/>
         <result property="status" column="status"/>
-        <result property="productType" column="product_type"/>
-        <result property="provider" column="provider"/>
+        <result property="productId" column="product_id"/>
+
         <result property="ciphertext" column="ciphertext"/>
         <result property="ciphertextPath" column="ciphertext_path"/>
         <result property="md5" column="md5"/>
@@ -18,35 +18,50 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="remark" column="remark"/>
+        <association property="product"    column="productId" javaType="AppProduct" resultMap="productResult" />
     </resultMap>
+    <resultMap id="supplierResult" type="AppSupplier">
+        <id     property="supplierId"    column="supplier_id"     />
+        <result property="supplierName"  column="supplier_name"   />
+        <result property="supplierShortName"  column="supplier_short_name"   />
+    </resultMap>
+    <resultMap id="productResult" type="AppProduct">
+        <id     property="productId"    column="product_id"     />
+        <result property="productName"  column="product_name"   />
+        <result property="productType"  column="product_type"   />
+        <association property="supplier"    column="supplierId" javaType="AppSupplier" resultMap="supplierResult" />
 
+    </resultMap>
     <sql id="selectAppCiphertextsVo">
-        select id,
-               device_id,
-               status,
-               product_type,
-               provider,
-               ciphertext,
-               ciphertext_path,
-               md5,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               remark
-        from app_ciphertexts
+        select c.id,
+               c.device_id,
+               c.status,
+               c.product_id,
+               c.ciphertext,
+               c.ciphertext_path,
+               c.md5,
+               c.create_by,
+               c.create_time,
+               c.update_by,
+               c.update_time,
+               c.remark
+                ,s.supplier_id,s.supplier_name,s.supplier_short_name,p.product_name,p.product_id,p.product_type
+        from app_ciphertexts as c
+                 left join app_product p on c.product_id = p.product_id
+                 left join app_supplier s on p.supplier_id = s.supplier_id
+
     </sql>
 
     <select id="selectAppCiphertextsList" parameterType="AppCiphertexts" resultMap="AppCiphertextsResult">
         <include refid="selectAppCiphertextsVo"/>
         <where>
-            <if test="deviceId != null ">and device_id = #{deviceId}</if>
-            <if test="status != null  and status != ''">and status = #{status}</if>
-            <if test="productType != null  and productType != ''">and product_type = #{productType}</if>
-            <if test="provider != null  and provider != ''">and provider = #{provider}</if>
-            <if test="ciphertext != null  and ciphertext != ''">and ciphertext = #{ciphertext}</if>
-            <if test="ciphertextPath != null  and ciphertextPath != ''">and ciphertext_path = #{ciphertextPath}</if>
-            <if test="md5 != null  and md5 != ''">and md5 = #{md5}</if>
+            <if test="deviceId != null ">and c.device_id = #{deviceId}</if>
+            <if test="status != null  and status != ''">and c.status = #{status}</if>
+            <if test="productId != null  and productId != ''">and c.product_Id = #{productId}</if>
+
+            <if test="ciphertext != null  and ciphertext != ''">and c.ciphertext = #{ciphertext}</if>
+            <if test="ciphertextPath != null  and ciphertextPath != ''">and c.ciphertext_path = #{ciphertextPath}</if>
+            <if test="md5 != null  and md5 != ''">and c.md5 = #{md5}</if>
         </where>
 
         order by id desc
@@ -54,12 +69,12 @@
 
     <select id="selectAppCiphertextsById" parameterType="Long" resultMap="AppCiphertextsResult">
         <include refid="selectAppCiphertextsVo"/>
-        where id = #{id}
+        where c.id = #{id}
     </select>
 
     <select id="selectAppCiphertextsByDeviceId" parameterType="String" resultMap="AppCiphertextsResult">
         <include refid="selectAppCiphertextsVo"/>
-        where device_id = #{deviceId}
+        where c.device_id = #{deviceId}
     </select>
 
     <insert id="insertAppCiphertexts" parameterType="AppCiphertexts" useGeneratedKeys="true" keyProperty="id">
@@ -67,8 +82,7 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="deviceId != null">device_id,</if>
             <if test="status != null">status,</if>
-            <if test="productType != null">product_type,</if>
-            <if test="provider != null">provider,</if>
+            <if test="productId != null">product_id,</if>
             <if test="ciphertext != null">ciphertext,</if>
             <if test="ciphertextPath != null">ciphertext_path,</if>
             <if test="md5 != null">md5,</if>
@@ -81,8 +95,7 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="deviceId != null">#{deviceId},</if>
             <if test="status != null">#{status},</if>
-            <if test="productType != null">#{productType},</if>
-            <if test="provider != null">#{provider},</if>
+            <if test="productId != null">#{productId},</if>
             <if test="ciphertext != null">#{ciphertext},</if>
             <if test="ciphertextPath != null">#{ciphertextPath},</if>
             <if test="md5 != null">#{md5},</if>
@@ -99,8 +112,7 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="deviceId != null">device_id = #{deviceId},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="productType != null">product_type = #{productType},</if>
-            <if test="provider != null">provider = #{provider},</if>
+            <if test="productId != null">product_id = #{productId},</if>
             <if test="ciphertext != null">ciphertext = #{ciphertext},</if>
             <if test="ciphertextPath != null">ciphertext_path = #{ciphertextPath},</if>
             <if test="md5 != null">md5 = #{md5},</if>

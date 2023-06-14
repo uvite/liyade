@@ -115,7 +115,7 @@ public class AppDevicesStatusController extends BaseController
     /**
      * 批量审核授权管理
      */
-    @PreAuthorize("@ss.hasPermi('app:status:remove')")
+    @PreAuthorize("@ss.hasPermi('app:status:batchedit')")
     @Log(title = "审核授权管理", businessType = BusinessType.DELETE)
 	@PostMapping("/batchcheck/{ids}")
     public AjaxResult batchCheck(@PathVariable Long[] ids)

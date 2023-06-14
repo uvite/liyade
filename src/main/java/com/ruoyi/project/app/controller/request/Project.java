@@ -17,6 +17,16 @@ public class Project
     private String name;
     private String address;
 
+    public String getSn() {
+        return sn;
+    }
+
+    public void setSn(String sn) {
+        this.sn = sn;
+    }
+
+    private String sn;
+
     public String getName() {
         return name;
     }
@@ -49,8 +59,8 @@ public class Project
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
                 .append("name", getName())
                 .append("address", getAddress())
+                .append("sn", getSn())
                 .append("contact", getContact())
-
                 .toString();
     }
 }

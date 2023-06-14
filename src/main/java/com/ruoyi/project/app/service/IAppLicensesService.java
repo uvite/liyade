@@ -101,4 +101,13 @@ public interface IAppLicensesService
      * @return 结果
      */
     public int updateBatchAppLicenseStatus(LicensesUpdate appLicenses);
+
+    /**
+     * 检测是否重复提交数据
+     *
+     * @param md5
+     * @return 授权管理
+     */
+    public AppLicenses selectAppLicensesByMd5(String md5);
+
 }

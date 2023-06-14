@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.project.app.controller.request.BodyCiphertexts;
 import com.ruoyi.project.app.domain.AppDevice;
+import com.ruoyi.project.app.domain.AppProduct;
 
 /**
  * 参数配置Service接口
@@ -70,7 +71,7 @@ public interface IAppDeviceService
      */
     public int deleteAppDeviceById(Long id);
 
-    public AppDevice checkDeviceId(BodyCiphertexts bodyCiphertexts);
+    public AppDevice checkDeviceId(BodyCiphertexts bodyCiphertexts,AppProduct appProduct);
 
 
 

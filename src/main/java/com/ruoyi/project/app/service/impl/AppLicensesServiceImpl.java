@@ -48,6 +48,15 @@ public class AppLicensesServiceImpl implements IAppLicensesService
     }
 
     /**
+     * 是否重复提交数据 md5校验
+     */
+    @Override
+    public AppLicenses selectAppLicensesByMd5(String md5)
+    {
+        return appLicensesMapper.getAppLicensesByLicenseMd5(md5);
+    }
+
+    /**
      * 查询授权管理列表
      * 
      * @param appLicenses 授权管理

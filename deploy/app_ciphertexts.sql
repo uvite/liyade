@@ -3,15 +3,15 @@
 
  Source Server         : localhost_3306
  Source Server Type    : MySQL
- Source Server Version : 101102 (10.11.2-MariaDB)
+ Source Server Version : 110002 (11.0.2-MariaDB)
  Source Host           : 127.0.0.1:3306
  Source Schema         : liyade
 
  Target Server Type    : MySQL
- Target Server Version : 101102 (10.11.2-MariaDB)
+ Target Server Version : 110002 (11.0.2-MariaDB)
  File Encoding         : 65001
 
- Date: 30/05/2023 17:46:39
+ Date: 14/06/2023 14:12:44
 */
 
 SET NAMES utf8mb4;
@@ -25,8 +25,7 @@ CREATE TABLE `app_ciphertexts` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `device_id` varchar(255) NOT NULL COMMENT '设备id',
   `status` char(1) NOT NULL DEFAULT '0' COMMENT '状态（0未烧写 1烧写）',
-  `product_type` char(100) DEFAULT NULL COMMENT '产品类型',
-  `provider` char(100) DEFAULT NULL COMMENT '供应商',
+  `product_id` bigint(20) DEFAULT NULL COMMENT '产品类型',
   `ciphertext` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '密文内容' CHECK (json_valid(`ciphertext`)),
   `ciphertext_path` varchar(255) DEFAULT NULL COMMENT '密文路径',
   `md5` char(100) DEFAULT NULL COMMENT '密文md5',
@@ -36,6 +35,6 @@ CREATE TABLE `app_ciphertexts` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='密文管理';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='密文管理';
 
 SET FOREIGN_KEY_CHECKS = 1;

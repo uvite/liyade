@@ -3,7 +3,7 @@ package com.ruoyi.project.app.service.impl;
 import java.util.List;
 
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.project.app.domain.AppSupplier;
+import com.ruoyi.project.app.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.app.mapper.AppProductMapper;
@@ -53,6 +53,17 @@ public class AppProductServiceImpl implements IAppProductService {
     @Override
     public List<AppProduct> selectAppProductList(AppProduct appProduct) {
         return appProductMapper.selectAppProductList(appProduct);
+    }
+
+    /**
+     * 查询产品管理列表Api
+     *
+     * @param appProduct 产品管理
+     * @return 产品管理
+     */
+    @Override
+    public List<Product> getAppProductList(AppProduct appProduct) {
+        return appProductMapper.getAppProductList(appProduct);
     }
 
     /**
