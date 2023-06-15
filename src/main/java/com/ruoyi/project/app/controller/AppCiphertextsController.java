@@ -153,7 +153,7 @@ public class AppCiphertextsController extends BaseController {
 
         Map<String, Object> res = new HashMap<String, Object>();
 
-        res.put("deviceId", bodyCiphertexts.getDeviceId());
+       // res.put("deviceId", bodyCiphertexts.getDeviceId());
 
         if (appCiphertext == null) {
             bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);

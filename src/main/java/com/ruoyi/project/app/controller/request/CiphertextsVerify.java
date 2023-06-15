@@ -21,12 +21,10 @@ public class CiphertextsVerify
 
     /** 设备id */
     @Excel(name = "设备id")
-    @JsonProperty("device_id")
     private String deviceId;
 
     /** 产品类型 */
     @Excel(name = "产品类型")
-    @JsonProperty("product_type")
     private String productType;
 
 
