@@ -3,7 +3,9 @@ package com.ruoyi.project.app.controller;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.utils.bean.BeanUtils;
@@ -141,31 +143,34 @@ public class AppCiphertextsController extends BaseController {
         bodyCiphertexts.setCreateBy(getUsername());
         AppProduct appProduct = appProductService.selectAppProductByProductId(bodyCiphertexts.getProductId());
         if (appProduct == null) {
-            return error("产品id不存在");
+            return error("该产品不存在");
         }
         //检测设备是否注册，没注册则自动注册
         appDeviceService.checkDeviceId(bodyCiphertexts, appProduct);
 
         //查询是否存该设备的秘文
         AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("deviceId", bodyCiphertexts.getDeviceId());
+
+        Map<String, Object> res = new HashMap<String, Object>();
+
+        res.put("deviceId", bodyCiphertexts.getDeviceId());
 
         if (appCiphertext == null) {
             bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);
             System.out.println(appCiphertext);
             AppCiphertexts appCiphertexts = new AppCiphertexts();
             BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
-
-
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
-            int[] intArray = CipherText.getCiphertext(bodyCiphertexts.getCiphertextPath());
-            ajax.put("ciphertext", intArray);
-        } else {
-            int[] intArray = CipherText.getCiphertext(appCiphertext.getCiphertextPath());
-            ajax.put("ciphertext", intArray);
+
         }
-        return ajax;
+        AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
+
+
+        int[] intArray = CipherText.getCiphertext(ciphertext.getCiphertextPath());
+        res.put("ciphertext", intArray);
+        res.put("md5", ciphertext.getMd5());
+
+        return success(res);
 
     }
 

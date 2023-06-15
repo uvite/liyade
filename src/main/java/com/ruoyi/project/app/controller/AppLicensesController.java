@@ -100,19 +100,21 @@ public class AppLicensesController extends BaseController {
     @PostMapping("/gen")
     public AjaxResult add(@RequestBody LicensesCreate appLicenses) {
 
+        System.out.println(appLicenses.getProject().getName());
+        System.out.println(appLicenses.getProject());
         if (appLicenses.getDeviceId().size() == 0) {
             return error("设备ID不能为空");
         }
-        else if (StringUtils.isNotEmpty(appLicenses.getProject().getName()))
+        else if (StringUtils.isEmpty(appLicenses.getProject().getName()))
         {
             return error("缺少授权创建所需必要信息");
-        }else if (StringUtils.isNotEmpty(appLicenses.getProject().getSn()))
+        }else if (StringUtils.isEmpty(appLicenses.getProject().getSn()))
         {
             return error("缺少授权创建所需必要信息");
-        }else if (StringUtils.isNotEmpty(appLicenses.getProject().getContact().getName()))
+        }else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getName()))
         {
             return error("缺少授权创建所需必要信息");
-        }else if (StringUtils.isNotEmpty(appLicenses.getProject().getContact().getMobile()))
+        }else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getMobile()))
         {
             return error("缺少授权创建所需必要信息");
         }
