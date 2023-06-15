@@ -201,7 +201,9 @@ public class AppCiphertextsController extends BaseController {
             NoSuchAlgorithmException, IOException {
         //查询是否存在
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
-
+        if (StringUtils.isEmpty(appCiphertexts.getCiphertext())||appCiphertexts.getCiphertext().size()==0) {
+            return error("密文验证失败，请确认设备密文是否正确");
+        }
 
         if (ciphertext != null) {
 
