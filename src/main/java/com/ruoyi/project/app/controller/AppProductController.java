@@ -1,8 +1,11 @@
 package com.ruoyi.project.app.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.project.app.domain.Product;
 import com.ruoyi.project.app.service.IAppSupplierService;
@@ -62,10 +65,9 @@ public class AppProductController extends BaseController
 
         List<Product> list = appProductService.getAppProductList(appProduct);
 
-        System.out.println(list);
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("products", list);
-        return ajax;
+        Map<String, List> res = new HashMap<String, List>();
+        res.put("products", list);
+        return success(res);
     }
 
     /**

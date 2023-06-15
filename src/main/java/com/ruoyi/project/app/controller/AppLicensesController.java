@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.common.utils.sign.Md5Utils;
@@ -102,17 +103,28 @@ public class AppLicensesController extends BaseController {
         if (appLicenses.getDeviceId().size() == 0) {
             return error("设备ID不能为空");
         }
+        else if (StringUtils.isNotEmpty(appLicenses.getProject().getName()))
+        {
+            return error("缺少授权创建所需必要信息");
+        }else if (StringUtils.isNotEmpty(appLicenses.getProject().getSn()))
+        {
+            return error("缺少授权创建所需必要信息");
+        }else if (StringUtils.isNotEmpty(appLicenses.getProject().getContact().getName()))
+        {
+            return error("缺少授权创建所需必要信息");
+        }else if (StringUtils.isNotEmpty(appLicenses.getProject().getContact().getMobile()))
+        {
+            return error("缺少授权创建所需必要信息");
+        }
+
         //判断是否重复提交
         String data = String.format("%s+%s", appLicenses.getDeviceId().toString(), appLicenses.getLimitEnd());
         String md5 = Md5Utils.hash(data);
 
         AppLicenses licensesMd5=appLicensesService.selectAppLicensesByMd5(md5);
         if (licensesMd5!=null){
-            return error("重复数据提交");
+            return error("授权文件审核中");
         }
-
-
-
         Map<String, String> newLicense = License.createLicense(appLicenses);
         // appLicenses= License.createLicense(appLicenses);
         AppLicenses licenses = new AppLicenses();
