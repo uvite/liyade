@@ -100,16 +100,13 @@ public class AppLicensesController extends BaseController {
 
         System.out.println(appLicenses.getProject().getName());
         System.out.println(appLicenses.getProject());
-        if (appLicenses.getDeviceId().size() == 0) {
-            return error("设备ID不能为空");
-        } else if (StringUtils.isEmpty(appLicenses.getProject().getName())) {
-            return error("缺少授权创建所需必要信息");
-        } else if (StringUtils.isEmpty(appLicenses.getProject().getSn())) {
-            return error("缺少授权创建所需必要信息");
-        } else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getName())) {
-            return error("缺少授权创建所需必要信息");
-        } else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getMobile())) {
-            return error("缺少授权创建所需必要信息");
+        if (appLicenses.getDeviceId().size() == 0
+        ||StringUtils.isEmpty(appLicenses.getProject().getName())
+        || StringUtils.isEmpty(appLicenses.getProject().getSn())
+        ||StringUtils.isEmpty(appLicenses.getProject().getContact().getName())
+        ||StringUtils.isEmpty(appLicenses.getProject().getContact().getMobile())
+        ) {
+            return error("缺少授权创建所需必要信息",4005);
         }
 
         //判断是否重复提交
@@ -118,11 +115,11 @@ public class AppLicensesController extends BaseController {
 
         AppLicenses licensesMd5 = appLicensesService.selectAppLicensesByMd5(md5);
         if (licensesMd5 != null) {
-            return error("授权文件审核中");
+            return error("授权文件审核中",4004);
         }
         Map<String, String> newLicense = License.createLicense(appLicenses);
         if (StringUtils.isEmpty(newLicense.get("fileName"))) {
-            return error("授权文件创建失败，请联系管理员");
+            return error("授权文件创建失败，请联系管理员",4006);
         }
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, appLicenses);
@@ -197,7 +194,7 @@ public class AppLicensesController extends BaseController {
 //        }
         List<AppLicenses> listLicense = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
         if(listLicense.size()==0){
-            return error("未找到设备对应授权");
+            return error("未找到设备对应授权",4007);
         }
 
         return success(listLicense);
@@ -213,7 +210,7 @@ public class AppLicensesController extends BaseController {
     @PutMapping("/status")
     public AjaxResult changeStatus(@RequestBody LicensesUpdate appLicenses) {
         int rows = appLicensesService.updateBatchAppLicenseStatus(appLicenses);
-        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试");
+        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试",4008);
     }
 
     /**
@@ -243,7 +240,7 @@ public class AppLicensesController extends BaseController {
         AppLicenses appLicenses = appLicensesService.selectAppLicensesByLicenseId(license_id);
 
         if (appLicenses == null) {
-            return error("未找到设备对应授权");
+            return error("未找到设备对应授权",4007);
         }
         int[] intArray = License.getLicense(appLicenses.getFileName());
         System.out.println(appLicenses.getFileName());

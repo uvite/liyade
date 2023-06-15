@@ -129,6 +129,13 @@ public class BaseController
     {
         return AjaxResult.error(message);
     }
+    /**
+     * 返回失败消息
+     */
+    public AjaxResult error(String message,Integer msgCode)
+    {
+        return AjaxResult.error(message,msgCode);
+    }
 
     /**
      * 返回警告消息

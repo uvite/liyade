@@ -13,6 +13,7 @@ public final class ServiceException extends RuntimeException
      * 错误码
      */
     private Integer code;
+    private Integer msgCode;
 
     /**
      * 错误提示
@@ -36,12 +37,14 @@ public final class ServiceException extends RuntimeException
     public ServiceException(String message)
     {
         this.message = message;
+        this.msgCode = 4001;
     }
 
     public ServiceException(String message, Integer code)
     {
         this.message = message;
         this.code = code;
+        this.msgCode = 4001;
     }
 
     public String getDetailMessage()
@@ -59,9 +62,14 @@ public final class ServiceException extends RuntimeException
     {
         return code;
     }
+    public Integer getMsgCode()
+    {
+        return msgCode;
+    }
 
     public ServiceException setMessage(String message)
     {
+        this.msgCode = 4001;
         this.message = message;
         return this;
     }

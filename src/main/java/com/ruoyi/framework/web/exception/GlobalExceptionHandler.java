@@ -33,7 +33,7 @@ public class GlobalExceptionHandler
     {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',权限校验失败'{}'", requestURI, e.getMessage());
-        return AjaxResult.error(HttpStatus.FORBIDDEN, "用户权限不足");
+        return AjaxResult.error(HttpStatus.FORBIDDEN, "用户权限不足",4003);
     }
 
     /**
@@ -56,7 +56,8 @@ public class GlobalExceptionHandler
     {
         log.error(e.getMessage(), e);
         Integer code = e.getCode();
-        return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage()) : AjaxResult.error(e.getMessage());
+        Integer msgCode = e.getMsgCode();
+        return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage(),msgCode) : AjaxResult.error(e.getMessage(),msgCode);
     }
 
     /**
@@ -89,6 +90,7 @@ public class GlobalExceptionHandler
     {
         log.error(e.getMessage(), e);
         String message = e.getAllErrors().get(0).getDefaultMessage();
+
         return AjaxResult.error(message);
     }
 

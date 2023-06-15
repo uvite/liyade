@@ -144,7 +144,7 @@ public class AppCiphertextsController extends BaseController {
         bodyCiphertexts.setCreateBy(getUsername());
         AppProduct appProduct = appProductService.selectAppProductByProductId(bodyCiphertexts.getProductId());
         if (appProduct == null) {
-            return error("该产品不存在");
+            return error("密文创建失败，请联系管理员",4009);
         }
         //检测设备是否注册，没注册则自动注册
         appDeviceService.checkDeviceId(bodyCiphertexts, appProduct);
@@ -157,7 +157,7 @@ public class AppCiphertextsController extends BaseController {
             bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);
 
             if (StringUtils.isEmpty(bodyCiphertexts.getCiphertextPath())) {
-                return error("密文创建失败，请联系管理员");
+                return error("密文创建失败，请联系管理员",4009);
             }
             AppCiphertexts appCiphertexts = new AppCiphertexts();
             BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
@@ -187,7 +187,7 @@ public class AppCiphertextsController extends BaseController {
     @PutMapping("/changeStatus")
     public AjaxResult changeStatus(@ApiIgnore @RequestBody BodyCiphertexts appCiphertexts) {
         int rows = appCiphertextsService.updateAppCiphertextsStatus(appCiphertexts);
-        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试");
+        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试",4008);
     }
 
 
@@ -202,7 +202,7 @@ public class AppCiphertextsController extends BaseController {
         //查询是否存在
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
         if (StringUtils.isEmpty(appCiphertexts.getCiphertext())||appCiphertexts.getCiphertext().size()==0) {
-            return error("密文验证失败，请确认设备密文是否正确");
+            return error("密文验证失败，请确认设备密文是否正确",4010);
         }
 
         if (ciphertext != null) {
@@ -220,10 +220,10 @@ public class AppCiphertextsController extends BaseController {
 
                 return success(res);
             } else {
-                return error("密文验证失败，请确认设备密文是否正确");
+                return error("密文验证失败，请确认设备密文是否正确",4010);
             }
         } else {
-            return error("密文验证失败，请确认设备密文是否正确");
+            return error("密文验证失败，请确认设备密文是否正确",4010);
         }
 
     }

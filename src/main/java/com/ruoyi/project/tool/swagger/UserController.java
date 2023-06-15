@@ -52,9 +52,6 @@ public class UserController extends BaseController {
     @PostMapping("/userlogin")
     public AjaxResult userLogin(@RequestBody UserEntity user) {
 
-
-       // AjaxResult ajax = AjaxResult.success();
-        // 生成令牌
         String token = loginService.userLogin(user.getUsername(), user.getPassword());
         Map<String, String> res = new HashMap<String, String>();
         res.put(Constants.TOKEN, token);
