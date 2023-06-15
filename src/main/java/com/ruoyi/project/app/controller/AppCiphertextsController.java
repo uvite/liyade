@@ -153,7 +153,7 @@ public class AppCiphertextsController extends BaseController {
 
         Map<String, Object> res = new HashMap<String, Object>();
 
-       // res.put("deviceId", bodyCiphertexts.getDeviceId());
+        // res.put("deviceId", bodyCiphertexts.getDeviceId());
 
         if (appCiphertext == null) {
             bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);
@@ -211,15 +211,19 @@ public class AppCiphertextsController extends BaseController {
             int[] intArray = CipherText.getCiphertext(ciphertext.getCiphertextPath());
 
 
-            System.out.println("error" + appCiphertexts.getCiphertext().toString());
-            System.out.println("error" + (Arrays.toString(intArray)));
             if (Arrays.toString(intArray).equals(appCiphertexts.getCiphertext().toString())) {
-                return success(ciphertext);
+                Map<String, Object> res = new HashMap<String, Object>();
+                res.put("deviceId", ciphertext.getDeviceId());
+                res.put("productId", ciphertext.getProductId());
+                res.put("createdAt", ciphertext.getCreateTime());
+                res.put("provider", ciphertext.getProduct().getSupplier().getSupplierShortName());
+
+                return success(res);
             } else {
-                return error("校验失败");
+                 return error("密文验证失败，请确认设备密文是否正确");
             }
         } else {
-            return error("校验失败");
+            return error("密文验证失败，请确认设备密文是否正确");
         }
 
     }
