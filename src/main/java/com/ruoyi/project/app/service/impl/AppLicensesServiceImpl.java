@@ -168,7 +168,7 @@ public class AppLicensesServiceImpl implements IAppLicensesService
      * @return 授权管理
      */
     @Override
-    public List<AppLicenses> selectAppLicensesByLicenseId(String licenseId) {
+    public  AppLicenses  selectAppLicensesByLicenseId(String licenseId) {
         return appLicensesMapper.selectAppLicensesByLicenseId(licenseId);
     }
     /**

@@ -79,7 +79,7 @@ public interface IAppLicensesService
      * @param licenseId 授权管理主键
      * @return 授权管理
      */
-    public List<AppLicenses> selectAppLicensesByLicenseId(String licenseId);
+    public  AppLicenses  selectAppLicensesByLicenseId(String licenseId);
 
     /**
      * 审核

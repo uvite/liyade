@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.project.app.controller.request.BodyCiphertexts;
@@ -152,19 +153,17 @@ public class AppCiphertextsController extends BaseController {
         AppCiphertexts appCiphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
 
         Map<String, Object> res = new HashMap<String, Object>();
-
-        // res.put("deviceId", bodyCiphertexts.getDeviceId());
-
         if (appCiphertext == null) {
             bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);
-            System.out.println(appCiphertext);
+
+            if (StringUtils.isEmpty(bodyCiphertexts.getCiphertextPath())) {
+                return error("密文创建失败，请联系管理员");
+            }
             AppCiphertexts appCiphertexts = new AppCiphertexts();
             BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
-
         }
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
-
 
         int[] intArray = CipherText.getCiphertext(ciphertext.getCiphertextPath());
         res.put("ciphertext", intArray);
@@ -187,8 +186,8 @@ public class AppCiphertextsController extends BaseController {
     @Log(title = "密文状态", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public AjaxResult changeStatus(@ApiIgnore @RequestBody BodyCiphertexts appCiphertexts) {
-
-        return toAjax(appCiphertextsService.updateAppCiphertextsStatus(appCiphertexts));
+        int rows = appCiphertextsService.updateAppCiphertextsStatus(appCiphertexts);
+        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试");
     }
 
 
@@ -196,7 +195,6 @@ public class AppCiphertextsController extends BaseController {
      * 请求密文
      */
     @ApiOperation("密文验证")
-
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/verify")
     public AjaxResult verify(@RequestBody CiphertextsVerify appCiphertexts) throws
@@ -220,7 +218,7 @@ public class AppCiphertextsController extends BaseController {
 
                 return success(res);
             } else {
-                 return error("密文验证失败，请确认设备密文是否正确");
+                return error("密文验证失败，请确认设备密文是否正确");
             }
         } else {
             return error("密文验证失败，请确认设备密文是否正确");

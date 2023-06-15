@@ -1,9 +1,6 @@
 package com.ruoyi.project.app.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +12,7 @@ import com.ruoyi.project.app.controller.request.BodyLicenses;
 import com.ruoyi.project.app.controller.request.LicensesCreate;
 import com.ruoyi.project.app.controller.request.LicensesGet;
 import com.ruoyi.project.app.controller.request.LicensesUpdate;
+import com.ruoyi.project.app.controller.utils.CipherText;
 import com.ruoyi.project.app.controller.utils.License;
 import com.ruoyi.project.app.domain.AppDevicesStatus;
 import com.ruoyi.project.app.service.IAppDevicesStatusService;
@@ -104,18 +102,13 @@ public class AppLicensesController extends BaseController {
         System.out.println(appLicenses.getProject());
         if (appLicenses.getDeviceId().size() == 0) {
             return error("设备ID不能为空");
-        }
-        else if (StringUtils.isEmpty(appLicenses.getProject().getName()))
-        {
+        } else if (StringUtils.isEmpty(appLicenses.getProject().getName())) {
             return error("缺少授权创建所需必要信息");
-        }else if (StringUtils.isEmpty(appLicenses.getProject().getSn()))
-        {
+        } else if (StringUtils.isEmpty(appLicenses.getProject().getSn())) {
             return error("缺少授权创建所需必要信息");
-        }else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getName()))
-        {
+        } else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getName())) {
             return error("缺少授权创建所需必要信息");
-        }else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getMobile()))
-        {
+        } else if (StringUtils.isEmpty(appLicenses.getProject().getContact().getMobile())) {
             return error("缺少授权创建所需必要信息");
         }
 
@@ -123,12 +116,14 @@ public class AppLicensesController extends BaseController {
         String data = String.format("%s+%s", appLicenses.getDeviceId().toString(), appLicenses.getLimitEnd());
         String md5 = Md5Utils.hash(data);
 
-        AppLicenses licensesMd5=appLicensesService.selectAppLicensesByMd5(md5);
-        if (licensesMd5!=null){
+        AppLicenses licensesMd5 = appLicensesService.selectAppLicensesByMd5(md5);
+        if (licensesMd5 != null) {
             return error("授权文件审核中");
         }
         Map<String, String> newLicense = License.createLicense(appLicenses);
-        // appLicenses= License.createLicense(appLicenses);
+        if (StringUtils.isEmpty(newLicense.get("fileName"))) {
+            return error("授权文件创建失败，请联系管理员");
+        }
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, appLicenses);
         List<AppDevicesStatus> list = new ArrayList<AppDevicesStatus>();
@@ -201,6 +196,9 @@ public class AppLicensesController extends BaseController {
 //            appLicensesService.insertAppLicenses(bodyLicenses);
 //        }
         List<AppLicenses> listLicense = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+        if(listLicense.size()==0){
+            return error("未找到设备对应授权");
+        }
 
         return success(listLicense);
     }
@@ -214,8 +212,8 @@ public class AppLicensesController extends BaseController {
     @Log(title = "授权管理", businessType = BusinessType.UPDATE)
     @PutMapping("/status")
     public AjaxResult changeStatus(@RequestBody LicensesUpdate appLicenses) {
-
-        return toAjax(appLicensesService.updateBatchAppLicenseStatus(appLicenses));
+        int rows = appLicensesService.updateBatchAppLicenseStatus(appLicenses);
+        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试");
     }
 
     /**
@@ -241,14 +239,18 @@ public class AppLicensesController extends BaseController {
             @ApiImplicitParam(name = "licenseId", value = "授权Id", dataType = "String", dataTypeClass = String.class),
     })
     @PostMapping("/download/{license_id}")
-    public void download(@PathVariable("license_id") String license_id, HttpServletResponse response) throws Exception {
-        List<AppLicenses> list = appLicensesService.selectAppLicensesByLicenseId(license_id);
+    public AjaxResult download(@PathVariable("license_id") String license_id, HttpServletResponse response) throws Exception {
+        AppLicenses appLicenses = appLicensesService.selectAppLicensesByLicenseId(license_id);
 
-        if (list.size() == 0) {
-            throw new Exception("没有找到文件！");
+        if (appLicenses == null) {
+            return error("未找到设备对应授权");
         }
-        String filePath = list.get(0).getFileName();
-        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        FileUtils.writeBytes(filePath, response.getOutputStream());
+        int[] intArray = License.getLicense(appLicenses.getFileName());
+        System.out.println(appLicenses.getFileName());
+        System.out.println(intArray);
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("license", intArray);
+        return success(res);
+
     }
 }

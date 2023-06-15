@@ -109,7 +109,7 @@ public interface AppLicensesMapper
      */
     public List<AppLicenses> selectAppLicensesListByDeviceIds(String[] deviceIds);
 
-    public List<AppLicenses> selectAppLicensesByLicenseId(String LicenseId);
+    public  AppLicenses  selectAppLicensesByLicenseId(String LicenseId);
 
     public int updateAppLicensesStatus(AppLicenses appLicenses);
 

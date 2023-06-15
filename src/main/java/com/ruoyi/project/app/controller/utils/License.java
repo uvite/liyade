@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class License {
 
@@ -30,10 +31,8 @@ public class License {
         String licPath = "data/lic/" + uuid + ".lic";
         SimpleDateFormat format2 = new SimpleDateFormat("yyyy年MM月dd日");
         String limitEnd = format2.format(bodyLicenses.getLimitEnd());
+        Map<String, String> res=new HashMap<>();
 
-      //  String[] array = bodyLicenses.getDeviceId().toArray(new String[bodyLicenses.getDeviceId().size()]);
-        System.out.println(bodyLicenses.getDeviceId());
-        System.out.println(String.join(",",bodyLicenses.getDeviceId()));
         try {
             // 设置命令参数
             List<String> cmds = new ArrayList<>();
@@ -67,17 +66,14 @@ public class License {
                 process.destroy();
             }
 
+            res.put("fileName",licPath);
+            res.put("licenseId",uuid);
+
 
         } catch (Exception e) {
             String msg = "启动任务失败:" + e.getMessage();
             log.error(msg, e);
         }
-        Map<String, String> res=new HashMap<>();
-
-
-        res.put("fileName",licPath);
-        res.put("licenseId",uuid);
-
 
         return res;
 
@@ -123,7 +119,40 @@ public class License {
 
     }
 
+    //生成密文
+    public static int[] getLicense(String filePath) {
+        int[] intArray = new int[0];
+        try {
 
+            System.out.println("====="+filePath);
+            File File_Path = new File(filePath);
+
+            FileInputStream File_Input_Stream = new FileInputStream(File_Path);
+
+            // Create a byte array
+            byte[] Demo_Array = new byte[(int) File_Path.length()];
+
+            // Read file content to byte array
+            File_Input_Stream.read(Demo_Array);
+
+            //Close the instance
+            File_Input_Stream.close();
+
+            intArray = IntStream.range(0, Demo_Array.length)
+                    .map(i -> Demo_Array[i] & 0xff)
+                    .toArray();
+
+            System.out.println("=====");
+            System.out.println(intArray);
+            // appCiphertexts.setCiphertext(Arrays.toString(Demo_Array));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return intArray;
+
+    }
 
 
 }
