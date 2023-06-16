@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
@@ -88,8 +90,8 @@ public class AppLicenses extends BaseEntity
     private String projectSn;
 
     /** 授权管理信息 */
-
-    private List<AppDevicesStatus> devices;
+    @JsonIgnore
+    private List<AppDevicesStatus> appDevicesStatusList;
 
     public List<DevicesStatus> getDevicesStatuses() {
         return devicesStatuses;
@@ -174,15 +176,15 @@ public class AppLicenses extends BaseEntity
         return projectMobile;
     }
 
-    //@JsonGetter("devices")
+
     public List<AppDevicesStatus> getAppDevicesStatusList()
     {
-        return devices;
+        return appDevicesStatusList;
     }
 
     public void setAppDevicesStatusList(List<AppDevicesStatus> appDevicesStatusList)
     {
-        this.devices = appDevicesStatusList;
+        this.appDevicesStatusList = appDevicesStatusList;
     }
 
     @Override
@@ -201,7 +203,7 @@ public class AppLicenses extends BaseEntity
             .append("projectName", getProjectName())
             .append("projectUsername", getProjectUsername())
             .append("projectMobile", getProjectMobile())
-            .append("devices", getAppDevicesStatusList())
+
             .toString();
     }
 }

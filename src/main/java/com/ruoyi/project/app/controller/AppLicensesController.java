@@ -173,21 +173,12 @@ public class AppLicensesController extends BaseController {
     @PostMapping("/list/deviceId")
     public AjaxResult listDevices(@RequestBody LicensesGet appLicenses) {
 
-        System.out.println("appLicenses");
-        System.out.println(appLicenses);
-
         List<String> deviceIds = appLicenses.getDeviceId();
 
         if (deviceIds.size() == 0) {
             return error("未找到设备对应授权",4007);
         }
 
-
-//        //如果不存在设备的授权文件则创建一个三个月的
-//        if (notExistIds.size() >= 0) {
-//            AppLicenses bodyLicenses = License.createThreeMonthLicense(notExistIds);
-//            appLicensesService.insertAppLicenses(bodyLicenses);
-//        }
         List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
         if(listLicenses.size()==0){
             return error("未找到设备对应授权",4007);
@@ -196,16 +187,12 @@ public class AppLicensesController extends BaseController {
         for(int i=0;i<listLicenses.size();i++){
 
             List<DevicesStatus> list = listLicenses.get(i).getDevicesStatuses();
-            System.out.println(list);
-            System.out.println("list =======");
+
 
             List<String> existIds = list.stream().map(DevicesStatus::getDeviceId).collect(Collectors.toList());
-            System.out.println(existIds);
-            System.out.println(" ex =======");
+
             List<String> notExistIds = deviceIds.stream().filter(item -> !existIds.contains(item)).collect(Collectors.toList());
 
-            System.out.println(notExistIds);
-            System.out.println("note =======");
             if(notExistIds.size()>0){
                 listLicenses.remove(i);//使用集合的删除方法删除
                 i--;
