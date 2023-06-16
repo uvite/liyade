@@ -91,6 +91,16 @@ public class AppLicenses extends BaseEntity
 
     private List<AppDevicesStatus> devices;
 
+    public List<DevicesStatus> getDevicesStatuses() {
+        return devicesStatuses;
+    }
+
+    public void setDevicesStatuses(List<DevicesStatus> devicesStatuses) {
+        this.devicesStatuses = devicesStatuses;
+    }
+
+    private List<DevicesStatus> devicesStatuses;
+
     public void setId(Long id) 
     {
         this.id = id;

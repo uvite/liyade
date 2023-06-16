@@ -15,6 +15,7 @@ import com.ruoyi.project.app.controller.request.LicensesUpdate;
 import com.ruoyi.project.app.controller.utils.CipherText;
 import com.ruoyi.project.app.controller.utils.License;
 import com.ruoyi.project.app.domain.AppDevicesStatus;
+import com.ruoyi.project.app.domain.DevicesStatus;
 import com.ruoyi.project.app.service.IAppDevicesStatusService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -119,7 +120,7 @@ public class AppLicensesController extends BaseController {
         }
         Map<String, String> newLicense = License.createLicense(appLicenses);
         if (StringUtils.isEmpty(newLicense.get("fileName"))) {
-            return error("授权文件创建失败，请联系管理员",4006);
+            /// return error("授权文件创建失败，请联系管理员",4006);
         }
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, appLicenses);
@@ -178,26 +179,42 @@ public class AppLicensesController extends BaseController {
         List<String> deviceIds = appLicenses.getDeviceId();
 
         if (deviceIds.size() == 0) {
-            return error("设备ID不能为空");
+            return error("未找到设备对应授权",4007);
         }
 
-        List<AppDevicesStatus> list = appDevicesStatusService.selectAppDevicesStatusListByDeviceIds(deviceIds);
-        List<String> existIds = list.stream().map(AppDevicesStatus::getDeviceId).collect(Collectors.toList());
-        List<String> notExistIds = deviceIds.stream().filter(item -> !existIds.contains(item)).collect(Collectors.toList());
 
-        System.out.println("notExistIds");
-        System.out.println(notExistIds);
 //        //如果不存在设备的授权文件则创建一个三个月的
 //        if (notExistIds.size() >= 0) {
 //            AppLicenses bodyLicenses = License.createThreeMonthLicense(notExistIds);
 //            appLicensesService.insertAppLicenses(bodyLicenses);
 //        }
-        List<AppLicenses> listLicense = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
-        if(listLicense.size()==0){
+        List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+        if(listLicenses.size()==0){
             return error("未找到设备对应授权",4007);
         }
 
-        return success(listLicense);
+        for(int i=0;i<listLicenses.size();i++){
+
+            List<DevicesStatus> list = listLicenses.get(i).getDevicesStatuses();
+            System.out.println(list);
+            System.out.println("list =======");
+
+            List<String> existIds = list.stream().map(DevicesStatus::getDeviceId).collect(Collectors.toList());
+            System.out.println(existIds);
+            System.out.println(" ex =======");
+            List<String> notExistIds = deviceIds.stream().filter(item -> !existIds.contains(item)).collect(Collectors.toList());
+
+            System.out.println(notExistIds);
+            System.out.println("note =======");
+            if(notExistIds.size()>0){
+                listLicenses.remove(i);//使用集合的删除方法删除
+                i--;
+            }
+        }
+
+
+
+        return success(listLicenses);
     }
 
 

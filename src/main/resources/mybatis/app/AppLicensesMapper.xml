@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <resultMap id="AppLicensesAppDevicesStatusResult" type="AppLicenses" extends="AppLicensesResult">
-        <collection property="devices" notNullColumn="sub_id" javaType="java.util.List" resultMap="AppDevicesStatusResult" />
+        <collection property="devicesStatuses" notNullColumn="sub_id" javaType="java.util.List" resultMap="AppDevicesStatusResult" />
     </resultMap>
 
     <resultMap type="DevicesStatus" id="AppDevicesStatusResult">
