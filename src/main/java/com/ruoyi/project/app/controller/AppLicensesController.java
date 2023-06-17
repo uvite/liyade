@@ -103,10 +103,9 @@ public class AppLicensesController extends BaseController {
     @Log(title = "授权管理", businessType = BusinessType.INSERT)
     @PostMapping("/gen")
     public AjaxResult add(@RequestBody LicensesCreate appLicenses) {
+        List<String> deviceIds = appLicenses.getDeviceId();
 
-        System.out.println(appLicenses.getProject().getName());
-        System.out.println(appLicenses.getProject());
-        if (appLicenses.getDeviceId().size() == 0
+        if (deviceIds.size() == 0
         ||StringUtils.isEmpty(appLicenses.getProject().getName())
         || StringUtils.isEmpty(appLicenses.getProject().getSn())
         ||StringUtils.isEmpty(appLicenses.getProject().getContact().getName())
@@ -116,7 +115,7 @@ public class AppLicensesController extends BaseController {
         }
 
         //判断是否重复提交
-        String data = String.format("%s+%s", appLicenses.getDeviceId().toString(), appLicenses.getLimitEnd());
+        String data = String.format("%s+%s", deviceIds.toString(), appLicenses.getLimitEnd());
         String md5 = Md5Utils.hash(data);
 
         AppLicenses licensesMd5 = appLicensesService.selectAppLicensesByMd5(md5);
@@ -134,15 +133,17 @@ public class AppLicensesController extends BaseController {
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, appLicenses);
         List<AppDevicesStatus> list = new ArrayList<AppDevicesStatus>();
-        for (int i = 0; i < appLicenses.getDeviceId().size(); i++) {
+        for (int i = 0; i < deviceIds.size(); i++) {
             AppDevicesStatus appDevicesStatus = new AppDevicesStatus();
-            appDevicesStatus.setDeviceId(appLicenses.getDeviceId().get(i));
+            appDevicesStatus.setDeviceId(deviceIds.get(i));
             appDevicesStatus.setUsed("0");
             appDevicesStatus.setEnabled(enabled);
             list.add(appDevicesStatus);
         }
         licenses.setLicenseId(newLicense.get("licenseId"));
         licenses.setFileName(newLicense.get("fileName"));
+
+        licenses.setPassword(newLicense.get("password"));
         licenses.setMd5(md5);
         licenses.setProjectName(appLicenses.getProject().getName());
         licenses.setProjectSn(appLicenses.getProject().getSn());
@@ -150,7 +151,13 @@ public class AppLicensesController extends BaseController {
         licenses.setProjectUsername(appLicenses.getProject().getContact().getName());
         licenses.setProjectMobile(appLicenses.getProject().getContact().getMobile());
         licenses.setAppDevicesStatusList(list);
-        return toAjax(appLicensesService.insertAppLicenses(licenses));
+
+
+        LicensesGet licensesGet=new LicensesGet();
+        licensesGet.setDeviceId(appLicenses.getDeviceId());
+        appLicensesService.insertAppLicenses(licenses);
+        return this.listDevices(licensesGet);
+
     }
 
     /**
@@ -189,9 +196,7 @@ public class AppLicensesController extends BaseController {
         }
 
         List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
-        if(listLicenses.size()==0){
-            return error("未找到设备对应授权",4007);
-        }
+
 
         for(int i=0;i<listLicenses.size();i++){
 
@@ -207,11 +212,14 @@ public class AppLicensesController extends BaseController {
                 i--;
             }
         }
-
+        if(listLicenses.size()==0){
+            return error("未找到设备对应授权",4007);
+        }
 
 
         return success(listLicenses);
     }
+
 
 
     /**

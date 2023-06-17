@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="licenseId"    column="license_id"    />
         <result property="fileName"    column="file_name"    />
+        <result property="password"    column="password"    />
         <result property="limitStart"    column="limit_start"    />
         <result property="limitEnd"    column="limit_end"    />
         <result property="createBy"    column="create_by"    />
@@ -35,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAppLicensesVo">
-        select id, license_id, file_name, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name,project_address, project_username,project_sn project_mobile,md5 from app_licenses
+        select id, license_id, file_name, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name,project_address, project_username,project_sn project_mobile,md5,password from app_licenses
     </sql>
 
     <select id="selectAppLicensesList" parameterType="AppLicenses" resultMap="AppLicensesResult">
@@ -54,14 +55,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectAppLicensesById" parameterType="Long" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
+        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
  b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
         from app_licenses a
         left join app_devices_status b on b.id = a.id
         where a.id = #{id}
     </select>
     <select id="getAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username,a.project_sn,a.project_address, a.project_mobile,
+        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username,a.project_sn,a.project_address, a.project_mobile,
  b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
         from app_licenses a
         left join app_devices_status b on b.id = a.id
@@ -76,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectAppLicensesListByDeviceIds" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
+        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
  b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
         from app_licenses a
         left join app_devices_status b on b.license_id = a.id
@@ -91,6 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="licenseId != null">license_id,</if>
             <if test="fileName != null">file_name,</if>
+            <if test="password != null">password,</if>
             <if test="limitStart != null">limit_start,</if>
             <if test="limitEnd != null">limit_end,</if>
             <if test="createBy != null">create_by,</if>
@@ -108,6 +110,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="licenseId != null">#{licenseId},</if>
             <if test="fileName != null">#{fileName},</if>
+            <if test="password != null">#{password},</if>
             <if test="limitStart != null">#{limitStart},</if>
             <if test="limitEnd != null">#{limitEnd},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -130,6 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="licenseId != null">license_id = #{licenseId},</if>
             <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="password != null">password = #{password},</if>
             <if test="limitStart != null">limit_start = #{limitStart},</if>
             <if test="limitEnd != null">limit_end = #{limitEnd},</if>
             <if test="createBy != null">create_by = #{createBy},</if>

@@ -33,6 +33,7 @@ public class License {
         String limitEnd = format2.format(bodyLicenses.getLimitEnd());
         Map<String, String> res=new HashMap<>();
 
+        String password = Password.generateRandomPassword(8);
         try {
             // 设置命令参数
             List<String> cmds = new ArrayList<>();
@@ -40,7 +41,7 @@ public class License {
             cmds.add("--deviceId");
             cmds.add( String.join(",",bodyLicenses.getDeviceId()));
             cmds.add("--password");
-            cmds.add("123456");
+            cmds.add(password);
             cmds.add("--date1");
             cmds.add(limitEnd);
             cmds.add("--mode");
@@ -67,6 +68,7 @@ public class License {
             }
 
             res.put("fileName",licPath);
+            res.put("password",password);
             res.put("licenseId",uuid);
 
 
@@ -153,6 +155,7 @@ public class License {
         return intArray;
 
     }
+
 
 
 }

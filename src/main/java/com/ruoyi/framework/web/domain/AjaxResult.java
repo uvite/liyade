@@ -3,6 +3,7 @@ package com.ruoyi.framework.web.domain;
 import java.util.HashMap;
 import java.util.Objects;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.utils.StringUtils;
 
@@ -64,8 +65,11 @@ public class AjaxResult extends HashMap<String, Object> {
         if (StringUtils.isNotNull(data)) {
             super.put(DATA_TAG, data);
         } else {
-            super.put(DATA_TAG, null);
+            super.put(DATA_TAG, new JSONObject());
         }
+
+
+        //
     }
 
     /**
@@ -83,7 +87,7 @@ public class AjaxResult extends HashMap<String, Object> {
         if (StringUtils.isNotNull(data)) {
             super.put(DATA_TAG, data);
         } else {
-            super.put(DATA_TAG, null);
+            super.put(DATA_TAG, new JSONObject());
         }
     }
 
