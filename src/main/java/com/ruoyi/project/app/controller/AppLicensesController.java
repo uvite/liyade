@@ -8,6 +8,8 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.common.utils.sign.Md5Utils;
+import com.ruoyi.framework.security.service.PermissionService;
+import com.ruoyi.framework.security.service.SysPermissionService;
 import com.ruoyi.project.app.controller.request.BodyLicenses;
 import com.ruoyi.project.app.controller.request.LicensesCreate;
 import com.ruoyi.project.app.controller.request.LicensesGet;
@@ -57,6 +59,9 @@ public class AppLicensesController extends BaseController {
 
     @Autowired
     private IAppDevicesStatusService appDevicesStatusService;
+    @Autowired
+    private PermissionService permissionService;
+
 
     /**
      * 查询授权管理列表
@@ -120,8 +125,12 @@ public class AppLicensesController extends BaseController {
         }
         Map<String, String> newLicense = License.createLicense(appLicenses);
         if (StringUtils.isEmpty(newLicense.get("fileName"))) {
-            /// return error("授权文件创建失败，请联系管理员",4006);
+            return error("授权文件创建失败，请联系管理员",4006);
         }
+
+        Boolean Enabled=permissionService.hasPermi("app:licenses:enabled");
+
+        String enabled=Enabled?"1":"0";
         AppLicenses licenses = new AppLicenses();
         BeanUtils.copyBeanProp(licenses, appLicenses);
         List<AppDevicesStatus> list = new ArrayList<AppDevicesStatus>();
@@ -129,7 +138,7 @@ public class AppLicensesController extends BaseController {
             AppDevicesStatus appDevicesStatus = new AppDevicesStatus();
             appDevicesStatus.setDeviceId(appLicenses.getDeviceId().get(i));
             appDevicesStatus.setUsed("0");
-            appDevicesStatus.setEnabled("0");
+            appDevicesStatus.setEnabled(enabled);
             list.add(appDevicesStatus);
         }
         licenses.setLicenseId(newLicense.get("licenseId"));
