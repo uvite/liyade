@@ -34,6 +34,16 @@ public class Product  {
     @Excel(name = "名称")
     private String productName;
 
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    private String productCode;
+
 
 
     public void setProductId(Long productId) {
