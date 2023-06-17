@@ -141,10 +141,14 @@ public class AppCiphertextsController extends BaseController {
     @Log(title = "密文管理", businessType = BusinessType.INSERT)
     @PostMapping("/gor")
     public AjaxResult gor(@ApiIgnore @RequestBody BodyCiphertexts bodyCiphertexts) throws NoSuchAlgorithmException, IOException {
+        if (StringUtils.isEmpty(bodyCiphertexts.getProductCode()) || StringUtils.isEmpty(bodyCiphertexts.getDeviceId())
+        ) {
+            return error("密文创建失败，请联系管理员", 4009);
+        }
         bodyCiphertexts.setCreateBy(getUsername());
-        AppProduct appProduct = appProductService.selectAppProductByProductId(bodyCiphertexts.getProductId());
+        AppProduct appProduct = appProductService.selectAppProductByProductCode(bodyCiphertexts.getProductCode());
         if (appProduct == null) {
-            return error("密文创建失败，请联系管理员",4009);
+            return error("密文创建失败，请联系管理员", 4009);
         }
         //检测设备是否注册，没注册则自动注册
         appDeviceService.checkDeviceId(bodyCiphertexts, appProduct);
@@ -157,7 +161,7 @@ public class AppCiphertextsController extends BaseController {
             bodyCiphertexts = CipherText.createCiphertext(bodyCiphertexts);
 
             if (StringUtils.isEmpty(bodyCiphertexts.getCiphertextPath())) {
-                return error("密文创建失败，请联系管理员",4009);
+                return error("密文创建失败，请联系管理员", 4009);
             }
             AppCiphertexts appCiphertexts = new AppCiphertexts();
             BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
@@ -187,7 +191,7 @@ public class AppCiphertextsController extends BaseController {
     @PutMapping("/changeStatus")
     public AjaxResult changeStatus(@ApiIgnore @RequestBody BodyCiphertexts appCiphertexts) {
         int rows = appCiphertextsService.updateAppCiphertextsStatus(appCiphertexts);
-        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试",4008);
+        return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试", 4008);
     }
 
 
@@ -201,8 +205,8 @@ public class AppCiphertextsController extends BaseController {
             NoSuchAlgorithmException, IOException {
         //查询是否存在
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(appCiphertexts.getDeviceId());
-        if (StringUtils.isEmpty(appCiphertexts.getCiphertext())||appCiphertexts.getCiphertext().size()==0) {
-            return error("密文验证失败，请确认设备密文是否正确",4010);
+        if (StringUtils.isEmpty(appCiphertexts.getCiphertext()) || appCiphertexts.getCiphertext().size() == 0) {
+            return error("密文验证失败，请确认设备密文是否正确", 4010);
         }
 
         if (ciphertext != null) {
@@ -220,10 +224,10 @@ public class AppCiphertextsController extends BaseController {
 
                 return success(res);
             } else {
-                return error("密文验证失败，请确认设备密文是否正确",4010);
+                return error("密文验证失败，请确认设备密文是否正确", 4010);
             }
         } else {
-            return error("密文验证失败，请确认设备密文是否正确",4010);
+            return error("密文验证失败，请确认设备密文是否正确", 4010);
         }
 
     }

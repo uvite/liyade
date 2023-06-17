@@ -38,6 +38,13 @@ public interface IAppProductService
     public AppProduct selectAppProductByProductId(Long productId);
 
     /**
+     * 根据产品编码查询产品
+     * @param productCode
+     * @return
+     */
+    public AppProduct selectAppProductByProductCode(String productCode);
+
+    /**
      * 查询产品管理列表
      * 
      * @param appProduct 产品管理

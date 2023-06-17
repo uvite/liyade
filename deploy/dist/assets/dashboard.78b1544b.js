@@ -1,1 +1,0 @@
-import{H as r}from"./index.ca4b45bd.js";function o(a){return r({url:"/app/dashboard/analysis",method:"get",params:a})}function t(a){return r({url:"/app/dashboard/logs",method:"get",params:a})}export{o as a,t as l};

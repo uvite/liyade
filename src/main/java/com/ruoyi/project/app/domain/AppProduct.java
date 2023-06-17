@@ -47,6 +47,19 @@ public class AppProduct extends BaseEntity {
     @Excel(name = "产品编号")
     private String productCode;
 
+    public String getProductAlias() {
+        return productAlias;
+    }
+
+    public void setProductAlias(String productAlias) {
+        this.productAlias = productAlias;
+    }
+
+    /**
+     * 产品别名
+     */
+    private String productAlias;
+
     /**
      * 参考价格
      */

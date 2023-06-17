@@ -43,6 +43,17 @@ public class AppProductServiceImpl implements IAppProductService {
     public AppProduct selectAppProductByProductId(Long productId) {
         return appProductMapper.selectAppProductByProductId(productId);
     }
+    /**
+     * 查询产品管理
+     *
+     * @param productCode 产品code
+     * @return 产品管理
+     */
+    @Override
+    public AppProduct selectAppProductByProductCode(String productCode) {
+        return appProductMapper.selectAppProductByProductCode(productCode);
+
+    }
 
     /**
      * 查询产品管理列表

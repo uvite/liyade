@@ -42,6 +42,12 @@ public class BodyCiphertexts extends BaseEntity {
     @JsonProperty("productId")
     private Long productId;
 
+    /**
+     * 产品code
+     */
+    @Excel(name = "产品类型")
+    private String productCode;
+
 
     /**
      * 密文内容
@@ -115,6 +121,15 @@ public class BodyCiphertexts extends BaseEntity {
 
     public String getMd5() {
         return md5;
+    }
+
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     @Override

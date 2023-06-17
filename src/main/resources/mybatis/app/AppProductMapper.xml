@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="productId"    column="product_id"    />
         <result property="productName"    column="product_name"    />
         <result property="productType"    column="product_type"    />
+        <result property="productAlias"    column="product_alias"    />
         <result property="supplierId"    column="supplier_id"    />
         <result property="productCode"    column="product_code"    />
         <result property="productPrice"    column="product_price"    />
@@ -28,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="Product" id="AppProductResultSimple">
         <result property="productId"    column="product_id"    />
         <result property="productName"    column="product_name"    />
+        <result property="productCode"    column="product_code"    />
     </resultMap>
 
     <resultMap id="supplierResult" type="AppSupplier">
@@ -36,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAppProductVo">
-        select p.product_id, p.product_name, p.product_type, p.supplier_id, p.product_code, p.product_price, p.product_create_time, p.create_by, p.create_time, p.update_by, p.update_time, p.remark,
+        select p.product_id, p.product_name,p.product_alias, p.product_type, p.supplier_id, p.product_code, p.product_price, p.product_create_time, p.create_by, p.create_time, p.update_by, p.update_time, p.remark,
                s.supplier_id,s.supplier_name
         from app_product p
             left join app_supplier s on p.supplier_id = s.supplier_id
@@ -51,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productType != null  and productType != ''"> and p.product_type = #{productType}</if>
             <if test="supplierId != null "> and p.supplier_id = #{supplierId}</if>
             <if test="productCode != null  and productCode != ''"> and p.product_code = #{productCode}</if>
+            <if test="productAlias != null  and productAlias != ''"> and p.product_alias = #{productAlias}</if>
             <if test="productPrice != null "> and p.product_price = #{productPrice}</if>
             <if test="productCreateTime != null "> and p.product_create_time = #{productCreateTime}</if>
         </where>
@@ -58,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getAppProductList"  resultMap="AppProductResultSimple">
-        select  product_id,  product_name
+        select  product_id,  product_name,product_code
         from app_product
         <where>
              is_deleted=0
@@ -94,6 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="productName != null">product_name,</if>
             <if test="productType != null">product_type,</if>
+            <if test="productAlias != null">product_alias,</if>
             <if test="supplierId != null">supplier_id,</if>
             <if test="productCode != null">product_code,</if>
             <if test="productPrice != null">product_price,</if>
@@ -107,6 +111,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="productName != null">#{productName},</if>
             <if test="productType != null">#{productType},</if>
+            <if test="productAlias != null">product_alias,</if>
+
             <if test="supplierId != null">#{supplierId},</if>
             <if test="productCode != null">#{productCode},</if>
             <if test="productPrice != null">#{productPrice},</if>
@@ -126,6 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productType != null">product_type = #{productType},</if>
             <if test="supplierId != null">supplier_id = #{supplierId},</if>
             <if test="productCode != null">product_code = #{productCode},</if>
+            <if test="productAlias != null">product_alias = #{productAlias},</if>
             <if test="productPrice != null">product_price = #{productPrice},</if>
             <if test="productCreateTime != null">product_create_time = #{productCreateTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
