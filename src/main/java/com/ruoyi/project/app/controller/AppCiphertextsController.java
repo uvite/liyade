@@ -165,6 +165,7 @@ public class AppCiphertextsController extends BaseController {
             }
             AppCiphertexts appCiphertexts = new AppCiphertexts();
             BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
+            appCiphertexts.setProductId(appProduct.getProductId());
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
         }
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
