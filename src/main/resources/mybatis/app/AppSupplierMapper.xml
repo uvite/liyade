@@ -36,6 +36,7 @@
     <select id="selectAppSupplierList" parameterType="AppSupplier" resultMap="AppSupplierResult">
         <include refid="selectAppSupplierVo"/>
         <where>
+            is_deleted=0
             <if test="supplierName != null  and supplierName != ''">and supplier_name like concat('%', #{supplierName},
                 '%')
             </if>
@@ -51,9 +52,12 @@
 
     <select id="selectAppSupplierAll" resultMap="AppSupplierResult">
         <include refid="selectAppSupplierVo"/>
+        <where>
+            is_deleted=0
+        </where>
     </select>
     <select id="selectAppSupplierCount" resultType="Integer">
-        select count(1) from app_supplier where status=0
+        select count(1) from app_supplier where status=0 and is_deleted=0
     </select>
     <select id="selectAppSupplierBySupplierId" parameterType="Long" resultMap="AppSupplierResult">
         <include refid="selectAppSupplierVo"/>
@@ -62,6 +66,11 @@
     <select id="selectAppSupplierBySupplierShortName" parameterType="String" resultMap="AppSupplierResult">
         <include refid="selectAppSupplierVo"/>
         where supplier_short_name = #{supplierShortName}
+    </select>
+
+    <select id="checkSupplierNameUnique" parameterType="String" resultMap="AppSupplierResult">
+        <include refid="selectAppSupplierVo"/>
+        where supplier_name = #{supplierName} and is_deleted=0
     </select>
 
     <insert id="insertAppSupplier" parameterType="AppSupplier" useGeneratedKeys="true" keyProperty="supplierId">
@@ -118,7 +127,7 @@
     </delete>
 
     <delete id="deleteAppSupplierBySupplierIds" parameterType="String">
-        delete from app_supplier where supplier_id in
+        update  app_supplier set is_deleted=1 where supplier_id in
         <foreach item="supplierId" collection="array" open="(" separator="," close=")">
             #{supplierId}
         </foreach>

@@ -74,7 +74,7 @@
 
     <select id="selectAppCiphertextsByDeviceId" parameterType="String" resultMap="AppCiphertextsResult">
         <include refid="selectAppCiphertextsVo"/>
-        where c.device_id = #{deviceId}
+        where c.device_id = #{deviceId} and p.is_deleted=0
     </select>
 
     <insert id="insertAppCiphertexts" parameterType="AppCiphertexts" useGeneratedKeys="true" keyProperty="id">

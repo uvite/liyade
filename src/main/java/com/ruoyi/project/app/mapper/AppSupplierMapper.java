@@ -50,6 +50,12 @@ public interface AppSupplierMapper
     public List<AppSupplier> selectAppSupplierList(AppSupplier appSupplier);
 
     /**
+     * 供应商管理新增 名称唯一性检测
+     * @param supplierName
+     * @return
+     */
+    public AppSupplier checkSupplierNameUnique(String supplierName);
+    /**
      * 新增供应商管理
      * 
      * @param appSupplier 供应商管理

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.project.app.domain.Product;
 import com.ruoyi.project.app.domain.AppProduct;
+import com.ruoyi.project.system.domain.SysUser;
 
 /**
  * 产品管理Service接口
@@ -99,7 +100,13 @@ public interface IAppProductService
      */
     public int updateProductStatus(AppProduct appProduct);
 
-
+    /**
+     * 校验产品编号是否唯一
+     *
+     * @param appProduct 产品信息
+     * @return 结果
+     */
+    public boolean checkProductUnique(AppProduct appProduct);
     /**
      * 逻辑删除
      *

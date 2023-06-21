@@ -3,6 +3,8 @@ package com.ruoyi.project.app.service.impl;
 import java.util.List;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.project.app.controller.utils.Constants;
 import com.ruoyi.project.app.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,6 +90,25 @@ public class AppProductServiceImpl implements IAppProductService {
         appProduct.setCreateTime(DateUtils.getNowDate());
         return appProductMapper.insertAppProduct(appProduct);
     }
+
+    /**
+     * 校验产品编号是否唯一
+     *
+     * @param product 产品信息
+     * @return 结果
+     */
+    @Override
+    public boolean checkProductUnique(AppProduct product)
+    {
+        Long productId = StringUtils.isNull(product.getProductId()) ? -1L : product.getProductId();
+        AppProduct info = appProductMapper.checkProductUnique(product.getProductCode(),product.getProductName());
+        if (StringUtils.isNotNull(info) && info.getProductId().longValue() != productId.longValue())
+        {
+            return Constants.NOT_UNIQUE;
+        }
+        return Constants.UNIQUE;
+    }
+
 
     /**
      * 修改产品管理

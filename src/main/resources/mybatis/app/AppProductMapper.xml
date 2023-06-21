@@ -72,9 +72,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectAppProductAll" resultMap="AppProductResult">
         <include refid="selectAppProductVo"/>
         <where>
-            is_deleted=0
+            p.is_deleted=0
         </where>
-        order by  product_id desc
+        order by  p.product_id desc
     </select>
 
 
@@ -89,7 +89,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectAppProductByProductCode" parameterType="String" resultMap="AppProductResult">
         <include refid="selectAppProductVo"/>
-        where p.product_code = #{productCode}
+        where p.product_code = #{productCode} and p.is_deleted=0
+    </select>
+
+    <select id="checkProductUnique" parameterType="String" resultMap="AppProductResult">
+        <include refid="selectAppProductVo"/>
+        where (p.product_code = #{productCode} or p.product_name=#{productName} )and p.is_deleted=0
     </select>
         
     <insert id="insertAppProduct" parameterType="AppProduct" useGeneratedKeys="true" keyProperty="productId">

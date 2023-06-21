@@ -1,6 +1,8 @@
 package com.ruoyi.project.app.service;
 
 import java.util.List;
+
+import com.ruoyi.project.app.domain.AppProduct;
 import com.ruoyi.project.app.domain.AppSupplier;
 import com.ruoyi.project.system.domain.SysRole;
 
@@ -34,6 +36,14 @@ public interface IAppSupplierService
      * @return 供应商管理
      */
     public AppSupplier selectAppSupplierBySupplierId(Long supplierId);
+
+    /**
+     * 校验供应商是否唯一
+     *
+     * @param appSupplier 供应商信息
+     * @return 结果
+     */
+    public boolean checkSupplierNameUnique(AppSupplier appSupplier);
 
     /**
      * 查询供应商管理列表

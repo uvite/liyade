@@ -2,8 +2,9 @@ package com.ruoyi.project.app.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
-import com.ruoyi.project.system.domain.SysRole;
+import com.ruoyi.project.app.controller.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.app.mapper.AppSupplierMapper;
@@ -43,6 +44,17 @@ public class AppSupplierServiceImpl implements IAppSupplierService
     public AppSupplier selectAppSupplierBySupplierId(Long supplierId)
     {
         return appSupplierMapper.selectAppSupplierBySupplierId(supplierId);
+    }
+
+    @Override
+    public boolean checkSupplierNameUnique(AppSupplier supplier) {
+        Long supplierId = StringUtils.isNull(supplier.getSupplierId()) ? -1L : supplier.getSupplierId();
+        AppSupplier info = appSupplierMapper.checkSupplierNameUnique(supplier.getSupplierName());
+        if (StringUtils.isNotNull(info) && info.getSupplierId().longValue() != supplierId.longValue())
+        {
+            return Constants.NOT_UNIQUE;
+        }
+        return Constants.UNIQUE;
     }
 
     /**

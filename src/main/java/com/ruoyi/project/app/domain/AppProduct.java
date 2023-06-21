@@ -45,7 +45,7 @@ public class AppProduct extends BaseEntity {
      * 产品编号
      */
     @Excel(name = "产品编号")
-    private String productCode;
+     private String productCode;
 
     public String getProductAlias() {
         return productAlias;

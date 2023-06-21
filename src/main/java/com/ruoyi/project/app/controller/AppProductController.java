@@ -11,6 +11,7 @@ import com.ruoyi.project.app.domain.Product;
 import com.ruoyi.project.app.service.IAppSupplierService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -106,8 +107,12 @@ public class AppProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:product:add')")
     @Log(title = "产品管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody AppProduct appProduct)
+    public AjaxResult add(@Validated @RequestBody AppProduct appProduct)
     {
+        if (!appProductService.checkProductUnique(appProduct))
+        {
+            return error("新增产品失败，产品名称或产品编号已存在");
+        }
         return toAjax(appProductService.insertAppProduct(appProduct));
     }
 

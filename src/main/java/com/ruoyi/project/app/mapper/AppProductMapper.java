@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.project.app.domain.Product;
 import com.ruoyi.project.app.domain.AppProduct;
+import com.ruoyi.project.system.domain.SysUser;
 
 /**
  * 产品管理Mapper接口
@@ -34,13 +35,23 @@ public interface AppProductMapper
      * @return 产品管理
      */
     public AppProduct selectAppProductByProductId(Long productId);
- /**
+
+    /**
+     * 校验产品编号是否唯一
+     *
+     * @param productCode 产品编号
+     * @return 结果
+     */
+    public AppProduct checkProductUnique(String productCode,String productName);
+
+    /**
      * 查询产品管理
      *
      * @param productCode 产品管理编号
      * @return 产品管理
      */
     public AppProduct selectAppProductByProductCode(String productCode);
+
 
     /**
      * 查询产品管理列表

@@ -79,6 +79,10 @@ public class AppSupplierController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody AppSupplier appSupplier)
     {
+        if (!appSupplierService.checkSupplierNameUnique(appSupplier))
+        {
+            return error("新增供应商'" + appSupplier.getSupplierName() + "'失败，供应商已存在");
+        }
         return toAjax(appSupplierService.insertAppSupplier(appSupplier));
     }
 
