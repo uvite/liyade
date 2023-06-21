@@ -191,6 +191,11 @@ public class AppCiphertextsController extends BaseController {
     @Log(title = "密文状态", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public AjaxResult changeStatus(@ApiIgnore @RequestBody BodyCiphertexts appCiphertexts) {
+
+        if (StringUtils.isEmpty(appCiphertexts.getDeviceId()) || StringUtils.isEmpty(appCiphertexts.getStatus())
+        ) {
+            return error("密文更新失败，请联系管理员", 4009);
+        }
         int rows = appCiphertextsService.updateAppCiphertextsStatus(appCiphertexts);
         return rows > 0 ? AjaxResult.success() : AjaxResult.error("状态更新失败，请重试", 4008);
     }
