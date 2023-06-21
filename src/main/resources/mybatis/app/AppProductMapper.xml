@@ -92,9 +92,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where p.product_code = #{productCode} and p.is_deleted=0
     </select>
 
-    <select id="checkProductUnique" parameterType="String" resultMap="AppProductResult">
+    <select id="checkProductCodeUnique" parameterType="map" resultMap="AppProductResult">
         <include refid="selectAppProductVo"/>
-        where (p.product_code = #{productCode} or p.product_name=#{productName} )and p.is_deleted=0
+        where  p.product_code = #{productCode} and p.is_deleted=0
+    </select>
+    <select id="checkProductNameUnique" parameterType="map" resultMap="AppProductResult">
+        <include refid="selectAppProductVo"/>
+        where  p.product_name=#{productName}  and p.is_deleted=0
     </select>
         
     <insert id="insertAppProduct" parameterType="AppProduct" useGeneratedKeys="true" keyProperty="productId">
@@ -116,7 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="productName != null">#{productName},</if>
             <if test="productType != null">#{productType},</if>
-            <if test="productAlias != null">product_alias,</if>
+            <if test="productAlias != null">#{productAlias},</if>
 
             <if test="supplierId != null">#{supplierId},</if>
             <if test="productCode != null">#{productCode},</if>

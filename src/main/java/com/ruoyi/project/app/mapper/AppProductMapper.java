@@ -1,6 +1,7 @@
 package com.ruoyi.project.app.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ruoyi.project.app.domain.Product;
 import com.ruoyi.project.app.domain.AppProduct;
@@ -37,12 +38,19 @@ public interface AppProductMapper
     public AppProduct selectAppProductByProductId(Long productId);
 
     /**
-     * 校验产品编号是否唯一
+     * 校验产品名称是否唯一
      *
-     * @param productCode 产品编号
+     * @param param 产品
      * @return 结果
      */
-    public AppProduct checkProductUnique(String productCode,String productName);
+    public AppProduct checkProductNameUnique(Map<String, Object> param);
+/**
+     * 校验产品编号是否唯一
+     *
+     * @param param 产品
+     * @return 结果
+     */
+    public AppProduct checkProductCodeUnique(Map<String, Object> param);
 
     /**
      * 查询产品管理

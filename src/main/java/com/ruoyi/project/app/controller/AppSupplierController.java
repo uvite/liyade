@@ -25,14 +25,13 @@ import com.ruoyi.framework.web.page.TableDataInfo;
 
 /**
  * 供应商管理Controller
- * 
+ *
  * @author ruoyi
  * @date 2023-04-13
  */
 @RestController
 @RequestMapping("/app/supplier")
-public class AppSupplierController extends BaseController
-{
+public class AppSupplierController extends BaseController {
     @Autowired
     private IAppSupplierService appSupplierService;
 
@@ -41,8 +40,7 @@ public class AppSupplierController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:supplier:list')")
     @GetMapping("/list")
-    public TableDataInfo list(AppSupplier appSupplier)
-    {
+    public TableDataInfo list(AppSupplier appSupplier) {
         startPage();
         List<AppSupplier> list = appSupplierService.selectAppSupplierList(appSupplier);
         return getDataTable(list);
@@ -54,8 +52,7 @@ public class AppSupplierController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:supplier:export')")
     @Log(title = "供应商管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, AppSupplier appSupplier)
-    {
+    public void export(HttpServletResponse response, AppSupplier appSupplier) {
         List<AppSupplier> list = appSupplierService.selectAppSupplierList(appSupplier);
         ExcelUtil<AppSupplier> util = new ExcelUtil<AppSupplier>(AppSupplier.class);
         util.exportExcel(response, list, "供应商管理数据");
@@ -66,8 +63,7 @@ public class AppSupplierController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:supplier:query')")
     @GetMapping(value = "/{supplierId}")
-    public AjaxResult getInfo(@PathVariable("supplierId") Long supplierId)
-    {
+    public AjaxResult getInfo(@PathVariable("supplierId") Long supplierId) {
         return success(appSupplierService.selectAppSupplierBySupplierId(supplierId));
     }
 
@@ -77,10 +73,8 @@ public class AppSupplierController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:supplier:add')")
     @Log(title = "供应商管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody AppSupplier appSupplier)
-    {
-        if (!appSupplierService.checkSupplierNameUnique(appSupplier))
-        {
+    public AjaxResult add(@RequestBody AppSupplier appSupplier) {
+        if (!appSupplierService.checkSupplierNameUnique(appSupplier)) {
             return error("新增供应商'" + appSupplier.getSupplierName() + "'失败，供应商已存在");
         }
         return toAjax(appSupplierService.insertAppSupplier(appSupplier));
@@ -92,8 +86,10 @@ public class AppSupplierController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:supplier:edit')")
     @Log(title = "供应商管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody AppSupplier appSupplier)
-    {
+    public AjaxResult edit(@RequestBody AppSupplier appSupplier) {
+        if (!appSupplierService.checkSupplierNameUnique(appSupplier)) {
+            return error("修改供应商'" + appSupplier.getSupplierName() + "'失败，供应商已存在");
+        }
         return toAjax(appSupplierService.updateAppSupplier(appSupplier));
     }
 
@@ -102,9 +98,8 @@ public class AppSupplierController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:supplier:remove')")
     @Log(title = "供应商管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{supplierIds}")
-    public AjaxResult remove(@PathVariable Long[] supplierIds)
-    {
+    @DeleteMapping("/{supplierIds}")
+    public AjaxResult remove(@PathVariable Long[] supplierIds) {
         return toAjax(appSupplierService.deleteAppSupplierBySupplierIds(supplierIds));
     }
 
@@ -114,8 +109,7 @@ public class AppSupplierController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:supplier:edit')")
     @Log(title = "供应商管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
-    public AjaxResult changeStatus(@RequestBody AppSupplier appSupplier)
-    {
+    public AjaxResult changeStatus(@RequestBody AppSupplier appSupplier) {
 
         return toAjax(appSupplierService.updateSupplierStatus(appSupplier));
     }

@@ -31,14 +31,13 @@ import com.ruoyi.framework.web.page.TableDataInfo;
 
 /**
  * 产品管理Controller
- * 
+ *
  * @author ruoyi
  * @date 2023-04-13
  */
 @RestController
 @RequestMapping("/app/product")
-public class AppProductController extends BaseController
-{
+public class AppProductController extends BaseController {
     @Autowired
     private IAppProductService appProductService;
     @Autowired
@@ -49,8 +48,7 @@ public class AppProductController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:product:list')")
     @GetMapping("/list")
-    public TableDataInfo list(AppProduct appProduct)
-    {
+    public TableDataInfo list(AppProduct appProduct) {
         startPage();
         List<AppProduct> list = appProductService.selectAppProductList(appProduct);
         return getDataTable(list);
@@ -61,8 +59,7 @@ public class AppProductController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:product:list')")
     @GetMapping("/getlist")
-    public AjaxResult getlist(AppProduct appProduct)
-    {
+    public AjaxResult getlist(AppProduct appProduct) {
 
         List<Product> list = appProductService.getAppProductList(appProduct);
 
@@ -77,8 +74,7 @@ public class AppProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:product:export')")
     @Log(title = "产品管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, AppProduct appProduct)
-    {
+    public void export(HttpServletResponse response, AppProduct appProduct) {
         List<AppProduct> list = appProductService.selectAppProductList(appProduct);
         ExcelUtil<AppProduct> util = new ExcelUtil<AppProduct>(AppProduct.class);
         util.exportExcel(response, list, "产品管理数据");
@@ -107,12 +103,14 @@ public class AppProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:product:add')")
     @Log(title = "产品管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody AppProduct appProduct)
-    {
-        if (!appProductService.checkProductUnique(appProduct))
-        {
-            return error("新增产品失败，产品名称或产品编号已存在");
+    public AjaxResult add(@Validated @RequestBody AppProduct appProduct) {
+        if (!appProductService.checkProductNameUnique(appProduct)) {
+            return error("新增产品失败，产品名称已存在");
         }
+        if (!appProductService.checkProductCodeUnique(appProduct)) {
+            return error("新增产品失败， 产品编号已存在");
+        }
+
         return toAjax(appProductService.insertAppProduct(appProduct));
     }
 
@@ -122,8 +120,13 @@ public class AppProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('app:product:edit')")
     @Log(title = "产品管理", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody AppProduct appProduct)
-    {
+    public AjaxResult edit(@RequestBody AppProduct appProduct) {
+        if (!appProductService.checkProductNameUnique(appProduct)) {
+            return error("修改产品失败，产品名称已存在");
+        }
+        if (!appProductService.checkProductCodeUnique(appProduct)) {
+            return error("修改产品失败， 产品编号已存在");
+        }
         return toAjax(appProductService.updateAppProduct(appProduct));
     }
 
@@ -132,19 +135,18 @@ public class AppProductController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('app:product:remove')")
     @Log(title = "产品管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{productIds}")
-    public AjaxResult remove(@PathVariable Long[] productIds)
-    {
+    @DeleteMapping("/{productIds}")
+    public AjaxResult remove(@PathVariable Long[] productIds) {
         return toAjax(appProductService.logicDeleteBatch(productIds));
     }
+
     /**
      * 状态修改
      */
     @PreAuthorize("@ss.hasPermi('app:product:edit')")
     @Log(title = "产品管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
-    public AjaxResult changeStatus(@RequestBody AppProduct appProduct)
-    {
+    public AjaxResult changeStatus(@RequestBody AppProduct appProduct) {
 
         return toAjax(appProductService.updateProductStatus(appProduct));
     }

@@ -1,6 +1,8 @@
 package com.ruoyi.project.app.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -92,16 +94,39 @@ public class AppProductServiceImpl implements IAppProductService {
     }
 
     /**
+     * 校验产品名称是否唯一
+     *
+     * @param product 产品信息
+     * @return 结果
+     */
+    @Override
+    public boolean checkProductNameUnique(AppProduct product)
+    {
+        Long productId = StringUtils.isNull(product.getProductId()) ? -1L : product.getProductId();
+        Map<String, Object> param = new HashMap<>();
+        param.put("productCode", product.getProductCode());
+        param.put("productName", product.getProductName());
+        AppProduct info = appProductMapper.checkProductNameUnique(param);
+        if (StringUtils.isNotNull(info) && info.getProductId().longValue() != productId.longValue())
+        {
+            return Constants.NOT_UNIQUE;
+        }
+        return Constants.UNIQUE;
+    }
+    /**
      * 校验产品编号是否唯一
      *
      * @param product 产品信息
      * @return 结果
      */
     @Override
-    public boolean checkProductUnique(AppProduct product)
+    public boolean checkProductCodeUnique(AppProduct product)
     {
         Long productId = StringUtils.isNull(product.getProductId()) ? -1L : product.getProductId();
-        AppProduct info = appProductMapper.checkProductUnique(product.getProductCode(),product.getProductName());
+        Map<String, Object> param = new HashMap<>();
+        param.put("productCode", product.getProductCode());
+        param.put("productName", product.getProductName());
+        AppProduct info = appProductMapper.checkProductCodeUnique(param);
         if (StringUtils.isNotNull(info) && info.getProductId().longValue() != productId.longValue())
         {
             return Constants.NOT_UNIQUE;

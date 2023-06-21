@@ -101,12 +101,20 @@ public interface IAppProductService
     public int updateProductStatus(AppProduct appProduct);
 
     /**
+     * 校验产品名称是否唯一
+     *
+     * @param appProduct 产品信息
+     * @return 结果
+     */
+    public boolean checkProductNameUnique(AppProduct appProduct);
+
+    /**
      * 校验产品编号是否唯一
      *
      * @param appProduct 产品信息
      * @return 结果
      */
-    public boolean checkProductUnique(AppProduct appProduct);
+    public boolean checkProductCodeUnique(AppProduct appProduct);
     /**
      * 逻辑删除
      *
