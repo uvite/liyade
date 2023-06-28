@@ -1,11 +1,15 @@
 package com.ruoyi.project.app.controller.request;
 
+
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
+import com.ruoyi.project.app.controller.utils.DateDeserializer;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +37,7 @@ public class LicensesCreate
 
     /** 开始时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
+
     @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date limitStart;
 

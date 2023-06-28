@@ -77,6 +77,9 @@ public class AppIpController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody AppIp appIp)
     {
+        if (!appIpService.checkIpUnique(appIp)) {
+            return error("新增Ip'" + appIp.getIp() + "'失败，Ip已存在");
+        }
         return toAjax(appIpService.insertAppIp(appIp));
     }
 

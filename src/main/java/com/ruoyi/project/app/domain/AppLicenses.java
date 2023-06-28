@@ -76,6 +76,16 @@ public class AppLicenses extends BaseEntity
     @Excel(name = "联系人电话")
     private String projectMobile;
 
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    private String deviceId;
+
 
     public String getMd5() {
         return md5;

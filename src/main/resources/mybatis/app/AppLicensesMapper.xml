@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="projectUsername"    column="project_username"    />
         <result property="projectMobile"    column="project_mobile"    />
         <result property="md5"    column="md5"    />
+
     </resultMap>
 
     <resultMap id="AppLicensesAppDevicesStatusResult" type="AppLicenses" extends="AppLicensesResult">
@@ -36,21 +37,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAppLicensesVo">
-        select id, license_id, file_name, limit_start, limit_end, create_by, create_time, update_by, update_time, remark, project_name,project_address, project_username,project_sn project_mobile,md5,password from app_licenses
+        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
+               b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
+        from app_licenses a
+                 left join app_devices_status b on b.license_id = a.id
     </sql>
 
     <select id="selectAppLicensesList" parameterType="AppLicenses" resultMap="AppLicensesResult">
-        <include refid="selectAppLicensesVo"/>
+        select
+        ANY_VALUE(a.id) as id,
+        ANY_VALUE(a.license_id) as license_id,
+        ANY_VALUE(a.file_name) as file_name,
+        ANY_VALUE(a.password) as password,
+        ANY_VALUE(a.limit_start) as limit_start,
+        ANY_VALUE(a.limit_end) as limit_end,
+        ANY_VALUE(a.create_by) as create_by,
+        ANY_VALUE(a.create_time) as create_time,
+        ANY_VALUE(a.update_by) as update_by,
+        ANY_VALUE(a.update_time) as update_time,
+        ANY_VALUE(a.remark) as remark,
+        ANY_VALUE(a.project_name) as project_name,
+        ANY_VALUE(a.project_address) as project_address,
+        ANY_VALUE(a.project_sn) as project_sn,
+        ANY_VALUE(a.project_username) as project_username,
+        ANY_VALUE(a.project_mobile) as project_mobile,
+        ANY_VALUE(b.id) as sub_id,
+        ANY_VALUE(b.device_id) as sub_device_id,
+        ANY_VALUE(b.used) as sub_used,
+        ANY_VALUE(b.enabled) as sub_enabled
+        from app_licenses a
+        left join app_devices_status b on b.license_id = a.id
         <where>  
-            <if test="licenseId != null  and licenseId != ''"> and license_id = #{licenseId}</if>
-            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
-            <if test="limitStart != null "> and limit_start = #{limitStart}</if>
-            <if test="limitEnd != null "> and limit_end = #{limitEnd}</if>
-            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
-            <if test="projectSn != null  and projectSn != ''"> and project_sn like concat('%', #{projectSn}, '%')</if>
-            <if test="projectUsername != null  and projectUsername != ''"> and project_username like concat('%', #{projectUsername}, '%')</if>
-            <if test="projectMobile != null  and projectMobile != ''"> and project_mobile = #{projectMobile}</if>
+            <if test="licenseId != null  and licenseId != ''"> and a.license_id = #{licenseId}</if>
+            <if test="deviceId != null  and deviceId != ''"> and b.device_id = #{deviceId}</if>
+            <if test="limitStart != null "> and a.limit_start = #{limitStart}</if>
+            <if test="limitEnd != null "> and a.limit_end = #{limitEnd}</if>
+            <if test="projectName != null  and projectName != ''"> and a.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectSn != null  and projectSn != ''"> and a.project_sn like concat('%', #{projectSn}, '%')</if>
+            <if test="projectUsername != null  and projectUsername != ''"> and a.project_username like concat('%', #{projectUsername}, '%')</if>
+            <if test="projectMobile != null  and projectMobile != ''"> and a.project_mobile = #{projectMobile}</if>
         </where>
+        GROUP BY b.license_id
         order by id desc
     </select>
     
@@ -58,14 +85,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
  b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
         from app_licenses a
-        left join app_devices_status b on b.id = a.id
+        left join app_devices_status b on b.license_id = a.id
         where a.id = #{id}
     </select>
     <select id="getAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name, a.project_username,a.project_sn,a.project_address, a.project_mobile,
- b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
-        from app_licenses a
-        left join app_devices_status b on b.id = a.id
+        <include refid="selectAppLicensesVo"/>
         where a.license_id = #{license_id}
     </select>
 
@@ -77,10 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectAppLicensesListByDeviceIds" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
-        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
- b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
-        from app_licenses a
-        left join app_devices_status b on b.license_id = a.id
+        <include refid="selectAppLicensesVo"/>
         where b.device_id in
         <foreach item="deviceId" collection="array" open="(" separator="," close=")">
             #{deviceId}
@@ -173,7 +194,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteAppDevicesStatusByLicenseId" parameterType="Long">
-        delete from app_devices_status where licens_id = #{id}
+        delete from app_devices_status where license_id = #{id}
     </delete>
 
     <insert id="batchAppDevicesStatus">
@@ -185,6 +206,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesResult">
         <include refid="selectAppLicensesVo"/>
-        where license_id = #{licenseId}
+        where a.license_id = #{licenseId}
     </select>
 </mapper>

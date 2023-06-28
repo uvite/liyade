@@ -179,6 +179,6 @@
         select count(1) from app_device where stock_status=0
     </select>
     <select id="selectDeviceStatusCount" resultType="Integer">
-        select count(1) from app_device where device_status=1
+        select count(1) from app_device where used=1 and is_deleted=0
     </select>
 </mapper>

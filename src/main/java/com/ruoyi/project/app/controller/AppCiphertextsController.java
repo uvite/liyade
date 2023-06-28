@@ -167,7 +167,7 @@ public class AppCiphertextsController extends BaseController {
             BeanUtils.copyBeanProp(appCiphertexts, bodyCiphertexts);
             appCiphertexts.setProductId(appProduct.getProductId());
             appCiphertextsService.insertAppCiphertexts(appCiphertexts);
-        }
+       }
         AppCiphertexts ciphertext = appCiphertextsService.selectAppCiphertextsByDeviceId(bodyCiphertexts.getDeviceId());
 
         int[] intArray = CipherText.getCiphertext(ciphertext.getCiphertextPath());

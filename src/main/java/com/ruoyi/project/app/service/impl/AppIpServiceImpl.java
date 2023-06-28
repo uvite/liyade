@@ -1,6 +1,10 @@
 package com.ruoyi.project.app.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.project.app.controller.utils.Constants;
+import com.ruoyi.project.app.domain.AppSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.app.mapper.AppIpMapper;
@@ -89,6 +93,17 @@ public class AppIpServiceImpl implements IAppIpService
     public int deleteAppIpById(Long id)
     {
         return appIpMapper.deleteAppIpById(id);
+    }
+
+    @Override
+    public boolean checkIpUnique(AppIp appIp) {
+        Long ipId = StringUtils.isNull(appIp.getId()) ? -1L : appIp.getId();
+        AppIp info = appIpMapper.checkIpUnique(appIp.getIp());
+        if (StringUtils.isNotNull(info) && info.getId().longValue() != ipId.longValue())
+        {
+            return Constants.NOT_UNIQUE;
+        }
+        return Constants.UNIQUE;
     }
 
     @Override

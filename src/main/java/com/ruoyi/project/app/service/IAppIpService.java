@@ -2,6 +2,7 @@ package com.ruoyi.project.app.service;
 
 import java.util.List;
 import com.ruoyi.project.app.domain.AppIp;
+import com.ruoyi.project.app.domain.AppSupplier;
 
 /**
  * ip白名单Service接口
@@ -58,7 +59,13 @@ public interface IAppIpService
      * @return 结果
      */
     public int deleteAppIpById(Long id);
-
+    /**
+     * 校验ip是否唯一
+     *
+     * @param appIp 供应商信息
+     * @return 结果
+     */
+    public boolean checkIpUnique(AppIp appIp);
 
     /**
      * 根据ip获取白名单信息

@@ -66,4 +66,12 @@ public interface AppIpMapper
      * @return bool
      */
     public AppIp selectAppIpByIp(String ip);
+
+    /**
+     * 查询ip是否唯一
+     *
+     * @param ip ip
+     * @return bool
+     */
+    public AppIp checkIpUnique(String ip);
 }

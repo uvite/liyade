@@ -115,6 +115,11 @@ public class AppDeviceServiceImpl implements IAppDeviceService
         }else{
             if(appDevice.getIsDeleted()!=0){
                 appDevice.setIsDeleted(0);
+                appDevice.setDeviceId(deviceId);
+                appDevice.setSupplierId(appProduct.getSupplierId());
+                appDevice.setProductId(appProduct.getProductId());
+                appDevice.setCreateBy(bodyCiphertexts.getCreateBy());
+                appDevice.setCreateTime(DateUtils.getNowDate());
                 appDeviceMapper.updateAppDevice(appDevice);
             }
         }
