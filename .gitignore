@@ -31,7 +31,7 @@ rebel.xml
 nbproject/private/
 build/*
 nbbuild/
- 
+docker/*
 nbdist/
 .nb-gradle/
 
