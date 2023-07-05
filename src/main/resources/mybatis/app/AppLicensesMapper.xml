@@ -106,6 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="deviceId" collection="array" open="(" separator="," close=")">
             #{deviceId}
         </foreach>
+        order by a.id desc limit 20
     </select>
         
     <insert id="insertAppLicenses" parameterType="AppLicenses" useGeneratedKeys="true" keyProperty="id">

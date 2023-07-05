@@ -167,7 +167,37 @@ public class AppLicensesController extends BaseController {
         LicensesGet licensesGet = new LicensesGet();
         licensesGet.setDeviceId(appLicenses.getDeviceId());
         appLicensesService.insertAppLicenses(licenses);
-        return this.listDevices(licensesGet);
+
+        //List<String> deviceIds = appLicenses.getDeviceId();
+
+        if (deviceIds.size() == 0) {
+            return error("未找到设备对应授权", 4007);
+        }
+
+        List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+
+
+        for (int i = 0; i < listLicenses.size(); i++) {
+
+            List<DevicesStatus> list1 = listLicenses.get(i).getDevicesStatuses();
+
+
+            List<String> existIds = list1.stream().map(DevicesStatus::getDeviceId).collect(Collectors.toList());
+
+            List<String> notExistIds = deviceIds.stream().filter(item -> !existIds.contains(item)).collect(Collectors.toList());
+
+            if (notExistIds.size() > 0) {
+                listLicenses.remove(i);//使用集合的删除方法删除
+                i--;
+            }
+        }
+        if (listLicenses.size() == 0) {
+            return error("未找到设备对应授权", 4007);
+        }
+        //取出listLicenses中的第0个内空，生成新数组
+        List<AppLicenses> oneLicense=new ArrayList<>();
+        oneLicense.add( listLicenses.get(0));
+        return success(oneLicense);
 
     }
 
