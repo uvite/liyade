@@ -174,7 +174,7 @@ public class AppLicensesController extends BaseController {
             return error("未找到设备对应授权", 4007);
         }
 
-        List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesByDeviceIds(deviceIds);
+        List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
 
 
         for (int i = 0; i < listLicenses.size(); i++) {
@@ -194,10 +194,12 @@ public class AppLicensesController extends BaseController {
         if (listLicenses.size() == 0) {
             return error("未找到设备对应授权", 4007);
         }
-        //取出listLicenses中的第0个内空，生成新数组
-        List<AppLicenses> oneLicense=new ArrayList<>();
-        oneLicense.add( listLicenses.get(0));
-        return success(oneLicense);
+        List<AppLicenses> topLicenses = listLicenses.stream()
+                .limit(1)
+                .collect(Collectors.toList());
+
+
+        return success(topLicenses);
 
     }
 
@@ -256,9 +258,12 @@ public class AppLicensesController extends BaseController {
         if (listLicenses.size() == 0) {
             return error("未找到设备对应授权", 4007);
         }
+        //取出listLicenses中的前20，生成新数组
+        List<AppLicenses> topLicenses = listLicenses.stream()
+                .limit(5)
+                .collect(Collectors.toList());
 
-
-        return success(listLicenses);
+        return success(topLicenses);
     }
 
 

@@ -43,6 +43,7 @@ public class BaseException extends RuntimeException
         this.msgCode = msgCode;
         this.args = args;
         this.defaultMessage = defaultMessage;
+
     }
 
     public BaseException(String module, String code, Object[] args,Integer msgCode)

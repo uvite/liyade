@@ -23,7 +23,7 @@ public final class ServiceException extends RuntimeException
     /**
      * 错误明细，内部调试错误
      *
-     * 和 {@link CommonResult#getDetailMessage()} 一致的设计
+
      */
     private String detailMessage;
 
@@ -37,14 +37,19 @@ public final class ServiceException extends RuntimeException
     public ServiceException(String message)
     {
         this.message = message;
-        this.msgCode = 4001;
+        this.msgCode = 4002;
+    }
+    public ServiceException(Integer msgCode,String message)
+    {
+        this.message = message;
+        this.msgCode = msgCode;
     }
 
     public ServiceException(String message, Integer code)
     {
         this.message = message;
         this.code = code;
-        this.msgCode = 4001;
+
     }
 
     public String getDetailMessage()
@@ -69,7 +74,7 @@ public final class ServiceException extends RuntimeException
 
     public ServiceException setMessage(String message)
     {
-        this.msgCode = 4001;
+
         this.message = message;
         return this;
     }

@@ -69,6 +69,7 @@ public class AjaxResult extends HashMap<String, Object> {
         }
 
 
+
         //
     }
 

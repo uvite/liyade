@@ -1,6 +1,9 @@
 package com.ruoyi.framework.web.exception;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
+
+import com.ruoyi.common.exception.base.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -68,6 +71,7 @@ public class GlobalExceptionHandler
     {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
+
         return AjaxResult.error(e.getMessage());
     }
 
@@ -103,6 +107,16 @@ public class GlobalExceptionHandler
         log.error(e.getMessage(), e);
         String message = e.getBindingResult().getFieldError().getDefaultMessage();
         return AjaxResult.error(message);
+    }
+
+    /**
+     * 登录异常
+     */
+    @ExceptionHandler(BaseException.class)
+    public AjaxResult loginException(BaseException e)
+    {
+
+        return AjaxResult.error(e.getMessage(),e.getMsgCode());
     }
 
     /**
