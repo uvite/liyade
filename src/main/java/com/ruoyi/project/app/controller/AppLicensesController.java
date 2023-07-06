@@ -260,7 +260,7 @@ public class AppLicensesController extends BaseController {
         }
         //取出listLicenses中的前20，生成新数组
         List<AppLicenses> topLicenses = listLicenses.stream()
-                .limit(5)
+                .limit(20)
                 .collect(Collectors.toList());
 
         return success(topLicenses);
