@@ -135,6 +135,13 @@ public class AppLicensesServiceImpl implements IAppLicensesService
         return appLicensesMapper.selectAppLicensesListByDeviceIds(array);
     }
 
+    @Override
+    public List<AppLicenses> selectAppLicensesByDeviceIds(List<String> deviceIds) {
+
+        String[] array = deviceIds.toArray(new String[deviceIds.size()]);
+        return appLicensesMapper.selectAppLicensesByDeviceIds(array);
+    }
+
     /**
      * 新增授权管理信息
      * 

@@ -135,7 +135,7 @@ public class AppLicensesController extends BaseController {
         }
         Map<String, String> newLicense = License.createLicense(appLicenses);
         if (StringUtils.isEmpty(newLicense.get("fileName"))) {
-            return error("授权文件创建失败，请联系管理员",4006);
+           return error("授权文件创建失败，请联系管理员",4006);
         }
 
         Boolean Enabled = permissionService.hasPermi("app:licenses:enabled");
@@ -174,7 +174,7 @@ public class AppLicensesController extends BaseController {
             return error("未找到设备对应授权", 4007);
         }
 
-        List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesListByDeviceIds(deviceIds);
+        List<AppLicenses> listLicenses = appLicensesService.selectAppLicensesByDeviceIds(deviceIds);
 
 
         for (int i = 0; i < listLicenses.size(); i++) {

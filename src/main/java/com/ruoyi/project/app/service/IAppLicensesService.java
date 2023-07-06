@@ -71,6 +71,8 @@ public interface IAppLicensesService
      */
     public List<AppLicenses> selectAppLicensesListByDeviceIds(List<String>  deviceIds);
 
+    public List<AppLicenses> selectAppLicensesByDeviceIds(List<String>  deviceIds);
+
 
 
     /**

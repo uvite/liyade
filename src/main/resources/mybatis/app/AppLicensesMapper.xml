@@ -99,14 +99,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where md5 = #{md5}
     </select>
 
-
     <select id="selectAppLicensesListByDeviceIds" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
-        <include refid="selectAppLicensesVo"/>
+        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
+        b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
+        from  (SELECT * FROM app_licenses ORDER BY id DESC LIMIT 20) a
+        left join app_devices_status b on b.license_id = a.id
         where b.device_id in
         <foreach item="deviceId" collection="array" open="(" separator="," close=")">
             #{deviceId}
         </foreach>
-        order by a.id desc limit 20
+        order by a.id desc
+    </select>
+
+
+    <select id="selectAppLicensesByDeviceIds" parameterType="String" resultMap="AppLicensesAppDevicesStatusResult">
+        select a.id, a.license_id, a.file_name,a.password, a.limit_start, a.limit_end, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.project_name,a.project_address,a.project_sn, a.project_username, a.project_mobile,
+        b.id as sub_id, b.device_id as sub_device_id, b.used as sub_used, b.enabled as sub_enabled
+        from  (SELECT * FROM app_licenses ORDER BY id DESC LIMIT 1) a
+        left join app_devices_status b on b.license_id = a.id
+        where b.device_id in
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+        order by a.id desc
     </select>
         
     <insert id="insertAppLicenses" parameterType="AppLicenses" useGeneratedKeys="true" keyProperty="id">
