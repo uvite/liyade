@@ -210,6 +210,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectAppLicensesByLicenseId" parameterType="String" resultMap="AppLicensesResult">
         <include refid="selectAppLicensesVo"/>
-        where a.license_id = #{licenseId}
+        where a.license_id = #{licenseId} limit 1
     </select>
 </mapper>
